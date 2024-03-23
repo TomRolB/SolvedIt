@@ -6,6 +6,8 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -19,15 +21,16 @@ public class UserTest {
     private EntityManagerFactory managerFactory;
     private EntityManager em;
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         managerFactory.close();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         managerFactory = Persistence.createEntityManagerFactory("test");
         em = managerFactory.createEntityManager();
+        System.out.println("Entity manager has been set-up");
     }
 
     @Test
