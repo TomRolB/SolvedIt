@@ -23,18 +23,6 @@ export function Login() {
             .post("/users/login", {email: email, password: password})
             .then((res) => console.log(res.data))
             .catch(err => console.log(err))
-        // fetch("/users/login", {
-        //     method:'post',
-        //     // body: JSON.stringify({
-        //     //     email: email,
-        //     //     password: password
-        //     // })
-        //     body: {
-        //         email: email,
-        //         password: password
-        //     }
-        // }).then((res) => console.log(res))
-
     }
 
     function handleEmailChange(event) {
