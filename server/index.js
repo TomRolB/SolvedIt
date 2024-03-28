@@ -1,9 +1,13 @@
 const express = require('express')
 const app = express()
 
+const ejs = require('ejs') // TODO: Replace ejs by React. Delete dependency.
 const db = require('./models')
 
 app.use(express.json())
+
+app.set('view engine', 'ejs');
+
 
 // Routers
 const userRouter = require('./routes/Users')
