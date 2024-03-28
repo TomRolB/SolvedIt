@@ -23,6 +23,7 @@ router.get("/login", async (req, res) => {
 router.post("/login", async (req, res) => {
     const userIsValid = await Auth.validateUser(req)
 
+
     if (userIsValid) {
         res.send("You have successfully logged in!")
     } else {

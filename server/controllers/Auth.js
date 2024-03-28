@@ -1,13 +1,20 @@
 const { Users } = require("../models")
 
 exports.validateUser = async (form) => {
+    const formEmail = form.body.email
+    const formPassword = form.body.password
+
     const user = await Users.findOne({
         where: {
-            email: form.body.email
+            email: formEmail
         }
     })
 
-    return form.body.password === user.dataValues.password
+    if (user === null) return false
+
+    const actualPassword = user.dataValues.password
+
+    return formPassword === actualPassword
 }
 
 exports.registerUser = async (form) => {
