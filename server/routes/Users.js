@@ -30,4 +30,18 @@ router.post("/login", async (req, res) => {
     }
 })
 
+router.get("/register", async (req, res) => {
+    res.render("temp_register")
+})
+
+router.post("/register", async (req, res) => {
+    const userIsValid = await Auth.registerUser(req)
+
+    if (userIsValid) {
+        res.send("You have successfully registered!")
+    } else {
+        res.send("Invalid credentials") // We will actually re-send the form, but let's keep it simple for now
+    }
+})
+
 module.exports = router
