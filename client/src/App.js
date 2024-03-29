@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import Register from "./pages/register";
@@ -23,7 +23,6 @@ function App(props) {
                 <Route path="/users/register" element={ <Register/> }/>
             </Routes>
         </BrowserRouter>
-
     );
 }
 
