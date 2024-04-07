@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import Register from "./pages/register";
 import {Home} from "./pages/Home";
+import {CreateClass} from "./pages/CreateClass";
 
 function App(props) {
 
@@ -23,6 +24,7 @@ function App(props) {
                 <Route path="/login" element={ <Login/> }/>
                 <Route path="/users/register" element={ <Register/> }/>
                 <Route path="/home" element={<Home/>}></Route>
+                <Route path="/create-class" element={<CreateClass/>}></Route>
             </Routes>
         </BrowserRouter>
     );

@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
 })
 router.post("/", async (req, res) => {
     const classInfo = req.body
+    console.log(classInfo)
     await Class.create(classInfo)
     res.json(classInfo)
 })
