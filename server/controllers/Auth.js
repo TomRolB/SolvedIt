@@ -1,7 +1,63 @@
 const { Users } = require("../models")
 const crypto = require("crypto")
+const cron = require("cron")
 
-let sessions = {}
+const sessions = {}
+const EXPIRATION_TIME = 1000
+
+class Node {
+    constructor(value){
+        this.value = value
+        this.datetime = Date.now()
+        this.next = null
+    }
+}
+
+class SessionQueue {
+    constructor(){
+        this.first = null
+        this.last = null
+        this.size = 0
+    }
+
+    enqueue(value){
+        let newNode = new Node(value)
+        if(!this.first){
+            this.first = newNode
+            this.last = newNode
+        }else{
+            this.last.next = newNode
+            this.last = newNode
+        }
+
+        this.size++
+
+        return this.size
+    }
+    deleteAllExpiredSessions() {
+        const now = Date.now()
+        while (this.size > 0 && (now - this.first.datetime > EXPIRATION_TIME)) {
+            delete sessions[this.first.value]
+            this.first = this.first.next
+            this.size--
+        }
+    }
+}
+
+const queue = new SessionQueue()
+
+// Cron job to delete expired sessions.
+// The job will run every minute to make it testable
+new cron.CronJob(
+    '00 * * * * *',
+    function () {
+        queue.deleteAllExpiredSessions()
+        console.log("CRON JOB: Deleted expired sessions")
+    },
+    null,
+    true,
+    "America/Argentina/Buenos_Aires"
+);
 
 exports.validateUser = async (form) => {
     const formEmail = form.body.email
@@ -21,7 +77,11 @@ exports.validateUser = async (form) => {
     //TODO: Handle user trying to login when already having a session
 
     const uuid = crypto.randomUUID()
-    sessions[uuid] = user.id
+    sessions[uuid] = {
+        id: user.id,
+        since: Date.now()
+    }
+    queue.enqueue(uuid)
 
     return {
         wasSuccessful: true,
@@ -64,10 +124,18 @@ exports.registerUser = async (form) => {
     user.save()
 
     const uuid = crypto.randomUUID()
-    sessions[uuid] = user.id
+    sessions[uuid] = {
+        id: user.id,
+        since: Date.now()
+    }
+    queue.enqueue(uuid)
 
     return {
         wasSuccessful: true,
         uuid: uuid
     }
+}
+
+exports.isLoggedIn = (uuid) => {
+    return uuid in sessions
 }

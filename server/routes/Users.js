@@ -51,4 +51,8 @@ router.post("/register", async (req, res) => {
     res.send(result)
 })
 
+router.post("/isLoggedIn", async (req, res) => {
+  res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
+})
+
 module.exports = router
