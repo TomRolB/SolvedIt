@@ -36,12 +36,9 @@ router.get("/login", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
-    // Get uuid, or null if user has no session
-    const uuid = await Auth.validateUser(req)
+    const result = await Auth.validateUser(req)
 
-    // For now, we'll send a null uuid when there is no
-    // session, but this will probably be changed
-    res.send(uuid)
+    res.send(result)
 })
 
 router.get("/register", async (req, res) => {
@@ -49,13 +46,18 @@ router.get("/register", async (req, res) => {
 })
 
 router.post("/register", async (req, res) => {
-    const userIsValid = await Auth.registerUser(req)
+    const result = await Auth.registerUser(req)
 
-    if (userIsValid) {
-        res.send("You have successfully registered!")
-    } else {
-        res.send("Invalid credentials") // We will actually re-send the form, but let's keep it simple for now
-    }
+    res.send(result)
+})
+
+router.post("/isLoggedIn", async (req, res) => {
+  res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
+})
+
+router.post("/logout", async (req, res) => {
+    Auth.logout(req.body.uuid)
+    res.send("Logged out successfully")
 })
 
 module.exports = router

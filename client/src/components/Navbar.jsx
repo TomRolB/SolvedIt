@@ -1,4 +1,20 @@
-export const Navbar = () => {
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
+
+export const Navbar = ({uuid, setUuid}) => {
+    const navigate = useNavigate()
+    const handleLogOut = () => {
+        axios
+            .post("users/logout", {uuid: uuid})
+            .then((res) => console.log(res))
+            .catch(err => console.log(err))
+
+        localStorage.removeItem("uuid")
+
+        let path = "/login"
+        navigate(path)
+    }
+
     return (
         <nav className="bg-white border-gray-200 dark:bg-gray-900">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -18,7 +34,7 @@ export const Navbar = () => {
                             <a href="#" className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
                         </li>
                         <li>
-                            <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Log Out</a>
+                            <a href="#" onClick={handleLogOut} className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Log Out</a>
                         </li>
                         <li>
                             <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
