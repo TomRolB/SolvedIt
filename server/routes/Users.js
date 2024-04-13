@@ -36,12 +36,9 @@ router.get("/login", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
-    // Get uuid, or null if user has no session
-    const uuid = await Auth.validateUser(req)
+    const result = await Auth.validateUser(req)
 
-    // For now, we'll send a null uuid when there is no
-    // session, but this will probably be changed
-    res.send(uuid)
+    res.send(result)
 })
 
 router.get("/register", async (req, res) => {

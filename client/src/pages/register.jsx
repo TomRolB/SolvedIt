@@ -40,9 +40,7 @@ function Register({uuid, setUuid}) {
             navigate("/home")
         }
         else {
-            console.log("An error message should have been displayed")
             setErrorMessage(result.data.errorMessage)
-            console.log(errorMessage)
         }
     }
 

@@ -13,17 +13,20 @@ exports.validateUser = async (form) => {
         }
     })
 
-    if (user === null) return null
-
-    const actualPassword = user.dataValues.password
-    if (formPassword !== actualPassword) return null
+    if (user === null || user.dataValues.password !== formPassword) return {
+        wasSuccessful: false,
+        errorMessage: "The provided email or password are invalid",
+    }
 
     //TODO: Handle user trying to login when already having a session
 
     const uuid = crypto.randomUUID()
     sessions[uuid] = user.id
 
-    return uuid
+    return {
+        wasSuccessful: true,
+        uuid: uuid,
+    }
 }
 
 const RegisterResult = {

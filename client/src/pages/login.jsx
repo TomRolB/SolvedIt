@@ -17,16 +17,25 @@ export function Login({uuid, setUuid}) {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const [errorMessage, setErrorMessage] = useState(null)
+
+    function handleResult(result) {
+        if (result.data.wasSuccessful) {
+            localStorage.setItem("uuid", result.data.uuid)
+            setUuid(result.data.uuid) // This is simply used to refresh the app.
+                                      // We actually update uuid at localStorage.
+            navigate("/home")
+        } else {
+            setErrorMessage(result.data.errorMessage)
+        }
+    }
+
     function handleSubmit(event) {
         event.preventDefault() //Prevents page from refreshing
         axios
             .post("/users/login", {email: email, password: password})
-            .then((res) => {
-                localStorage.setItem("uuid", res.data)
-                setUuid(res.data) // This is simply used to refresh the app.
-                                  // We actually update uuid at localStorage.
-                navigate("/home")
-            })
+            .then((res) => handleResult(res))
             .catch(err => console.log(err))
     }
 
@@ -47,6 +56,7 @@ export function Login({uuid, setUuid}) {
     return (
         <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
             <form method="post" onSubmit={handleSubmit}>
+                { errorMessage != null ? <h1 color={"red"}> {errorMessage} </h1> : null }
                 <label className={labelStyle} htmlFor="email">Email:</label><br/>
                 <input className={textInputStyle} type="email" id="email" name="email" onChange={handleEmailChange}/><br/>
                 <label className={labelStyle} htmlFor="password">Password:</label><br/>
