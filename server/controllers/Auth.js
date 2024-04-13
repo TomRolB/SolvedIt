@@ -26,10 +26,29 @@ exports.validateUser = async (form) => {
     return uuid
 }
 
+const RegisterResult = {
+    SUCCESS: "Successfully registered",
+}
+
 exports.registerUser = async (form) => {
     if (form.body.password !== form.body.confirmPassword) {
         // Send new form and ask to re-complete
-        return false
+        return {
+            wasSuccessful: false,
+            errorMessage: "Passwords do not match",
+        }
+    }
+
+    const formEmail = form.body.email
+    const dbUser = await Users.findOne({
+        where: {
+            email: formEmail
+        }
+    })
+
+    if (dbUser !== null) return {
+        wasSuccessful: false,
+        errorMessage: "This email has already been used",
     }
 
     const user = Users.build({
@@ -41,5 +60,11 @@ exports.registerUser = async (form) => {
 
     user.save()
 
-    return true
+    const uuid = crypto.randomUUID()
+    sessions[uuid] = user.id
+
+    return {
+        wasSuccessful: true,
+        uuid: uuid
+    }
 }

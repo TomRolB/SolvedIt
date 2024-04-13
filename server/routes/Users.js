@@ -49,13 +49,9 @@ router.get("/register", async (req, res) => {
 })
 
 router.post("/register", async (req, res) => {
-    const userIsValid = await Auth.registerUser(req)
+    const result = await Auth.registerUser(req)
 
-    if (userIsValid) {
-        res.send("You have successfully registered!")
-    } else {
-        res.send("Invalid credentials") // We will actually re-send the form, but let's keep it simple for now
-    }
+    res.send(result)
 })
 
 module.exports = router

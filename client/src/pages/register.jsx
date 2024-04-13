@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
-function Register(props) {
+function Register({uuid, setUuid}) {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState(null)
 
     function handleFirstNameChange(event) {
         setFirstName(event.target.value)
@@ -29,6 +31,21 @@ function Register(props) {
         setConfirmPassword(event.target.value)
     }
 
+    const navigate = useNavigate()
+    function handleResult(result) {
+        if (result.data.wasSuccessful) {
+            localStorage.setItem("uuid", result.data.uuid)
+            setUuid(result.data.uuid) // This is simply used to refresh the app.
+                              // We actually update uuid at localStorage.
+            navigate("/home")
+        }
+        else {
+            console.log("An error message should have been displayed")
+            setErrorMessage(result.data.errorMessage)
+            console.log(errorMessage)
+        }
+    }
+
     function handleSubmit(event) {
         event.preventDefault() //Prevents page from refreshing
         axios
@@ -39,7 +56,7 @@ function Register(props) {
                 password: password,
                 confirmPassword: confirmPassword
             })
-            .then((res) => console.log(res.data))
+            .then((res) => handleResult(res))
             .catch(err => console.log(err))
     }
 
@@ -50,6 +67,7 @@ function Register(props) {
         //TODO: Could probably simplify with React logic
         <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
             <form method="post" onSubmit={handleSubmit}>
+                { errorMessage != null ? <h1 color={"red"}> {errorMessage} </h1> : null }
                 <div className="flex flex-row">
                     <div>
                         <label className={labelStyle} htmlFor="firstName">First name:</label><br/>

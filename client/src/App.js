@@ -29,7 +29,7 @@ function App(props) {
                 <Route index element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }/>
                 <Route path="/home" element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
-                <Route path="/users/register" element={ <Register/> }/>
+                <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
             </Routes>
         </BrowserRouter>
     );
