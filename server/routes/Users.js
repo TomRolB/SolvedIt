@@ -2,8 +2,23 @@ const express = require('express')
 const router = express.Router()
 const { Users } = require("../models")
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
+const session = require("express-session")
 const Auth = require("../controllers/Auth");
+
 router.use(bodyParser.urlencoded({extended: true}))
+
+// TODO: uninstall cookieParser and session if it's not used in the end
+router.use(cookieParser())
+router.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: "some secret", //TODO: change
+    cookie: {
+        httpOnly: true,
+        maxAge: 3600000
+    }
+}))
 
 router.get("/", async (req, res) => {
     const listOfUsers = await Users.findAll()
@@ -17,18 +32,13 @@ router.post("/", async (req, res) => {
 })
 
 router.get("/login", async (req, res) => {
-    res.render("temp_login")
+    // res.render("temp_login")
 })
 
 router.post("/login", async (req, res) => {
-    const userIsValid = await Auth.validateUser(req)
+    const result = await Auth.validateUser(req)
 
-
-    if (userIsValid) {
-        res.send("You have successfully logged in!")
-    } else {
-        res.send("Invalid credentials")
-    }
+    res.send(result)
 })
 
 router.get("/register", async (req, res) => {
@@ -36,13 +46,18 @@ router.get("/register", async (req, res) => {
 })
 
 router.post("/register", async (req, res) => {
-    const userIsValid = await Auth.registerUser(req)
+    const result = await Auth.registerUser(req)
 
-    if (userIsValid) {
-        res.send("You have successfully registered!")
-    } else {
-        res.send("Invalid credentials") // We will actually re-send the form, but let's keep it simple for now
-    }
+    res.send(result)
+})
+
+router.post("/isLoggedIn", async (req, res) => {
+  res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
+})
+
+router.post("/logout", async (req, res) => {
+    Auth.logout(req.body.uuid)
+    res.send("Logged out successfully")
 })
 
 module.exports = router
