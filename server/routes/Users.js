@@ -2,8 +2,23 @@ const express = require('express')
 const router = express.Router()
 const { Users } = require("../models")
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
+const session = require("express-session")
 const Auth = require("../controllers/Auth");
+
 router.use(bodyParser.urlencoded({extended: true}))
+
+// TODO: uninstall cookieParser and session if it's not used in the end
+router.use(cookieParser())
+router.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: "some secret", //TODO: change
+    cookie: {
+        httpOnly: true,
+        maxAge: 3600000
+    }
+}))
 
 router.get("/", async (req, res) => {
     const listOfUsers = await Users.findAll()
@@ -17,18 +32,16 @@ router.post("/", async (req, res) => {
 })
 
 router.get("/login", async (req, res) => {
-    res.render("temp_login")
+    // res.render("temp_login")
 })
 
 router.post("/login", async (req, res) => {
-    const userIsValid = await Auth.validateUser(req)
+    // Get uuid, or null if user has no session
+    const uuid = await Auth.validateUser(req)
 
-
-    if (userIsValid) {
-        res.send("You have successfully logged in!")
-    } else {
-        res.send("Invalid credentials")
-    }
+    // For now, we'll send a null uuid when there is no
+    // session, but this will probably be changed
+    res.send(uuid)
 })
 
 router.get("/register", async (req, res) => {
