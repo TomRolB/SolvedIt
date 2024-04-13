@@ -3,8 +3,9 @@ const crypto = require("crypto")
 const cron = require("cron")
 
 const sessions = {}
-const EXPIRATION_TIME = 1000
+const EXPIRATION_TIME = 3600000
 
+// Node class used in SessionQueue
 class Node {
     constructor(value){
         this.value = value
@@ -13,6 +14,9 @@ class Node {
     }
 }
 
+// Stores uuid in a FIFO manner, so that
+// we can efficiently delete sessions which
+// have expired
 class SessionQueue {
     constructor(){
         this.first = null
@@ -138,4 +142,8 @@ exports.registerUser = async (form) => {
 
 exports.isLoggedIn = (uuid) => {
     return uuid in sessions
+}
+
+exports.logout = (uuid) => {
+    delete sessions[uuid]
 }

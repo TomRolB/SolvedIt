@@ -55,4 +55,9 @@ router.post("/isLoggedIn", async (req, res) => {
   res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
 })
 
+router.post("/logout", async (req, res) => {
+    Auth.logout(req.body.uuid)
+    res.send("Logged out successfully")
+})
+
 module.exports = router
