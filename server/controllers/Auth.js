@@ -1,4 +1,7 @@
 const { Users } = require("../models")
+const crypto = require("crypto")
+
+let sessions = {}
 
 exports.validateUser = async (form) => {
     const formEmail = form.body.email
@@ -10,11 +13,17 @@ exports.validateUser = async (form) => {
         }
     })
 
-    if (user === null) return false
+    if (user === null) return null
 
     const actualPassword = user.dataValues.password
+    if (formPassword !== actualPassword) return null
 
-    return formPassword === actualPassword
+    //TODO: Handle user trying to login when already having a session
+
+    const uuid = crypto.randomUUID()
+    sessions[uuid] = user.id
+
+    return uuid
 }
 
 exports.registerUser = async (form) => {

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export function Login() {
+export function Login({uuid, setUuid}) {
 
     // When clicking on "Don't have an account yet?",
     // routeChange is executed, which runs navigate(path).
@@ -21,7 +21,12 @@ export function Login() {
         event.preventDefault() //Prevents page from refreshing
         axios
             .post("/users/login", {email: email, password: password})
-            .then((res) => console.log(res.data))
+            .then((res) => {
+                localStorage.setItem("uuid", res.data)
+                setUuid(res.data) // This is simply used to refresh the app.
+                                  // We actually update uuid at localStorage.
+                navigate("/home")
+            })
             .catch(err => console.log(err))
     }
 
