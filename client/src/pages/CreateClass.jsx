@@ -19,7 +19,8 @@ export function CreateClass() {
         axios
             .post("/class/create-class", {
                 name: className,
-                description: description
+                description: description,
+                uuid: localStorage.getItem("uuid")
             })
             .then((res) => console.log(res.data))
             .catch(err => console.log(err))

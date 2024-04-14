@@ -1,20 +1,20 @@
 const express = require('express')
 const router = express.Router()
-const { Class, Users} = require("../models")
+const { Class, IsInClass, Users} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
-
-router.get("/create-class", async (req, res) => {
-    const listOfClasses = await Class.findAll()
-    res.json(listOfClasses)
-    console.log(listOfClasses)
-})
+const db = require("../models/index")
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
-    console.log(classInfo)
-    await Class.create(classInfo)
-    res.json(classInfo)
+    // console.log(classInfo.uuid)
+    const userId = await Auth.getUserId(classInfo.uuid).id
+    await Class.create({name: classInfo.name, description: classInfo.description})
+    const classId = await Class.findOne({
+        attributes: [[db.sequelize.fn('COUNT', db.sequelize.col('id')), 'id']]
+    })
+    await IsInClass.create({userId: userId, classId: classId.id})
+    // res.json(classInfo)
 })
 
 module.exports = router
