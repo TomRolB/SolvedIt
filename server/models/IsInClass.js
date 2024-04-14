@@ -9,12 +9,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     });
-    IsInClass.associate = (models) => {
-        IsInClass.hasMany(models.Users, {})
-    }
-    IsInClass.associate = (models) => {
-        IsInClass.hasMany(models.Class, {})
-    }
 
     return IsInClass
 }

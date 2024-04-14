@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     });
+    Class.associate = (models) => {
+        Class.hasMany(models.IsInClass, {foreignKey: "classId"})
+    }
 
     return Class
 }
