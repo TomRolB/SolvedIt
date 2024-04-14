@@ -41,8 +41,15 @@ export function Home({uuid, setUuid}) {
 
     useEffect(() => {
         // Should not ever set state during rendering, so do this in useEffect instead.
+        sendUuid();
         fetchCourseInfo();
     }, []);
+
+    const sendUuid = () => {
+        axios.post("/home", {uuid: uuid})
+            .then((res) => console.log(res))
+            .catch(err => console.log(err))
+    }
 
     return (
         <>
