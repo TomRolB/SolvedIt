@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     const uuid = req.body.uuid
     const info = await auth.getUserId(uuid)
+    // for some reason this is the only working way to get the userId
     for (const a in info) {
         userId = info[a]
         break;

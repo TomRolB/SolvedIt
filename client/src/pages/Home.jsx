@@ -10,7 +10,7 @@ export function Home({uuid, setUuid}) {
 
     const createClassRows = (res) => {
         setClassRows(res.map((classInfo) => {
-            return <ClassRow name={classInfo.name} description={classInfo.description} id={classInfo.id}/>
+            return <ClassRow name={classInfo.name} description={classInfo.description} id={classInfo.classId}/>
         }))
     }
 
