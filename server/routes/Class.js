@@ -17,4 +17,11 @@ router.post("/create-class", async (req, res) => {
     // res.json(classInfo)
 })
 
+router.get("/byId/:id", async (req, res) => {
+    const id = req.params.id
+    const foundClass = await Class.findByPk(id)
+    res.json(foundClass)
+})
+
+
 module.exports = router
