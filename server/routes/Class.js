@@ -5,12 +5,12 @@ const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 
-router.get("/", async (req, res) => {
+router.get("/create-class", async (req, res) => {
     const listOfClasses = await Class.findAll()
     res.json(listOfClasses)
     console.log(listOfClasses)
 })
-router.post("/", async (req, res) => {
+router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     console.log(classInfo)
     await Class.create(classInfo)

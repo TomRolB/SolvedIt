@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import Register from "./pages/register";
@@ -35,11 +35,11 @@ function App(props) {
         // a component
         <BrowserRouter>
             <Routes>
-                <Route index element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }/>
-                <Route path="/home" element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }></Route>
+                <Route index element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid}/>, uuid, setUuid) }/>
+                <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid}/>, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
-                <Route path="/create-class" element={<CreateClass/>}></Route>
+                <Route path="/class/create-class" element={<CreateClass/>}></Route>
             </Routes>
         </BrowserRouter>
     );

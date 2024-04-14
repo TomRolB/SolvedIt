@@ -15,8 +15,10 @@ app.set('view engine', 'ejs');
 // Routers
 const userRouter = require('./routes/Users')
 const classRouter = require('./routes/Class')
+const homeRouter = require('./routes/Home')
 app.use("/users", userRouter)
-app.use("/create-class", classRouter)
+app.use("/class", classRouter)
+app.use("/home", homeRouter)
 
 db.sequelize.sync().then(() => {
     app.listen(3001, () => {
