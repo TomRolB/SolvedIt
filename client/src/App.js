@@ -4,6 +4,8 @@ import {Login} from "./pages/login";
 import Register from "./pages/register";
 import {Home} from "./pages/Home";
 import axios from "axios";
+import {Profile} from "./pages/profile"
+import {ProfileChanger} from "./pages/updateUser";
 
 
 function App(props) {
@@ -38,6 +40,8 @@ function App(props) {
                 <Route path="/home" element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
+                <Route path="/profile" element={getPageIfLoggedIn(<Profile/>, uuid, setUuid)}/>
+                <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
             </Routes>
         </BrowserRouter>
     );
