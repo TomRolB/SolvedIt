@@ -15,11 +15,8 @@ export const ProfileCard = () => {
                                 <div className="col-md-4 gradient-custom text-center text-white"
                                      style={{borderTopLeftRadius: ".5rem; border-bottom-left-radius: .5rem"}}>
                                     <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                        alt="Avatar" className="img-fluid my-5" style={{width: "80px"}}/>
-                                    <h5>Marie Horwitz</h5>
-                                    <p>Web Designer</p>
-                                    <i className="far fa-edit mb-5"></i>
+                                        src={require("../media/image.jpg")}
+                                        alt="Avatar" className="img-fluid my-5 h-20 rounded-full" style={{width: "80px"}}/>
                                 </div>
                                 <div className="col-md-8">
                                     <div className="card-body p-4">
