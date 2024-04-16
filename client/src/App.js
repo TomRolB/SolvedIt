@@ -43,7 +43,7 @@ function App(props) {
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
                 <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
-                <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser/>, uuid, setUuid)}/>
+                <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
             </Routes>
         </BrowserRouter>
     );

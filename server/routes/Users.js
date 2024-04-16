@@ -72,17 +72,44 @@ router.get("/:uuid", async(req,res) =>{
     res.send(data)
 })
 
-router.get("/:uuid/delete", async (req,res)=>{
+router.post("/:uuid/delete", async (req,res)=>{
     let id = Auth.getUserId(req.params.uuid).id
     Auth.logout(req.params.uuid)
-    Users.destroy(
+    await Users.destroy(
         {
             where:{
                 id:id
             }
         }
     )
-    res.send('User has been successfully deleted!')
+    res.send('User has been successfully deleted')
+})
+
+router.put(":uuid/update", async(req,res)=>{
+    let id = Auth.getUserId(req.params.uuid).id
+    let user = Users.findAll({
+        where:{
+            id:id
+        }
+    })
+    if(!req.params.firstName || !req.params.lastName){
+        res.send('No data has been provided')
+    }
+    let newFirstName = req.params.firstName
+    let newLastName = req.params.lastName
+    Users.update(
+        {
+            firstName: newFirstName,
+            lastName: newLastName
+        },
+        {
+            where: {
+                id:id
+            }
+        }
+    )
+
+
 })
 
 module.exports = router

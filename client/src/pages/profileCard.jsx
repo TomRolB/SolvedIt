@@ -2,10 +2,12 @@ import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from 'react';
 import '../styles/ProfileCard.css';
 import {useUserUuid} from "../hooks/useUserUuid";
+import axios from "axios";
 export const ProfileCard = () => {
-    let [uuid, setUuid] = useUserUuid()
     //Profile gets and updates uuid
     let [userData, setData] = useState()
+    let [uuid, setUuid] = useUserUuid()
+
     useEffect(() => {
         const fetchUserData = async () =>{
                 fetch(`http://localhost:3001/users/${uuid}`).then(
@@ -21,6 +23,27 @@ export const ProfileCard = () => {
             fetchUserData()
         }
     }, [uuid]);
+
+    const handleDelete = () => {
+        const deleteUser = async () =>{
+            axios.post(`http://localhost:3001/users/${uuid}/delete`)
+                .catch(
+                    reason => {console.log(reason)}
+                )
+        }
+        if(uuid) {
+            deleteUser()
+            console.log(uuid)
+            localStorage.removeItem('uuid')
+            setUuid("")
+            console.log(uuid)
+            navigate("/delete-user")
+        }
+    };
+
+
+
+
 
     console.log(userData) //Funca :)
     const navigate = useNavigate();
@@ -63,7 +86,7 @@ export const ProfileCard = () => {
 
                                             </div>
                                             <div className="col-6 mb-3">
-                                                <h6><a href="/update-user" className={redirectStyle}>Notification
+                                                <h6><a href="#" className={redirectStyle}>Notification
                                                     Settings</a></h6>
                                             </div>
                                         </div>
@@ -83,9 +106,7 @@ export const ProfileCard = () => {
                 </button>
                 <button
                     className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                onClick={()=>{
-                    navigate("/delete-user")
-                }}
+                onClick={handleDelete}
                 >
                     Delete Profile
                 </button>
