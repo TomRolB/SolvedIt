@@ -10,10 +10,9 @@ router.post("/create-class", async (req, res) => {
     // console.log(classInfo.uuid)
     const userId = await Auth.getUserId(classInfo.uuid).id
     await Class.create({name: classInfo.name, description: classInfo.description})
-    const classId = await Class.findOne({
-        attributes: [[db.sequelize.fn('COUNT', db.sequelize.col('id')), 'id']]
-    })
-    await IsInClass.create({userId: userId, classId: classId.id})
+    const maxId = await Class.max('id');
+    await console.log(maxId)
+    await IsInClass.create({userId: userId, classId: maxId})
     // res.json(classInfo)
 })
 
@@ -23,5 +22,18 @@ router.get("/byId/:id", async (req, res) => {
     res.json(foundClass)
 })
 
+router.delete("/byId/:id/edit", async (req, res) => {
+    const id = req.params.id
+    await Class.destroy({where: {id: id}})
+    res.json({message: "Class deleted"})
+})
+
+router.put("/byId/:id/edit", async (req, res) => {
+    const classInfo = req.body
+    const id = req.params.id
+    console.log(id)
+    await Class.update({name: classInfo.name, description: classInfo.description}, {where: {id: id}})
+    res.json({message: "Class updated"})
+})
 
 module.exports = router
