@@ -28,8 +28,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: true, // must be null for one-time code
             validate: {
-                nullIfOneTime(value) {
-
+                nullConstraint(value) {
+                    if (value == null) {
+                        if (this.type === "many-times") {
+                            throw new Error("Expiration cannot be null for many-times code")
+                        }
+                    } else {
+                        if (this.type === "one-time") {
+                            throw new Error("Expiration must be null for one-time code")
+                        }
+                    }
                 }
             }
         },
