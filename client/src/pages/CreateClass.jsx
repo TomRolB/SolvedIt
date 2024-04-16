@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
+import {useNavigate} from "react-router-dom";
 
 export function CreateClass() {
     const [className, setClassName] = useState("")
     const [description, setDescription] = useState("")
+    const navigate = useNavigate()
 
     function handleClassNameChange(event) {
         setClassName(event.target.value)
@@ -24,6 +26,7 @@ export function CreateClass() {
             })
             .then((res) => console.log(res.data))
             .catch(err => console.log(err))
+        navigate("/home")
     }
 
     return (
