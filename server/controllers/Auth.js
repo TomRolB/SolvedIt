@@ -99,7 +99,6 @@ const RegisterResult = {
 
 exports.registerUser = async (form) => {
     if (form.body.password !== form.body.confirmPassword) {
-        // Send new form and ask to re-complete
         return {
             wasSuccessful: false,
             errorMessage: "Passwords do not match",
