@@ -22,7 +22,20 @@ module.exports = (sequelize, DataTypes) => {
         },
         userId: {
             type: DataTypes.INTEGER,
-            allowNull: true // must be null for many-times code
+            allowNull: true, // must be null for many-times code
+            validate: {
+                nullConstraint(value) {
+                    if (value != null) {
+                        if (this.codeType === "many-times") {
+                            throw new Error("userId must be null for many-times code")
+                        }
+                    } else {
+                        if (this.codeType === "one-time") {
+                            throw new Error("userId cannot be null for one-time code")
+                        }
+                    }
+                }
+            }
         },
         expiration: {
             type: DataTypes.DATE,
@@ -30,12 +43,12 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 nullConstraint(value) {
                     if (value == null) {
-                        if (this.type === "many-times") {
+                        if (this.codeType === "many-times") {
                             throw new Error("Expiration cannot be null for many-times code")
                         }
                     } else {
-                        if (this.type === "one-time") {
-                            throw new Error("Expiration must be null for one-time code")
+                        if (this.codeType === "one-time") {
+                            throw new Error("expiration must be null for one-time code")
                         }
                     }
                 }
@@ -43,10 +56,20 @@ module.exports = (sequelize, DataTypes) => {
         },
         userCount: {
             type: DataTypes.SMALLINT,
-            allowNull: true // must be null for one-time code
+            defaultValue: 0,
+            validate: {
+                nullConstraint(value) {
+                    if (this.codeType === "one-time" && value > 1) {
+                        throw new Error("userCount must be 0 or 1 for one-time codes")
+                    }
+                }
+            }
         }
     })
     InviteCode.hasOne(Users)
+    InviteCode.beforeCreate((inviteCode, options) => {
+
+    })
 
     return InviteCode
 }
