@@ -85,28 +85,13 @@ router.post("/:uuid/delete", async (req,res)=>{
     res.send('User has been successfully deleted')
 })
 
-router.put(":uuid/update", async(req,res)=>{
+router.put("/:uuid/update", async(req,res)=>{
     let id = Auth.getUserId(req.params.uuid).id
-    let user = Users.findAll({
-        where:{
-            id:id
-        }
-    })
-    if(!req.params.firstName || !req.params.lastName){
-        res.send('No data has been provided')
-    }
-    let newFirstName = req.params.firstName
-    let newLastName = req.params.lastName
-    Users.update(
-        {
-            firstName: newFirstName,
-            lastName: newLastName
-        },
-        {
-            where: {
-                id:id
-            }
-        }
+    let data = req.body
+    let newFirstName = data.firstName
+    let newLastName = data.lastName
+    await Users.update(
+        {firstName: newFirstName, lastName: newLastName}, {where: {id:id}}
     )
 
 

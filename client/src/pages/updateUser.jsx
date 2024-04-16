@@ -8,35 +8,36 @@ export const ProfileChanger = ()=>{
     const namesInputStyle = "h-10 w-40 border-blue-700 border-2 rounded mt-2 md-2 text-xl";
     const labelStyle = "text-2xl"
 
+    const [data, setData] = useState({})
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
 
     const [uuid, setUuid] = useUserUuid()
     const navigate = useNavigate()
-
-    useEffect(() =>
-    axios.get(`users/${uuid}`).then((res)=>{
-        console.log(res)
-        setFirstName(res.data.firstName)
-        setLastName(res.data.lastName)
-    }).catch(err => console.log(err))
-    ,[])
+    useEffect(()=>{
+        axios.get(`/users/${uuid}`).then(res =>{
+            console.log(res)
+            setData(res.data)
+            setFirstName(res.data.firstName)
+            setLastName(res.data.lastName)
+        }).catch(err => console.log(err))
+    }, [])
 
 
 
     const handleEdit = () => {
         axios.put(`/users/${uuid}/update`, {firstName: firstName, lastName: lastName}).then((res) => {
             console.log(res)
-            navigate(`/profile`)
+            navigate("/profile")
         }).catch(err => console.log(err))
     }
 
     const handleFirstNameChange = (newFirstName) =>{
-        setFirstName(newFirstName)
+        setFirstName(newFirstName.target.value)
         console.log(newFirstName)
     }
     const handleLastNameChange = (newLastName) =>{
-        setFirstName(newLastName)
+        setFirstName(newLastName.target.value)
         console.log(newLastName)
     }
 
