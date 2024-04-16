@@ -6,6 +6,7 @@ import {Home} from "./pages/Home";
 import axios from "axios";
 import {Profile} from "./pages/profile"
 import {ProfileChanger} from "./pages/updateUser";
+import {DeleteUser} from "./pages/deleteUser";
 
 
 function App(props) {
@@ -42,6 +43,7 @@ function App(props) {
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
                 <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
+                <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser/>, uuid, setUuid)}/>
             </Routes>
         </BrowserRouter>
     );

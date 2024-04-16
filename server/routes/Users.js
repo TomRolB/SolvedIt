@@ -72,4 +72,17 @@ router.get("/:uuid", async(req,res) =>{
     res.send(data)
 })
 
+router.get("/:uuid/delete", async (req,res)=>{
+    let id = Auth.getUserId(req.params.uuid).id
+    Auth.logout(req.params.uuid)
+    Users.destroy(
+        {
+            where:{
+                id:id
+            }
+        }
+    )
+    res.send('User has been successfully deleted!')
+})
+
 module.exports = router
