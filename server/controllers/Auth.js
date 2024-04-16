@@ -147,3 +147,7 @@ exports.isLoggedIn = (uuid) => {
 exports.logout = (uuid) => {
     delete sessions[uuid]
 }
+
+exports.getUserId = (uuid) => {
+    return sessions[uuid].id
+}

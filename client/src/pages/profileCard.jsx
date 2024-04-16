@@ -1,10 +1,36 @@
 import {useNavigate} from "react-router-dom";
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../styles/ProfileCard.css';
+import {useUserUuid} from "../hooks/useUserUuid";
 export const ProfileCard = () => {
+    let [uuid, setUuid] = useUserUuid()
+    //Profile gets and updates uuid
+    let [userData, setData] = useState()
+    useEffect(() => {
+        const fetchUserData = async () =>{
+                fetch(`http://localhost:3001/users/${uuid}`).then(
+                    response => response.json()
+                ).then(
+                    response =>
+                    setData(response))
+                    .catch(
+                    reason => {console.log(reason)}
+            )
+        }
+        if(uuid) {
+            fetchUserData()
+        }
+    }, [uuid]);
+
+    console.log(userData) //Funca :)
     const navigate = useNavigate();
     const redirectStyle = "flex-col-reverse text-blue-700 underlineflex-col-reverse text-blue-700 underline"
     const subtitleStyle = "flex-col-reverse text-black-700 underlineflex-col-reverse text-black-700 underline"
+
+    if(!userData){
+        return <p>Loading...</p>
+    }
+
     return (
         <section className="vh-100" style={{backgroundColor: "#f4f5f7"}}>
             <div className="container py-5 h-100">
@@ -20,16 +46,16 @@ export const ProfileCard = () => {
                                 </div>
                                 <div className="col-md-8">
                                     <div className="card-body p-4">
-                                        <h1>User Information</h1>
+                                        <h1 className={subtitleStyle}>User Information</h1>
                                         <hr className="mt-0 mb-4"/>
                                         <div className="row pt-1">
                                             <div className="col-6 mb-3">
-                                                <h6 className={subtitleStyle}>Email</h6>
-                                                <p className="text-muted">info@example.com</p>
+                                                <h6 className={subtitleStyle}>Email: </h6>
+                                                <p className="text-muted">{userData.email}</p>
                                             </div>
                                             <div className="col-6 mb-3">
                                                 <h6 className={subtitleStyle}>Name</h6>
-                                                <p className="text-muted">123 456 789 <button
+                                                <p className="text-muted">{userData.firstName} {userData.lastName} <button
                                                     className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                                                     onClick={() => {
                                                         navigate("/update-user")

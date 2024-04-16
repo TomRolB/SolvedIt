@@ -40,7 +40,7 @@ function App(props) {
                 <Route path="/home" element={ getPageIfLoggedIn(<Home/>, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
-                <Route path="/profile" element={getPageIfLoggedIn(<Profile/>, uuid, setUuid)}/>
+                <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
             </Routes>
         </BrowserRouter>

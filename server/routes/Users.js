@@ -60,4 +60,16 @@ router.post("/logout", async (req, res) => {
     res.send("Logged out successfully")
 })
 
+router.get("/:uuid", async(req,res) =>{
+    let id = Auth.getUserId(req.params.uuid)
+    let data = await Users.findOne(
+        {
+            where:{
+                id:id
+            }
+        }
+    )
+    res.send(data)
+})
+
 module.exports = router
