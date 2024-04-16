@@ -6,6 +6,7 @@ import {Home} from "./pages/Home";
 import {CreateClass} from "./pages/CreateClass";
 import axios from "axios";
 import {Class} from "./pages/Class";
+import {ClassEdit} from "./pages/ClassEdit";
 
 
 function App(props) {
@@ -42,6 +43,7 @@ function App(props) {
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
                 <Route path="/class/create-class" element={<CreateClass/>}></Route>
                 <Route path="/class/:id" element={<Class uuid={uuid} setUuid={setUuid}/>}></Route>
+                <Route path="/class/:id/edit" element={<ClassEdit uuid={uuid} setUuid={setUuid}/>}></Route>
             </Routes>
         </BrowserRouter>
     );
