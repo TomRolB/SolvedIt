@@ -61,7 +61,7 @@ router.post("/logout", async (req, res) => {
 })
 
 router.get("/:uuid", async(req,res) =>{
-    let id = Auth.getUserId(req.params.uuid)
+    let id = Auth.getUserId(req.params.uuid).id
     let data = await Users.findOne(
         {
             where:{

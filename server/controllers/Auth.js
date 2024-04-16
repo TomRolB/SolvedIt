@@ -149,5 +149,5 @@ exports.logout = (uuid) => {
 }
 
 exports.getUserId = (uuid) => {
-    return sessions[uuid].id
+    return sessions[uuid]
 }
