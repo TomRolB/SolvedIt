@@ -56,7 +56,7 @@ export function ClassEdit({uuid, setUuid}) {
                         <input type="text" placeholder="Name" value={name} onChange={handleNameChange} className="border border-gray-300 dark:border-gray-700 rounded-lg p-2"/>
                         <textarea placeholder="Description" value={description} onChange={handleDescriptionChange} className="border border-gray-300 dark:border-gray-700 rounded-lg p-2"/>
                     </form>
-                    <div className={"flex flex-col items-center"}>
+                    <div className={"pt-5 flex flex-col items-center"}>
                         <button type="submit" className="w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             onClick={handleEdit}>
                             <i className="fa-solid fa-pen-to-square"></i> Edit Class

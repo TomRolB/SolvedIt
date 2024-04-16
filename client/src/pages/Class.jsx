@@ -16,6 +16,7 @@ export function Class({uuid, setUuid}) {
     }, []);
 
     const CourseInfo = () => {
+        if (classInfo === null) return (<h1>Class not found</h1>)
         return (
             <div>
                 <h1 className="text-5xl font-extrabold dark:text-black">{classInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-400">ID: {classInfo.id}</small></h1>
