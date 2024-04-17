@@ -28,8 +28,8 @@ export const ProfileChanger = ()=>{
     const handleEdit = () => {
         axios.put(`/users/${uuid}/update`, {firstName: firstName, lastName: lastName}).then((res) => {
             console.log(res)
-            navigate("/profile")
         }).catch(err => console.log(err))
+        navigate("/profile")
     }
 
     const handleFirstNameChange = (newFirstName) =>{
@@ -37,7 +37,7 @@ export const ProfileChanger = ()=>{
         console.log(newFirstName)
     }
     const handleLastNameChange = (newLastName) =>{
-        setFirstName(newLastName.target.value)
+        setLastName(newLastName.target.value)
         console.log(newLastName)
     }
 
