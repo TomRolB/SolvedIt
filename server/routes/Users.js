@@ -60,4 +60,41 @@ router.post("/logout", async (req, res) => {
     res.send("Logged out successfully")
 })
 
+router.get("/:uuid", async(req,res) =>{
+    let id = Auth.getUserId(req.params.uuid).id
+    let data = await Users.findOne(
+        {
+            where:{
+                id:id
+            }
+        }
+    )
+    res.send(data)
+})
+
+router.post("/:uuid/delete", async (req,res)=>{
+    let id = Auth.getUserId(req.params.uuid).id
+    Auth.logout(req.params.uuid)
+    await Users.destroy(
+        {
+            where:{
+                id:id
+            }
+        }
+    )
+    res.send('User has been successfully deleted')
+})
+
+router.put("/:uuid/update", async(req,res)=>{
+    let id = Auth.getUserId(req.params.uuid).id
+    let data = req.body
+    let newFirstName = data.firstName
+    let newLastName = data.lastName
+    await Users.update(
+        {firstName: newFirstName, lastName: newLastName}, {where: {id:id}}
+    )
+
+
+})
+
 module.exports = router
