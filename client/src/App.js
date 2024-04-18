@@ -6,6 +6,7 @@ import {Home} from "./pages/Home";
 import {CreateClass} from "./pages/CreateClass";
 import axios from "axios";
 import {Class} from "./pages/Class";
+import {Invites} from "./pages/Invites"
 
 
 function App(props) {
@@ -37,11 +38,12 @@ function App(props) {
         <BrowserRouter>
             <Routes>
                 <Route index element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid}/>, uuid, setUuid) }/>
-                <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid}/>, uuid, setUuid) }></Route>
+                <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid} />, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
                 <Route path="/class/create-class" element={<CreateClass/>}></Route>
                 <Route path="/class/:id" element={<Class uuid={uuid} setUuid={setUuid}/>}></Route>
+                <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
             </Routes>
         </BrowserRouter>
     );

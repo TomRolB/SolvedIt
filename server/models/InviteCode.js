@@ -66,7 +66,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     })
-    InviteCode.hasOne(Users)
     InviteCode.beforeCreate((inviteCode, options) => {
 
     })

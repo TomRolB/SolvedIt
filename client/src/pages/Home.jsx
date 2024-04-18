@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 
-export function Home({uuid, setUuid}) {
+export function Home({uuid, setUuid, classId, setClassId}) {
 
     const [classRows, setClassRows] = useState([])
 
@@ -59,7 +59,8 @@ export function Home({uuid, setUuid}) {
             <div className='p-5 grid grid-cols-2 divide-x'>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead
+                            className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
                                 Class Name
@@ -81,8 +82,13 @@ export function Home({uuid, setUuid}) {
                     </table>
                 </div>
                 <div class="container py-10 px-10 mx-0 min-w-full flex flex-col items-center">
-                    <button type="button" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                    <button type="button"
+                            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                         <a href="/class/create-class"><i className="fa-solid fa-plus"></i> Add Class</a>
+                    </button>
+                    <button type="button"
+                            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <a><i className="fa-solid fa-plus"></i> Join Class</a>
                     </button>
                 </div>
             </div>
