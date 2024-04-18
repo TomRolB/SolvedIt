@@ -36,4 +36,10 @@ router.put("/byId/:id/edit", async (req, res) => {
     res.json({message: "Class updated"})
 })
 
+router.post("/:uuid/enroll-to/:id", async(req,res) =>{
+    const classId = req.params.id
+    const userId = Auth.getUserId(req.params.uuid).id
+    IsInClass.create({userId: userId, classId: classId})
+})
+
 module.exports = router

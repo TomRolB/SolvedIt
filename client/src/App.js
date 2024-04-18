@@ -10,6 +10,7 @@ import {ProfileChanger} from "./pages/updateUser";
 import {DeleteUser} from "./pages/deleteUser";
 import {Class} from "./pages/Class";
 import {ClassEdit} from "./pages/ClassEdit";
+import {ClassEnroll} from "./pages/ClassEnroll";
 
 function App(props) {
 
@@ -49,6 +50,7 @@ function App(props) {
                 <Route path="/class/create-class" element={<CreateClass/>}></Route>
                 <Route path="/class/:id" element={<Class uuid={uuid} setUuid={setUuid}/>}></Route>
                 <Route path="/class/:id/edit" element={<ClassEdit uuid={uuid} setUuid={setUuid}/>}></Route>
+                <Route path="/enroll-class" element={<ClassEnroll uuid={uuid} setUuid={setUuid}/>}></Route>
             </Routes>
         </BrowserRouter>
     );
