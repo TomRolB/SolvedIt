@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 export function Home({uuid, setUuid}) {
 
     const [classRows, setClassRows] = useState([])
+    const [userName, setUser] = useState("")
 
     const createClassRows = (res) => {
         setClassRows(res.map((classInfo) => {
@@ -34,31 +35,38 @@ export function Home({uuid, setUuid}) {
     }
 
     const fetchCourseInfo = () => {
-        axios.get("/home")
+        axios.post("/home/get-courses", {uuid: uuid})
             .then((res) => createClassRows(res.data))
+            .catch(err => console.log(err))
+    }
+
+    const getUser = () => {
+        axios.post("/home/get-user", {uuid: uuid})
+            .then((res) => {
+                console.log(res)
+                setUser(res.data)
+                console.log(userName)
+            })
             .catch(err => console.log(err))
     }
 
     useEffect(() => {
         // Should not ever set state during rendering, so do this in useEffect instead.
-        sendUuid();
         fetchCourseInfo();
+        getUser();
     }, []);
 
-    const sendUuid = () => {
-        axios.post("/home", {uuid: uuid})
-            .then((res) => console.log(res))
-            .catch(err => console.log(err))
-    }
-
     return (
-        <>
+        <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
             <div>
                 <Navbar></Navbar>
             </div>
-            <div className='p-5 grid grid-cols-2 divide-x'>
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="pl-5 pt-5">
+                <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl">Welcome {userName}!</h1>
+            </div>
+            <div className='p-5 grid grid-cols-3 divide-x'>
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg col-span-2">
+                    <table className="table-auto w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
@@ -86,6 +94,6 @@ export function Home({uuid, setUuid}) {
                     </button>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
