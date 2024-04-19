@@ -8,28 +8,25 @@ import {Navbar} from "../components/Navbar";
 export const ClassEnroll = ()=>{
     let [link, setLink] = useState("")
     let [uuid, setUuid] = useUserUuid()
+    let [errorMessage, setErrorMessage] = useState("")
     const navigate = useNavigate()
-    const classLinkFormat = /\bhttp:\/\/enroll-to\/class\/\d\b/i
-    const trueClassLink = /\b\/class\/\d\b/i
-    let id;
-
+    const classLinkFormat = /\bhttp:\/www.solvedit.com\/enroll-to\/\d\b/i
+    const trueClassLink = /\d+\b/i
+    let id = Number(link.match(trueClassLink))
+    console.log("ID: "+ id)
+    console.log(typeof id)
     const handleLinkChange = (event) =>{
         setLink(event.target.value)
-        console.log(link)
+        console.log("Link: " + link)
     }
 
     const handleSubmit = () => {
-        if(!id){
-            window.location.reload()
-            console.log("No link was provided")
-        }
-        else {
-            console.log(id)
-            axios.post(`class/${uuid}/enroll-to/${id}`).then(res => {
-                console.log(res)
-                navigate(`class/${id}`)
-            }).catch(err => console.log(err))
-        }
+        axios.post(`/class/${uuid}/enroll-to/${id}`).then(res => {
+            console.log(res)
+        }).catch(err => {
+            console.log(err)
+        })
+        navigate(`/class/${id}`)
     }
 
     return(
@@ -41,6 +38,7 @@ export const ClassEnroll = ()=>{
                 <form className="my-10">
                     <div className="flex flex-col space-y-5">
                         <p className="font-medium text-slate-700 pb-2">Class Link</p>
+                        { errorMessage != null ? <h1 color={"red"}> {errorMessage} </h1> : null }
                         <input type="text" className="w-full py-3 border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-slate-500 hover:shadow" placeholder="Enter class link" value={link} onChange={handleLinkChange}/>
                         <button className="w-full py-3 font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg border-indigo-500 hover:shadow inline-flex space-x-2 items-center justify-center" onClick={handleSubmit}>
                             <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

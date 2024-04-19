@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, Users} = require("../models")
+const { Class, IsInClass, Users, InviteLink} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
+const {Sequelize} = require("sequelize");
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -39,7 +40,8 @@ router.put("/byId/:id/edit", async (req, res) => {
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    IsInClass.create({userId: userId, classId: classId})
+    IsInClass.create({userId: userId, classId: Number(classId)})
+    InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}})
 })
 
 module.exports = router
