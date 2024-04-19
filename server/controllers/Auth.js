@@ -148,5 +148,6 @@ exports.logout = (uuid) => {
 }
 
 exports.getUserId = (uuid) => {
+    console.log(sessions)
     return sessions[uuid]
 }

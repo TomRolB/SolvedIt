@@ -1,4 +1,4 @@
-import {redirect} from "react-router-dom";
+import {redirect, useNavigate} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
@@ -7,6 +7,11 @@ import { useParams } from 'react-router-dom';
 export function Home({uuid, setUuid, classId, setClassId}) {
 
     const [classRows, setClassRows] = useState([])
+
+    const [code, setCode] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
+
+    const navigate = useNavigate()
 
     const createClassRows = (res) => {
         setClassRows(res.map((classInfo) => {
@@ -51,6 +56,26 @@ export function Home({uuid, setUuid, classId, setClassId}) {
             .catch(err => console.log(err))
     }
 
+    function handleCodeChange(event) {
+        setCode(event.target.value)
+    }
+
+    function handleCodeJoinResult(result) {
+        if (result.data.wasSuccessful) {
+            navigate("/class/" + result.data.classId)
+        } else {
+            setErrorMessage(result.data.errorMessage)
+        }
+    }
+
+    function handleCodeSubmit(event) {
+        event.preventDefault()
+        axios
+            .post("/invite/join-with-code", {code: code, uuid: uuid})
+            .then((res) => handleCodeJoinResult(res))
+            .catch(err => console.log(err))
+    }
+
     return (
         <>
             <div>
@@ -86,10 +111,12 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                         <a href="/class/create-class"><i className="fa-solid fa-plus"></i> Add Class</a>
                     </button>
-                    <button type="button"
-                            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                        <a><i className="fa-solid fa-plus"></i> Join Class</a>
-                    </button>
+                    <form onSubmit={handleCodeSubmit}>
+                        <label>Join class with code:</label>
+                        {errorMessage ? <h1 color={"red"}> {errorMessage} </h1> : null}
+                        <input type="text" onChange={handleCodeChange} className="h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl"/>
+                        <input type="submit"/>
+                    </form>
                 </div>
             </div>
         </>
