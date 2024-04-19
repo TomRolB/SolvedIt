@@ -55,63 +55,47 @@ export const ProfileCard = () => {
     }
 
     return (
-        <section className="vh-100" style={{backgroundColor: "#f4f5f7"}}>
-            <div className="container py-5 h-100">
-                <div className="row d-flex justify-content-center align-items-center h-100">
-                    <div className="col col-lg-6 mb-4 mb-lg-0">
-                        <div className="card mb-3" style={{borderRadius: ".5rem"}}>
-                            <div className="row g-0">
-                                <div className="col-md-4 gradient-custom text-center text-white"
-                                     style={{borderTopLeftRadius: ".5rem; border-bottom-left-radius: .5rem"}}>
-                                    <img
-                                        src={require("../media/image.jpg")}
-                                        alt="Avatar" className="img-fluid my-5 h-20 rounded-full" style={{width: "80px"}}/>
-                                </div>
-                                <div className="col-md-8">
-                                    <div className="card-body p-4">
-                                        <h1 className={subtitleStyle}>User Information</h1>
-                                        <hr className="mt-0 mb-4"/>
-                                        <div className="row pt-1">
-                                            <div className="col-6 mb-3">
-                                                <h6 className={subtitleStyle}>Email: </h6>
-                                                <p className="text-muted">{userData.email}</p>
-                                            </div>
-                                            <div className="col-6 mb-3">
-                                                <h6 className={subtitleStyle}>Name</h6>
-                                                <p className="text-muted">{userData.firstName} {userData.lastName} <button
-                                                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                                                    onClick={() => {
-                                                        navigate("/update-user")
-                                                    }}>Change Username</button></p>
+            <div className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-10 p-5">
+                <div className="pl-5 flex flex-col items-start">
+                    <img className="w-24 h-24 mb-3 rounded-full shadow-lg" src={require("../media/image.jpg")} alt="Bonnie image"/>
+                </div>
+                <div className="card-body p-4">
+                    <h3 className="text-3xl font-bold dark:text-white">User Information:</h3>
+                    <div className="row pt-4">
+                        <div className="col-6 mb-3">
+                            <h6 className="text-lg font-bold dark:text-white">Email: </h6>
+                            <p className="mb-4 text-lg font-normal text-gray-500 dark:text-gray-400">{userData.email}</p>
+                        </div>
+                        <div className="col-6 mb-3">
+                            <h6 className="text-lg font-bold dark:text-white">Name: </h6>
+                            <p className="mb-4 text-lg font-normal text-gray-500 dark:text-gray-400">{userData.firstName} {userData.lastName}   <button
+                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                onClick={() => {
+                                    navigate("/update-user")
+                                }}>Change Username</button></p>
 
-                                            </div>
-                                            <div className="col-6 mb-3">
-                                                <h6><a href="#" className={redirectStyle}>Notification
-                                                    Settings</a></h6>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div className="col-6 mb-3">
+                            <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Notification Settings</a>
                         </div>
                     </div>
-                </div>
-                <button
-                    className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    onClick={() => {
-                        navigate("/home")
-                    }}>
-                    Home
-                </button>
-                <button
-                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                onClick={handleDelete}
-                >
-                    Delete Profile
-                </button>
+                    <div className="flex mt-4 md:mt-6">
+                        <button
+                            className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            onClick={() => {
+                                navigate("/home")
+                            }}>
+                            Home
+                        </button>
+                        <button
+                            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                            onClick={handleDelete}
+                        >
+                            Delete Profile
+                        </button>
+                    </div>
             </div>
-        </section>
+        </div>
     )
 }
 
