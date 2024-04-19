@@ -125,3 +125,19 @@ exports.joinWithCode = async (code, uuid) => {
         errorMessage: "Invalid code (invalid state)"
     }
 };
+
+exports.getCodes = async classId => {
+    return await InviteCode.findAll({
+        where: {
+            classId: classId
+        },
+        // Perform a left join with Users
+        // (userId is null for many-times codes,
+        //  so this will include them)
+        include: [{
+            model: Users,
+            attributes: ["email"],
+            required: false
+        }]
+    })
+};

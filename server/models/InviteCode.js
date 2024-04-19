@@ -1,4 +1,4 @@
-
+const Users = require("./Users")
 
 module.exports = (sequelize, DataTypes) => {
     const InviteCode = sequelize.define("InviteCode", {
@@ -66,9 +66,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     })
-    InviteCode.beforeCreate((inviteCode, options) => {
 
-    })
+    InviteCode.associate = (models) => {
+        InviteCode.hasOne(models.Class, {foreignKey: "id", sourceKey: "classId"})
+        InviteCode.hasOne(models.Users, {foreignKey: "id", sourceKey: "userId"})
+    }
 
     return InviteCode
 }
