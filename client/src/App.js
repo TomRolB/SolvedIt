@@ -5,8 +5,14 @@ import Register from "./pages/register";
 import {Home} from "./pages/Home";
 import {CreateClass} from "./pages/CreateClass";
 import axios from "axios";
+import {Profile} from "./pages/profile"
+import {ProfileChanger} from "./pages/updateUser";
+import {DeleteUser} from "./pages/deleteUser";
 import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
+import {ClassEdit} from "./pages/ClassEdit";
+import {ClassEnroll} from "./pages/ClassEnroll";
+
 
 
 function App(props) {
@@ -41,9 +47,15 @@ function App(props) {
                 <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid} />, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
+                <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
+                <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
+                <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/class/create-class" element={<CreateClass/>}></Route>
                 <Route path="/class/:id" element={<Class uuid={uuid} setUuid={setUuid}/>}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
+                <Route path="/class/:id/edit" element={<ClassEdit uuid={uuid} setUuid={setUuid}/>}></Route>
+                <Route path="/enroll-class" element={<ClassEnroll uuid={uuid} setUuid={setUuid}/>}></Route>
+
             </Routes>
         </BrowserRouter>
     );

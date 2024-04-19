@@ -54,16 +54,19 @@ export function Login({uuid, setUuid}) {
     const textInputStyle = "h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl";
     const labelStyle = "text-2xl"
     return (
-        <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
-            <form method="post" onSubmit={handleSubmit}>
-                { errorMessage != null ? <h1 color={"red"}> {errorMessage} </h1> : null }
-                <label className={labelStyle} htmlFor="email">Email:</label><br/>
-                <input className={textInputStyle} type="email" id="email" name="email" onChange={handleEmailChange}/><br/>
-                <label className={labelStyle} htmlFor="password">Password:</label><br/>
-                <input className={textInputStyle} type="password" id="password" name="password" onChange={handlePasswordChange}/><br/>
-                <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Submit"/><br/>
-                <a className="flex-col-reverse text-blue-700 underline" onClick={routeChange}>Don't have an account yet?</a>
-            </form>
+        <div>
+            <div className="h-screen flex items-center justify-evenly bg-gradient-to-tr from-white to-blue-300">
+                <img className="h-auto max-w-lg rounded-full" src={require("../media/logo.jpeg")} alt="image description"></img>
+                <form method="post" onSubmit={handleSubmit}>
+                    { errorMessage != null ? <h1 color={"red"}> {errorMessage} </h1> : null }
+                    <label className={labelStyle} htmlFor="email">Email:</label><br/>
+                    <input className={textInputStyle} type="email" id="email" name="email" onChange={handleEmailChange}/><br/>
+                    <label className={labelStyle} htmlFor="password">Password:</label><br/>
+                    <input className={textInputStyle} type="password" id="password" name="password" onChange={handlePasswordChange}/><br/>
+                    <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Submit"/><br/>
+                    <a className="flex-col-reverse text-blue-700 underline" onClick={routeChange}>Don't have an account yet?</a>
+                </form>
+            </div>
         </div>
     )
 }
