@@ -14,6 +14,7 @@ router.post("/create-class", async (req, res) => {
     const maxId = await Class.max('id');
     await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId})
+    InviteLink.create({classId: maxId, link: `http://www.solvedit.com/enroll-to/${maxId}`,userCount:0})
     // res.json(classInfo)
 })
 
@@ -40,8 +41,18 @@ router.put("/byId/:id/edit", async (req, res) => {
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    IsInClass.create({userId: userId, classId: Number(classId)})
+    await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId)}});
     InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}})
+})
+
+router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
+    const classId = req.params.id
+    const userId = Auth.getUserId(req.params.uuid).id
+    const isInClass = IsInClass.findAll({where:{classId: classId, userId: userId}})
+    if(!isInClass){
+        res.sendStatus(404)
+    }
+    res.json(isInClass)
 })
 
 module.exports = router

@@ -9,6 +9,7 @@ export const ClassEnroll = ()=>{
     let [link, setLink] = useState("")
     let [uuid, setUuid] = useUserUuid()
     let [errorMessage, setErrorMessage] = useState("")
+    let [enrolled, setEnrolled] = useState(false)
     const navigate = useNavigate()
     const classLinkFormat = /\bhttp:\/www.solvedit.com\/enroll-to\/\d\b/i
     const trueClassLink = /\d+\b/i
@@ -20,6 +21,10 @@ export const ClassEnroll = ()=>{
         console.log("Link: " + link)
     }
 
+    const handleAlreadyEnrolled = () =>{
+        let response = axios.get(`class/${uuid}/enrolled-in/${id}`)
+
+    }
     const handleSubmit = () => {
         axios.post(`/class/${uuid}/enroll-to/${id}`).then(res => {
             console.log(res)
