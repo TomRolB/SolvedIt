@@ -6,7 +6,6 @@ import {useNavigate} from "react-router-dom";
 
 export const ProfileChanger = ()=>{
     const namesInputStyle = "h-10 w-40 border-blue-700 border-2 rounded mt-2 md-2 text-xl";
-    const labelStyle = "text-2xl"
 
     const [data, setData] = useState({})
     const [firstName, setFirstName] = useState("")
@@ -29,7 +28,7 @@ export const ProfileChanger = ()=>{
         axios.put(`/users/${uuid}/update`, {firstName: firstName, lastName: lastName}).then((res) => {
             console.log(res)
         }).catch(err => console.log(err))
-        navigate("/profile")
+        navigate("/home")
     }
 
     const handleFirstNameChange = (newFirstName) =>{
@@ -46,21 +45,22 @@ export const ProfileChanger = ()=>{
         <div>
         <Navbar></Navbar>
             <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
-                <form>
-                    <div className="flex flex-row">
-                        <div>
-                            <label className={labelStyle} htmlFor="firstName">New First name: </label><br/>
-                            <input className={namesInputStyle + " mr-3"} type="text" id="firstName" name="firstName"
-                                   onChange={handleFirstNameChange}/><br/>
-                            <label className={labelStyle} htmlFor="lastName">New Last name: </label><br/>
-                            <input className={namesInputStyle} type="text" id="lastName" name="lastName"
-                                   onChange={handleLastNameChange}/><br/>
-                            <button className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Update" onClick={handleEdit}>
-                                <i className="fa-solid fa-pen-to-square"></i> Update
-                            </button>
+                <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800">
+                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">Update your name</h5>
+                    <form>
+                        <div className="flex flex-row">
+                            <div className="p-10">
+                                <label htmlFor="firstName" className="block text-lg font-bold dark:text-white">New First name:</label>
+                                <input type="text" id="firstName" name="firstName" onChange={handleFirstNameChange} className="bg-gray-50 border border-white-700 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input><br/>
+                                <label htmlFor="large-input" className="block text-lg font-bold dark:text-white">New Last name: </label>
+                                <input type="text" id="lastName" name="lastName" onChange={handleLastNameChange} className="bg-gray-50 border border-white-700 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input><br/>
+                                <button className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Update" onClick={handleEdit}>
+                                    <i className="fa-solid fa-pen-to-square"></i> Update
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     )
