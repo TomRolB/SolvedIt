@@ -62,7 +62,7 @@ export function Home({uuid, setUuid}) {
                 <Navbar></Navbar>
             </div>
             <div className="pl-5 pt-5">
-                <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl">Welcome {userName}!</h1>
+                <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl">Welcome<span className="text-transparent bg-clip-text bg-gradient-to-r to-blue-700 from-emerald-600"> {userName}</span>!</h1>
             </div>
             <div className='p-5 grid grid-cols-3 divide-x'>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg col-span-2">
