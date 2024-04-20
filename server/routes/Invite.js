@@ -18,7 +18,6 @@ router.post("/join-with-code", async (req, res) => {
 })
 
 router.get("/getCodes", async (req, res) => {
-    console.log(req)
     const result = await InviteController.getCodes(req.query.classId)
     res.send(result)
 })

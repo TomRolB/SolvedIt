@@ -52,7 +52,12 @@ router.post("/register", async (req, res) => {
 })
 
 router.post("/isLoggedIn", async (req, res) => {
-  res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
+    res.send({"isLoggedIn": Auth.isLoggedIn(req.body.uuid)})
+})
+
+router.get("/is-admin", async (req, res) => {
+    const result = await Auth.isAdmin(req.query.uuid, req.query.classId)
+    res.send(result)
 })
 
 router.post("/logout", async (req, res) => {

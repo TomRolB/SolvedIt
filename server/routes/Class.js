@@ -13,7 +13,7 @@ router.post("/create-class", async (req, res) => {
     await Class.create({name: classInfo.name, description: classInfo.description})
     const maxId = await Class.max('id');
     await console.log(maxId)
-    await IsInClass.create({userId: userId, classId: maxId})
+    await IsInClass.create({userId: userId, classId: maxId, permissions: "owner", isTeacher: false})
     InviteLink.create({classId: maxId, link: `http://www.solvedit.com/enroll-to/${maxId}`,userCount:0})
     // res.json(classInfo)
 })
