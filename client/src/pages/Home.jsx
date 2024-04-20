@@ -129,7 +129,7 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                         <label>Join class with code:</label>
                         {errorMessage ? <h1 color={"red"}> {errorMessage} </h1> : null}
                         <input type="text" onChange={handleCodeChange} className="h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl"/>
-                        <input type="submit"/>
+                        <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Submit"/>
                     </form>
                 </div>
             </div>
