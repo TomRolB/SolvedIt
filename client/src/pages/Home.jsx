@@ -131,6 +131,9 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                         <input type="text" onChange={handleCodeChange} className="h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl"/>
                         <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit" value="Submit"/>
                     </form>
+                    <button type="button" className="mt-9 focus:outline-none text-white bg-blue-500 hover:bg-blue-500 focus:ring-4 focus:ribg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-green-800">
+                        <a href="/enroll-class"><i className="fa-solid fa-plus"></i> Enroll to Class</a>
+                    </button>
                 </div>
             </div>
         </div>

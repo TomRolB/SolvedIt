@@ -2,6 +2,7 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
+import {Navbar} from "../components/Navbar";
 
 function ManyTimesCode({code, expiration, userCount}) {
     return <>
@@ -138,20 +139,23 @@ export function Invites() {
     }
 
     return (
-        <div className="bg-gradient-to-tr from-white to-blue-300">
-            <Subtitle text={"One-time codes"}></Subtitle>
-            {oneTimeCodes}
-            <Subtitle text={"Many-times codes"}></Subtitle>
-            {manyTimesCodes}
-            <Subtitle text={"Create new code"}></Subtitle>
-            <form onSubmit={handleCodeCreation}>
-                {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
-                <label>one-time</label>
-                <input type="checkbox" onChange={handleCheckboxChange} checked={isOneTime}/>
-                {input}<br/>
-                <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
-            </form>
-            <Subtitle text={"Link"}></Subtitle>
+        <div>
+            <Navbar></Navbar>
+            <div className="bg-gradient-to-tr h-screen from-white to-blue-300">
+                <Subtitle text={"One-time codes"}></Subtitle>
+                {oneTimeCodes}
+                <Subtitle text={"Many-times codes"}></Subtitle>
+                {manyTimesCodes}
+                <Subtitle text={"Create new code"}></Subtitle>
+                <form onSubmit={handleCodeCreation}>
+                    {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
+                    <label>one-time</label>
+                    <input type="checkbox" onChange={handleCheckboxChange} checked={isOneTime}/>
+                    {input}<br/>
+                    <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
+                </form>
+                <Subtitle text={"Link"}></Subtitle>
+            </div>
         </div>
     )
 }
