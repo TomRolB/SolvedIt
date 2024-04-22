@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
+import {Copy} from "../components/Copy";
 
 function ManyTimesCode({code, expiration, userCount}) {
     return <>
@@ -140,7 +141,7 @@ export function Invites() {
     }
 
     return (
-        <>
+        <div>
             <Navbar></Navbar>
             <div className="bg-gradient-to-tr from-white to-blue-300">
                 <Subtitle text={"One-time codes"}></Subtitle>
@@ -156,7 +157,8 @@ export function Invites() {
                     <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
                 </form>
                 <Subtitle text={"Link"}></Subtitle>
+                <Copy text={`http://www.solvedit.com/enroll-to/${id}`}></Copy>
             </div>
-        </>
+        </div>
     )
 }
