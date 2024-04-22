@@ -24,9 +24,12 @@ export function CreateClass() {
                 description: description,
                 uuid: localStorage.getItem("uuid")
             })
-            .then((res) => console.log(res.data))
+            .then((res) => {
+                console.log(res.data)
+                navigate("/home")
+                console.log("Navigating")
+            })
             .catch(err => console.log(err))
-        navigate("/home")
     }
 
     return (

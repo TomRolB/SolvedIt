@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
@@ -99,6 +99,7 @@ export function Invites() {
     function handleResult(result) {
         if (result.data.wasSuccessful) {
             setGeneratedCode(result.data.inviteCode)
+            fetchCodes()
         } else {
             setErrorMessage(result.data.errorMessage)
         }
@@ -142,11 +143,11 @@ export function Invites() {
     return (
         <div>
             <Navbar></Navbar>
-            <div className="bg-gradient-to-tr h-screen from-white to-blue-300">
+            <div className="bg-gradient-to-tr from-white to-blue-300">
                 <Subtitle text={"One-time codes"}></Subtitle>
-                {oneTimeCodes}
+                {oneTimeCodes.length > 0? oneTimeCodes : "No one-time codes created"}
                 <Subtitle text={"Many-times codes"}></Subtitle>
-                {manyTimesCodes}
+                {manyTimesCodes.length > 0? manyTimesCodes : "No many-times codes created"}
                 <Subtitle text={"Create new code"}></Subtitle>
                 <form onSubmit={handleCodeCreation}>
                     {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
