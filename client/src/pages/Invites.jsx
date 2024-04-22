@@ -98,6 +98,7 @@ export function Invites() {
     function handleResult(result) {
         if (result.data.wasSuccessful) {
             setGeneratedCode(result.data.inviteCode)
+            fetchCodes()
         } else {
             setErrorMessage(result.data.errorMessage)
         }
@@ -143,9 +144,9 @@ export function Invites() {
             <Navbar></Navbar>
             <div className="bg-gradient-to-tr from-white to-blue-300">
                 <Subtitle text={"One-time codes"}></Subtitle>
-                {oneTimeCodes > 0? oneTimeCodes : "No one-time codes created"}
+                {oneTimeCodes.length > 0? oneTimeCodes : "No one-time codes created"}
                 <Subtitle text={"Many-times codes"}></Subtitle>
-                {manyTimesCodes > 0? manyTimesCodes : "No many-times codes created"}
+                {manyTimesCodes.length > 0? manyTimesCodes : "No many-times codes created"}
                 <Subtitle text={"Create new code"}></Subtitle>
                 <form onSubmit={handleCodeCreation}>
                     {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
