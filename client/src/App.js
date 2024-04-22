@@ -50,12 +50,11 @@ function App(props) {
                 <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
                 <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
-                <Route path="/class/create-class" element={<CreateClass/>}></Route>
-                <Route path="/class/:id" element={<Class uuid={uuid} setUuid={setUuid}/>}></Route>
+                <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
+                <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
-                <Route path="/class/:id/edit" element={<ClassEdit uuid={uuid} setUuid={setUuid}/>}></Route>
-                <Route path="/enroll-class" element={<ClassEnroll uuid={uuid} setUuid={setUuid}/>}></Route>
-
+                <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/enroll-class" element={getPageIfLoggedIn(<ClassEnroll uuid={uuid} setUuid={setUuid}/>)}></Route>
             </Routes>
         </BrowserRouter>
     );

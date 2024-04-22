@@ -71,6 +71,8 @@ async function successfulCodeUsage(dbCodeRegister, userId) {
         .build({
             userId: userId,
             classId: dbCodeRegister.classId,
+            permissions: "normal",
+            isTeacher: false
         })
         .save()
 

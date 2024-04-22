@@ -1,4 +1,4 @@
-const { Users } = require("../models")
+const { Users, IsInClass } = require("../models")
 const crypto = require("crypto")
 const cron = require("cron")
 
@@ -148,4 +148,18 @@ exports.logout = (uuid) => {
 exports.getUserId = (uuid) => {
     console.log(sessions)
     return sessions[uuid]
+}
+
+exports.isAdmin = async (uuid, classId) => {
+    console.log(`Checking if user with uuid ${uuid} is admin`)
+    const userId = this.getUserId(uuid).id
+
+    const dbUserInClass = await IsInClass.findOne({
+        where: {
+            userId: userId,
+            classId: classId
+        }
+    })
+
+    return {isAdmin: dbUserInClass.permissions !== "normal"}
 }
