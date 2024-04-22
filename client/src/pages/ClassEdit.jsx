@@ -4,6 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 
 export function ClassEdit({uuid, setUuid}) {
+    const [isAdmin, setIsAdmin] = useState(false)
 
     const [classInfo, setClassInfo] = useState({})
     const [name, setName] = useState("")
@@ -12,8 +13,16 @@ export function ClassEdit({uuid, setUuid}) {
 
     const {id} = useParams()
 
+    function checkUserIsAdmin() {
+        axios
+            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: id}})
+            .then((res) => setIsAdmin(res.data.isAdmin))
+            .catch((err) => console.log(err))
+    }
+
     useEffect(() => {
-        axios.get(`/class/byId/${id}`).then((res) => {
+        checkUserIsAdmin()
+        axios.get(`/class/byId/${id}`, {params: {uuid: localStorage.getItem('uuid')}}).then((res) => {
             console.log(res)
             setClassInfo(res.data)
             setName(res.data.name)
@@ -23,14 +32,14 @@ export function ClassEdit({uuid, setUuid}) {
     }, [])
 
     const handeDelete = () => {
-        axios.delete(`/class/byId/${id}/edit`).then((res) => {
+        axios.delete(`/class/byId/${id}/edit`, {params: {uuid: localStorage.getItem('uuid')}}).then((res) => {
             console.log(res)
             navigate("/home")
         }).catch(err => console.log(err))
     }
 
     const handleEdit = () => {
-        axios.put(`/class/byId/${id}/edit`, {name: name, description: description}).then((res) => {
+        axios.put(`/class/byId/${id}/edit`, {name: name, description: description, uuid: localStorage.getItem("uuid")}).then((res) => {
             console.log(res)
             navigate(`/class/${id}`)
         }).catch(err => console.log(err))
@@ -46,7 +55,7 @@ export function ClassEdit({uuid, setUuid}) {
         console.log(description)
     }
 
-    return (
+    return isAdmin? (
         <div>
             <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
@@ -77,5 +86,5 @@ export function ClassEdit({uuid, setUuid}) {
                 </div>
             </div>
         </div>
-    )
+    ) : null
 }

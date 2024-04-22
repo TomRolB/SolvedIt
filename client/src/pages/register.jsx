@@ -37,7 +37,7 @@ function Register({uuid, setUuid}) {
             localStorage.setItem("uuid", result.data.uuid)
             setUuid(result.data.uuid) // This is simply used to refresh the app.
                               // We actually update uuid at localStorage.
-            navigate("/login")
+            navigate("/home")
         }
         else {
             setErrorMessage(result.data.errorMessage)
