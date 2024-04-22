@@ -1,14 +1,16 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
+import {Navbar} from "../components/Navbar";
+import {Copy} from "../components/Copy";
 
 function ManyTimesCode({code, expiration, userCount}) {
     return <>
-        <ul className="bg-gray-800 text-amber-50">
-            <li className="float-left block pr-20">{code}</li>
-            <li className="float-left block pr-20">{"Expiration: " + expiration}</li>
-            <li className="float-left block">{"Used by " + userCount + " users"}</li><br/>
+        <ul className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 pb-2 pt-2 max-w-xl">
+            <li className="font-mono border-gray-700 float-left block pl-2 pr-5 dark:text-white rounded">{code}</li>
+            <li className="border-gray-700 float-left block pl-2 pr-5 dark:text-white rounded">{"Expiration: " + expiration.slice(0, 10)}</li>
+            <li className="border-gray-700 float-left block pl-2 pr-2 dark:text-white rounded">{"Used by " + userCount + " users"}</li><br/>
         </ul>
     </>
 }
@@ -18,14 +20,22 @@ ManyTimesCode.propTypes = {
     expiration: PropTypes.any
 };
 
-function OneTimeCode({code, email}) {
-    return <>
-        <ul className="bg-gray-800 text-amber-50">
-            <li className="float-left block pr-20">{code}</li>
-            <li className="float-left block pr-20">{"Sent to user with email " + email}</li><br/>
+function OneTimeCode({code, email, userCount}) {
+    return <div>
+        <ul className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 pb-2 pt-2 max-w-xl">
+            <li className="font-mono border-gray-700 float-left block pl-2 pr-5 dark:text-white rounded">{code}</li>
+            <li className="border-gray-700 float-left block pl-2 pr-5 dark:text-white rounded">{"Sent to user with email " + email}</li>
+            <li className="border-gray-700 float-left block pl-2 pr-2 dark:text-white rounded">{userCount ? "Used": "Not used yet"}</li>
+            <br/>
         </ul>
-    </>
+    </div>
 }
+
+function Subtitle({text}) {
+    return <h2 className="text-3xl font-semibold dark:text-black pt-3 pb-2">{text}</h2>
+}
+
+Subtitle.propTypes = {text: PropTypes.string};
 
 export function Invites() {
     let {id} = useParams()
@@ -47,6 +57,7 @@ export function Invites() {
                 <OneTimeCode
                     code={codeRegister.code}
                     email={codeRegister.User.email}
+                    userCount={codeRegister.userCount}
                 />
             )
             else manyTimes.push(
@@ -88,6 +99,7 @@ export function Invites() {
     function handleResult(result) {
         if (result.data.wasSuccessful) {
             setGeneratedCode(result.data.inviteCode)
+            fetchCodes()
         } else {
             setErrorMessage(result.data.errorMessage)
         }
@@ -113,14 +125,14 @@ export function Invites() {
         input =
         <>
             <h1>user email:</h1>
-            <input type="text" onChange={handleEmailChange}/>
+            <input type="text" onChange={handleEmailChange} className="h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl"/>
             {generatedCode? <h1 color={"green"}>{generatedCode}</h1> : null}
         </>
     } else {
         input =
         <>
             <h1>expiration:</h1>
-            <input type="date" onChange={handleExpirationChange}/>
+            <input type="date" onChange={handleExpirationChange} className="h-10 w-80 border-blue-700 border-2 rounded mt-2 md-2 text-xl"/>
         </>
     }
 
@@ -129,20 +141,24 @@ export function Invites() {
     }
 
     return (
-        <>
-            <h1>One-time codes</h1>
-            {oneTimeCodes}
-            <h1>Many-times codes</h1>
-            {manyTimesCodes}
-            <button>Create new code:</button>
-            <form onSubmit={handleCodeCreation}>
-                {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
-                <label>one-time</label>
-                <input type="checkbox" onChange={handleCheckboxChange} checked={isOneTime}/>
-                {input}<br/>
-                <input type="submit" value="Generate"/>
-            </form>
-            <h1>Link</h1>
-        </>
+        <div>
+            <Navbar></Navbar>
+            <div className="bg-gradient-to-tr from-white to-blue-300">
+                <Subtitle text={"One-time codes"}></Subtitle>
+                {oneTimeCodes.length > 0? oneTimeCodes : "No one-time codes created"}
+                <Subtitle text={"Many-times codes"}></Subtitle>
+                {manyTimesCodes.length > 0? manyTimesCodes : "No many-times codes created"}
+                <Subtitle text={"Create new code"}></Subtitle>
+                <form onSubmit={handleCodeCreation}>
+                    {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
+                    <label>one-time</label>
+                    <input type="checkbox" onChange={handleCheckboxChange} checked={isOneTime}/>
+                    {input}<br/>
+                    <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
+                </form>
+                <Subtitle text={"Link"}></Subtitle>
+                <Copy text={`http://www.solvedit.com/enroll-to/${id}`}></Copy>
+            </div>
+        </div>
     )
 }

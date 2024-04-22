@@ -117,14 +117,12 @@ exports.registerUser = async (form) => {
         errorMessage: "This email has already been used",
     }
 
-    const user = Users.build({
+    const user = await Users.build({
         firstName: form.body.firstName,
         lastName: form.body.lastName,
         email: form.body.email,
         password: form.body.password
-    })
-
-    user.save()
+    }).save()
 
     const uuid = crypto.randomUUID()
     sessions[uuid] = {
