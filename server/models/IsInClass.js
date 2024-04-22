@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         permissions: {
             type: DataTypes.STRING,
             validate: {
-                isIn: ["normal", "admin", "owner"]
+                isIn: [["normal", "admin", "owner"]]
             }
         },
         isTeacher: {

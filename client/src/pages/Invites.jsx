@@ -40,6 +40,8 @@ Subtitle.propTypes = {text: PropTypes.string};
 export function Invites() {
     let {id} = useParams()
 
+    const [isAdmin, setIsAdmin] = useState(false)
+
     const [isOneTime, setIsOneTime] = useState(true);
     const [email, setEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState(null);
@@ -77,13 +79,21 @@ export function Invites() {
 
     const fetchCodes = () => {
         axios
-            .get("/Invite/getCodes", {params:{classId: id}})
+            .get("/Invite/getCodes", {params:{classId: id, uuid: localStorage.getItem("uuid")}})
             .then((res) => handleCodeResponse(res))
             .catch((err) => console.log(err))
     }
 
+    function checkUserIsAdmin() {
+        axios
+            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: id}})
+            .then((res) => setIsAdmin(res.data.isAdmin))
+            .catch((err) => console.log(err))
+    }
+
     useEffect(() => {
-        fetchCodes()
+        checkUserIsAdmin()
+        if (isAdmin) fetchCodes()
     }, [])
 
     function handleEmailChange(event) {
@@ -109,12 +119,12 @@ export function Invites() {
 
         if (isOneTime) {
             axios
-                .post("/invite/one-time", {classId: id, email: email})
+                .post("/invite/one-time", {classId: id, email: email, uuid: localStorage.getItem("uuid")})
                 .then((res) => handleResult(res))
                 .catch((error) => console.log(error))
         } else {
             axios
-                .post("/invite/many-times", {classId: id, expiration: expiration})
+                .post("/invite/many-times", {classId: id, expiration: expiration, uuid: localStorage.getItem("uuid")})
                 .then((res) => handleResult(res))
                 .catch((error) => console.log(error))
         }
@@ -140,7 +150,7 @@ export function Invites() {
         setIsOneTime(!isOneTime)
     }
 
-    return (
+    return isAdmin? (
         <div>
             <Navbar></Navbar>
             <div className="bg-gradient-to-tr from-white to-blue-300">
@@ -160,5 +170,5 @@ export function Invites() {
                 <Copy text={`http://www.solvedit.com/enroll-to/${id}`}></Copy>
             </div>
         </div>
-    )
+    ) : null
 }
