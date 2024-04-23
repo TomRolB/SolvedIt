@@ -46,11 +46,11 @@ router.put("/byId/:id/edit", async (req, res) => {
 
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     // Block this route for non-admin users
-    if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
+    // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
 
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId)}});
+    const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
     if(!created)
     InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
     res.json({message: "Successfully enrolled"})
