@@ -13,7 +13,7 @@ exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
 });
 
 exports.addQuestion = async (classId, title, description) => {
-    await Answer.create({
+    await Question.create({
         classId: classId,
         title: title,
         description: description,
@@ -21,5 +21,5 @@ exports.addQuestion = async (classId, title, description) => {
         isActive: true
     })
 
-    //TODO: bring to frontend
+    return "Created a question"
 };

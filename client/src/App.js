@@ -12,6 +12,7 @@ import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
 import {ClassEnroll} from "./pages/ClassEnroll";
+import {PostQuestion} from "./pages/PostQuestion";
 
 
 
@@ -52,6 +53,7 @@ function App(props) {
                 <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
                 <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/enroll-class" element={getPageIfLoggedIn(<ClassEnroll uuid={uuid} setUuid={setUuid}/>)}></Route>
