@@ -1,8 +1,7 @@
-import {redirect, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { useParams } from 'react-router-dom';
 
 export function Home({uuid, setUuid, classId, setClassId}) {
 
@@ -124,10 +123,6 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                     <button type="button"
                             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                         <a href="/class/create-class"><i className="fa-solid fa-plus"></i> Add Class</a>
-                    </button>
-                    <button type="button"
-                            className="mt-9 focus:outline-none text-white bg-blue-500 hover:bg-blue-500 focus:ring-4 focus:ribg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-green-800">
-                        <a href="/enroll-class"><i className="fa-solid fa-plus"></i> Enroll by link</a>
                     </button>
                     <form onSubmit={handleCodeSubmit}>
                         <label>Enroll with code:</label>
