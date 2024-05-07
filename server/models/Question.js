@@ -1,15 +1,11 @@
-module.exports = ({sequelize, DataTypes}: { sequelize: any, DataTypes: any }) => {
-    return sequelize.define("Answer", {
+module.exports = (sequelize, DataTypes) => {
+    const Question = sequelize.define("Question", {
         classId: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        questionId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        parentId: {
-            type: DataTypes.INTEGER,
+        title: {
+            type: DataTypes.STRING,
             allowNull: false
         },
         description: {
@@ -25,4 +21,5 @@ module.exports = ({sequelize, DataTypes}: { sequelize: any, DataTypes: any }) =>
             allowNull: false
         }
     })
+    return Question
 }

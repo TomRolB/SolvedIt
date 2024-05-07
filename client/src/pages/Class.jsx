@@ -7,6 +7,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     const [classInfo, setClassInfo] = useState([{}])
     const [isAdmin, setIsAdmin] = useState(false)
+    const [questions, setQuestions] = useState([])
     let {id} = useParams()
 
     useEffect(() => {
@@ -19,6 +20,15 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             .then((res) => setIsAdmin(res.data.isAdmin))
             .catch((err) => console.log(err))
 
+        axios
+            .get("/question/questions", {params: {classId: id, uuid: uuid}})
+            .then((res) => setQuestions(
+                res.data.map((questionInfo) => <h1>questionInfo.description+questionInfo.title</h1>)
+            ))
+            .catch((err) => {
+                console.log(err)
+                console.log("Question error")
+            })
     }, []);
 
     const CourseInfo = () => {
@@ -48,6 +58,8 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                     <a href={"/class/" + id + "/invites"}><i className="fa-solid fa-plus"></i> Manage Invitations</a>
                 </button> : null}
             </div>
+            {/*<Questions/>*/}
+            {questions}
         </div>
     )
 }

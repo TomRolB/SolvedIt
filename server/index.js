@@ -27,10 +27,12 @@ const userRouter = require('./routes/Users')
 const classRouter = require('./routes/Class')
 const homeRouter = require('./routes/Home')
 const inviteRouter = require('./routes/Invite')
+const questionRouter = require('./routes/Question.js')
 app.use("/users", userRouter)
 app.use("/class", classRouter)
 app.use("/home", homeRouter)
 app.use("/invite", inviteRouter)
+app.use("/question", questionRouter)
 
 
 db.sequelize.sync().then(() => {

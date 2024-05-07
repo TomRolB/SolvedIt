@@ -93,8 +93,9 @@ export function Invites() {
 
     useEffect(() => {
         checkUserIsAdmin()
+        console.log(isAdmin)
         if (isAdmin) fetchCodes()
-    }, [])
+    }, [isAdmin])
 
     function handleEmailChange(event) {
         // Sets email each time that a letter is
