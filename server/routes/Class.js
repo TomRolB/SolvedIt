@@ -13,9 +13,9 @@ router.post("/create-class", async (req, res) => {
     await Class.create({name: classInfo.name, description: classInfo.description})
     const maxId = await Class.max('id');
     await console.log(maxId)
-    await IsInClass.create({userId: userId, classId: maxId})
+    await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
     InviteLink.create({classId: maxId, link: `http://www.solvedit.com/enroll-to/${maxId}`,userCount:0})
-    // res.json(classInfo)
+    res.send("Created class!")
 })
 
 router.get("/byId/:id", async (req, res) => {
@@ -25,12 +25,18 @@ router.get("/byId/:id", async (req, res) => {
 })
 
 router.delete("/byId/:id/edit", async (req, res) => {
+    // Block this route for non-admin users
+    if (!await Auth.isAdmin(req.query.uuid, req.params.id)) return
+
     const id = req.params.id
     await Class.destroy({where: {id: id}})
     res.json({message: "Class deleted"})
 })
 
 router.put("/byId/:id/edit", async (req, res) => {
+    // Block this route for non-admin users
+    if (!await Auth.isAdmin(req.body.uuid, req.params.id)) return
+
     const classInfo = req.body
     const id = req.params.id
     console.log(id)
@@ -39,9 +45,12 @@ router.put("/byId/:id/edit", async (req, res) => {
 })
 
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
+    // Block this route for non-admin users
+    // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
+
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId)}});
+    const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
     if(!created)
     InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
     res.json({message: "Successfully enrolled"})

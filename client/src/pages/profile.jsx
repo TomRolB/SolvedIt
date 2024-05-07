@@ -4,11 +4,11 @@ import {ProfileCard} from "./profileCard";
 
 export const Profile = ()=>{
     return(
-        <div className="profile">
+        <div>
             <Navbar></Navbar>
-            <ProfileCard></ProfileCard>
-
-
+            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ProfileCard></ProfileCard>
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-const { Users } = require("../models")
+const { Users, IsInClass } = require("../models")
 const crypto = require("crypto")
 const cron = require("cron")
 
@@ -99,7 +99,6 @@ const RegisterResult = {
 
 exports.registerUser = async (form) => {
     if (form.body.password !== form.body.confirmPassword) {
-        // Send new form and ask to re-complete
         return {
             wasSuccessful: false,
             errorMessage: "Passwords do not match",
@@ -118,14 +117,12 @@ exports.registerUser = async (form) => {
         errorMessage: "This email has already been used",
     }
 
-    const user = Users.build({
+    const user = await Users.build({
         firstName: form.body.firstName,
         lastName: form.body.lastName,
         email: form.body.email,
         password: form.body.password
-    })
-
-    user.save()
+    }).save()
 
     const uuid = crypto.randomUUID()
     sessions[uuid] = {
@@ -149,5 +146,20 @@ exports.logout = (uuid) => {
 }
 
 exports.getUserId = (uuid) => {
+    console.log(sessions)
     return sessions[uuid]
+}
+
+exports.isAdmin = async (uuid, classId) => {
+    console.log(`Checking if user with uuid ${uuid} is admin`)
+    const userId = this.getUserId(uuid).id
+
+    const dbUserInClass = await IsInClass.findOne({
+        where: {
+            userId: userId,
+            classId: classId
+        }
+    })
+
+    return {isAdmin: dbUserInClass.permissions !== "normal"}
 }
