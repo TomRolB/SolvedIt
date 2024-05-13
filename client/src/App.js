@@ -11,9 +11,8 @@ import {DeleteUser} from "./pages/deleteUser";
 import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
-import {ClassEnroll} from "./pages/ClassEnroll";
+import {ClassEnroll} from "./utils/ClassEnroll";
 import {PostQuestion} from "./pages/PostQuestion";
-
 
 
 function App(props) {
@@ -37,6 +36,11 @@ function App(props) {
         return uuid != null ? page : <Login uuid={uuid} setUuid={setUuid}/>;
     }
 
+    function redirectPath() {
+        let cond = ClassEnroll()
+        return cond ? <Class uuid={uuid} setUuid={setUuid} /> : <Home uuid={uuid} setUuid={setUuid()}/> ;
+    }
+
     return (
         // This is simply the way React handles urls.
         // We define routes as components (in express they are part of
@@ -56,7 +60,7 @@ function App(props) {
                 <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
-                <Route path="/enroll-class" element={getPageIfLoggedIn(<ClassEnroll uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/enroll-to/:id" element={getPageIfLoggedIn(redirectPath())}></Route>
             </Routes>
         </BrowserRouter>
     );
