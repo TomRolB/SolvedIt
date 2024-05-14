@@ -21,5 +21,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     })
+    Question.associate = (models) => {
+        Question.hasMany(models.TaggedBy, {foreignKey: "questionId"})
+    }
     return Question
 }
