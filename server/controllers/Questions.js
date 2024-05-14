@@ -28,9 +28,10 @@ exports.addQuestion = async (userId, classId, title, description) => {
 };
 
 exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
-    await Question.create({
+    await Answer.create({
         userId: userId,
         classId: classId,
+        questionId: questionId,
         parentId: parentId,
         description: description,
         wasReported: false,

@@ -35,7 +35,7 @@ function Question({questionInfo}) {
         <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
         <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
         {!isBeingReplied
-            ? <button onClick={() => setIsBeingReplied(true)}>Reply</button>
+            ? <button className="text-amber-50" onClick={() => setIsBeingReplied(true)}>Reply</button>
             : <form onSubmit={handleAnswerSubmit}>
                 <input type="text" onChange={handleTextChange}/>
                 <input type="submit" value="Submit"/>
@@ -50,9 +50,26 @@ export function QuestionPage() {
     const questionInfo = location.state
     const [answers, setAnswers] = useState([])
 
+    useEffect(() => {
+        axios
+            .get("/question/answers", {
+                params: {
+                    classId: questionInfo.classId,
+                    questionId: questionInfo.id,
+                    uuid: localStorage.getItem("uuid")}
+            })
+            .then((res) => buildQuestionTree(res.data))
+            .catch((err) => {
+                console.log(err)
+                console.log("Answer error")
+            })
+    }, []);
+
     // TODO: could definitely be improved (you can probably create
     //  the tree using only collection methods)
     function buildQuestionTree(answers) {
+        console.log(`Received answers from DB: ${answers}`)
+
         const answerMap = new Map()
         const firstLevelAnswers = []
 
@@ -66,8 +83,12 @@ export function QuestionPage() {
 
         answers.forEach((answer) => {
             if (answer.parentId == null) firstLevelAnswers.push(answer)
-            else if (!answerMap.has(answer.parentId)) answerMap[answer.parentId] = []
-            answerMap[answer.parentId].push(answer)
+            else if (!answerMap.has(answer.parentId)) {
+                console.log(`Current map: ${answerMap}`)
+                answerMap[answer.parentId] = []
+                console.log(`Current list: ${answerMap[answer.parentId]}`)
+                answerMap[answer.parentId].push(answer)
+            }
         })
 
         const result = []
@@ -76,23 +97,22 @@ export function QuestionPage() {
             createAnswersRecursively(answer, answerMap, result)
         })
 
+        console.log(`Final result: ${result}`)
         setAnswers(result)
     }
 
     function createAnswersRecursively(answer, answerMap, result) {
-        result.push(<h1>{answer.description}</h1>)
-        answerMap[answer.id].forEach((subAnswer) => createAnswersRecursively(subAnswer))
+        result.push(<h1 key={answer.id}>{answer.description}</h1>)
+        console.log(`Result up to now: ${result}`)
+
+
+        if (answerMap.has(answer.id)) {
+            answerMap[answer.id].forEach((subAnswer) => createAnswersRecursively(subAnswer))
+        }
     }
 
-    useEffect(() => {
-        axios
-            .get("question/answers", {params: {classId: id, uuid: uuid}})
-            .then((res) => buildQuestionTree(res.data))
-            .catch((err) => {
-                console.log(err)
-                console.log("Answer error")
-            })
-    }, []);
-
-    return <Question questionInfo={questionInfo}/>
+    return <>
+        <Question questionInfo={questionInfo}/>
+        {answers.length > 0 ? answers : <h1>{"This question has no answers. Be the first to reply!"}</h1>}
+    </>
 }

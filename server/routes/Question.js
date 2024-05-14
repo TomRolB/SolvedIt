@@ -23,6 +23,7 @@ router.get("/questions", async (req, res) => {
 router.get("/answers", async (req, res) => {
     const classId = req.query.classId
     const questionId = req.query.questionId
+    console.log(`When querying answers, got questionId ${questionId}`)
     const userId = Auth.getUserId(req.query.uuid).id
     const isInClass = await IsInClass.findOne({
         where: {
