@@ -1,6 +1,6 @@
 import {useState} from "react";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 export function PostQuestion() {
     const [title, setTitle] = useState("")
@@ -15,6 +15,7 @@ export function PostQuestion() {
         setDescription(event.target.value)
     }
 
+    const navigate = useNavigate()
     function handleFormSubmit(event) {
         event.preventDefault()
         axios
@@ -24,7 +25,10 @@ export function PostQuestion() {
                 title: title,
                 description: description
             })
-            .then((res) => console.log(res))
+            .then((res) => {
+                console.log(res)
+                navigate("/class/" + id)
+            })
             .catch((err) => console.log(err))
     }
 

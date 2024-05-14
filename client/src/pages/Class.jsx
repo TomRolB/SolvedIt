@@ -1,4 +1,4 @@
-import {redirect, useParams} from "react-router-dom";
+import {redirect, useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
@@ -23,13 +23,31 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         axios
             .get("/question/questions", {params: {classId: id, uuid: uuid}})
             .then((res) => setQuestions(
-                res.data.map((questionInfo) => <h1>{"title: " + questionInfo.description+ ", description: " + questionInfo.title}</h1>)
+                res.data.map((questionInfo) => <Question key={questionInfo.id} questionInfo={questionInfo}/>)
             ))
             .catch((err) => {
                 console.log(err)
                 console.log("Question error")
             })
     }, []);
+
+    const navigate = useNavigate()
+    function handleQuestionClick(questionInfo) {
+        navigate(
+            "/class/" + id + "/question/" + questionInfo.id,
+            { state: questionInfo })
+    }
+
+    const Question = ({questionInfo}) => {
+        return <div onClick={() => handleQuestionClick(questionInfo)} className="bg-gray-800 rounded-2xl p-3 m-1">
+            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+        </div>
+    }
+
+    const Questions = () => {
+        return questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>
+    }
 
     const CourseInfo = () => {
         if (classInfo === null) return (<h1>Class not found</h1>)
@@ -60,8 +78,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                     className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                     <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post Question</a>
                 </button>}
-                {/*<Questions/>*/}
-                {questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>}
+                <Questions/>
             </div>
         </div>
     )

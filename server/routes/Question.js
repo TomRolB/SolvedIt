@@ -22,7 +22,7 @@ router.post('/post-question', async (req, res) => {
 
     if (!isInClass) return
 
-    const result = await Questions.addQuestion(classId, req.body.title, req.body.description)
+    const result = await Questions.addQuestion(userId, classId, req.body.title, req.body.description)
     res.send(result)
 })
 

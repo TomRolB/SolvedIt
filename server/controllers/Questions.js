@@ -1,9 +1,10 @@
-const {Question, Answer} = require("../models/")
+const {Question, Answer, Users} = require("../models/")
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
         classId: classId
-    }
+    },
+    include: Users
 });
 
 exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
@@ -12,8 +13,9 @@ exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
     }
 });
 
-exports.addQuestion = async (classId, title, description) => {
+exports.addQuestion = async (userId, classId, title, description) => {
     await Question.create({
+        userId: userId,
         classId: classId,
         title: title,
         description: description,

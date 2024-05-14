@@ -13,6 +13,7 @@ import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
 import {ClassEnroll} from "./pages/ClassEnroll";
 import {PostQuestion} from "./pages/PostQuestion";
+import {QuestionPage} from "./pages/QuestionPage";
 
 
 
@@ -54,6 +55,7 @@ function App(props) {
                 <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
                 <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
+                <Route path="/class/:id/question/:qid" element={getPageIfLoggedIn(<QuestionPage/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/enroll-class" element={getPageIfLoggedIn(<ClassEnroll uuid={uuid} setUuid={setUuid}/>)}></Route>
