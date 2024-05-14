@@ -10,7 +10,8 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
 exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
     where: {
         questionId: questionId
-    }
+    },
+    include: Users
 });
 
 exports.addQuestion = async (userId, classId, title, description) => {
@@ -24,4 +25,17 @@ exports.addQuestion = async (userId, classId, title, description) => {
     })
 
     return "Created a question"
+};
+
+exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
+    await Question.create({
+        userId: userId,
+        classId: classId,
+        parentId: parentId,
+        description: description,
+        wasReported: false,
+        isActive: true
+    })
+
+    return "Created an answer"
 };
