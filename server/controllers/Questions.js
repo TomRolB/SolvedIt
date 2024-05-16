@@ -1,4 +1,4 @@
-const {Question, Answer} = require("../models/")
+const {Question, Answer, TaggedBy} = require("../models/")
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -12,7 +12,7 @@ exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
     }
 });
 
-exports.addQuestion = async (classId, title, description) => {
+exports.addQuestion = async (classId, title, description, tags) => {
     await Question.create({
         classId: classId,
         title: title,
@@ -20,6 +20,13 @@ exports.addQuestion = async (classId, title, description) => {
         wasReported: false,
         isActive: true
     })
+    const maxId = await Question.max('id')
+    for (let tag of tags) {
+        await TaggedBy.create({
+            questionId: maxId,
+            tagId: tag
+        })
+    }
 
     return "Created a question"
 };

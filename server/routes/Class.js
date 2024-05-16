@@ -54,6 +54,12 @@ router.post('/byId/:id/create-tag', async (req, res) => {
     res.send(result)
 })
 
+router.get("/byId/:id/post-question", async (req, res) => {
+    const classId = req.params.id
+    const result = await Tags.getTagsOfClass(classId)
+    res.json(result)
+})
+
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     // Block this route for non-admin users
     // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
