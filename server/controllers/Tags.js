@@ -1,8 +1,8 @@
 const {Tags} = require("../models/")
 
-exports.getTagsOfClass = async (tagId) => await Tags.findAll({
+exports.getTagsOfClass = async (classId) => await Tags.findAll({
     where: {
-        id: tagId
+        classId: classId
     }
 });
 

@@ -18,7 +18,7 @@
     display: inline-block;
     color: #fff;
     font-size: 1.1em;
-    background-color: #007ea6;
+    /*background-color: #007ea6;*/
     padding: 6px 23px 9px;
     border-radius: 70em;
     margin: 8px 6px 8px 0;
@@ -48,7 +48,7 @@
     right: 7px;
 }
 
-.tag__name:hover {
-    transform: scale(1.1);
-    background-color: #00283f;
-}
+/*.tag__name:hover {*/
+/*    transform: scale(1.1);*/
+/*    background-color: #51572c;*/
+/*}*/
