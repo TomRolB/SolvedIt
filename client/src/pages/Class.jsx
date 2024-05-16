@@ -22,9 +22,28 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
         axios
             .get("/question/questions", {params: {classId: id, uuid: uuid}})
-            .then((res) => setQuestions(
-                res.data.map((questionInfo) => <h1>{"title: " + questionInfo.description+ ", description: " + questionInfo.title}</h1>)
-            ))
+            .then((res) => {
+                console.log(res);
+                let questions = []
+                for (let question of res.data) {
+                    if (questions[question.id] === undefined) {
+                        questions[question.id] = [question.title, question.description, [[question.tagId, question.tagName]]]
+                    } else {
+                        questions[question.id][2].push([question.tagId, question.tagName])
+                    }
+                }
+                console.log(questions)
+                setQuestions(
+                    questions.map((questionInfo) => {
+                        if (questionInfo[2][1] === undefined) {
+                            return (<h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + "No tags"}</h1>)
+                        }
+                        return(
+                            <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + questionInfo[2][1]}</h1>
+                        )
+                    })
+                )
+            })
             .catch((err) => {
                 console.log(err)
                 console.log("Question error")
