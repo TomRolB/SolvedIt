@@ -27,19 +27,24 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 let questions = []
                 for (let question of res.data) {
                     if (questions[question.id] === undefined) {
-                        questions[question.id] = [question.title, question.description, [[question.tagId, question.tagName]]]
+                        if (question.tagName === null) {
+                            questions[question.id] = [question.title, question.description, []]
+                        } else {
+                            questions[question.id] = [question.title, question.description, [question.tagName]]
+                        }
                     } else {
-                        questions[question.id][2].push([question.tagId, question.tagName])
+                        questions[question.id][2].push(question.tagName)
                     }
                 }
                 console.log(questions)
                 setQuestions(
                     questions.map((questionInfo) => {
-                        if (questionInfo[2][1] === undefined) {
+                        console.log(questionInfo)
+                        if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
                             return (<h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + "No tags"}</h1>)
                         }
                         return(
-                            <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + questionInfo[2][1]}</h1>
+                            <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + questionInfo[2]}</h1>
                         )
                     })
                 )
