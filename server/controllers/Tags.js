@@ -14,3 +14,9 @@ exports.addTag = async (name, classId) => {
 
     return "Created a tag"
 };
+
+exports.getTag = async (tagId) => await Tags.findByPk(tagId);
+
+exports.destroy = async (tagId) => await Tags.destroy({where: {id: tagId}});
+
+exports.update = async (tagId, name) => await Tags.update({name: name}, {where: {id: tagId}});

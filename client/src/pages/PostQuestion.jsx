@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
-import "../styles/Tag.css"
 import Select from "react-select";
 
 export function PostQuestion() {
