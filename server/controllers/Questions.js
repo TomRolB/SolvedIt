@@ -38,6 +38,7 @@ exports.addQuestion = async (classId, title, description, tags) => {
         isActive: true
     })
     const maxId = await Question.max('id')
+    if (tags === undefined || tags === null) return "Created a question"
     for (let tag of tags) {
         await TaggedBy.create({
             questionId: maxId,

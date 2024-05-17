@@ -13,6 +13,7 @@
 .title {
     font-weight: 900;
     font-size: 1.7em;
+    width: 100%;
 }
 
 .tag__name {
