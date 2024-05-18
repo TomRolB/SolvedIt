@@ -1,11 +1,12 @@
-const {Question, Answer, TaggedBy} = require("../models/")
+const {Question, Answer, Users, TaggedBy} = require("../models/")
 const db = require("../models/index")
 const {QueryTypes} = require("sequelize");
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
         classId: classId
-    }
+    },
+    include: Users
 });
 
 exports.getQuestionsWithTags = async (classId) => {
@@ -26,11 +27,14 @@ exports.getQuestionsWithTags = async (classId) => {
 exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
     where: {
         questionId: questionId
-    }
+    },
+    include: Users
 });
 
-exports.addQuestion = async (classId, title, description, tags) => {
+
+exports.addQuestion = async (userId, classId, title, description, tags) => {
     await Question.create({
+        userId: userId,
         classId: classId,
         title: title,
         description: description,
@@ -47,4 +51,18 @@ exports.addQuestion = async (classId, title, description, tags) => {
     }
 
     return "Created a question"
+};
+
+exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
+    await Answer.create({
+        userId: userId,
+        classId: classId,
+        questionId: questionId,
+        parentId: parentId,
+        description: description,
+        wasReported: false,
+        isActive: true
+    })
+
+    return "Created an answer"
 };

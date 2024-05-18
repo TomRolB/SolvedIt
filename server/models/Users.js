@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.associate = (models) => {
         Users.hasMany(models.IsInClass, {foreignKey: "userId"})
         Users.hasMany(models.InviteCode, {foreignKey: "userId"})
+        Users.hasMany(models.Question, {foreignKey: "userId"})
     }
 
     return Users

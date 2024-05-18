@@ -1,5 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define("Answer", {
+    const Answer = sequelize.define("Answer", {
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         classId: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -10,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         parentId: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            // if its parent is the question per se, then
+            // the parent question is null
+            allowNull: true
         },
         description: {
             type: DataTypes.STRING,
@@ -20,9 +26,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        IsActive: {
+        isActive: {
             type: DataTypes.BOOLEAN,
             allowNull: false
         }
     })
+
+    Answer.associate = (models) => {
+        Answer.belongsTo(models.Users, {foreignKey: "userId"})
+        Answer.belongsTo(models.Class, {foreignKey: "classId"})
+        Answer.belongsTo(models.Question, {foreignKey: "questionId"})
+    }
+
+    return Answer
 }

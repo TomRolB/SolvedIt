@@ -1,4 +1,4 @@
-import {redirect, useParams} from "react-router-dom";
+import {redirect, useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
@@ -41,10 +41,14 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                     questions.map((questionInfo) => {
                         console.log(questionInfo)
                         if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
-                            return (<h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + "No tags"}</h1>)
+                            return (
+                              <Question key={questionInfo.id} questionInfo={questionInfo}/>
+//                               <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + "No tags"}</h1>
+                            )
                         }
                         return(
-                            <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + questionInfo[2]}</h1>
+                             <Question key={questionInfo.id} questionInfo={questionInfo}/>
+//                             <h1>{"title: " + questionInfo[0]+ ", description: " + questionInfo[1] + ", tags: " + questionInfo[2]}</h1>
                         )
                     })
                 )
@@ -53,7 +57,25 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log(err)
                 console.log("Question error")
             })
-    }, []);
+    }, [questions]);
+
+    const navigate = useNavigate()
+    function handleQuestionClick(questionInfo) {
+        navigate(
+            "/class/" + id + "/question/" + questionInfo.id,
+            { state: questionInfo })
+    }
+
+    const Question = ({questionInfo}) => {
+        return <div onClick={() => handleQuestionClick(questionInfo)} className="bg-gray-800 rounded-2xl p-3 m-1">
+            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+        </div>
+    }
+
+    const Questions = () => {
+        return questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>
+    }
 
     const CourseInfo = () => {
         if (classInfo === null) return (<h1>Class not found</h1>)
@@ -98,8 +120,9 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         </button>
                     </div>
                 }
+                <Questions/>
                 {/*<Questions/>*/}
-                {questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>}
+//                 {questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>}
             </div>
         </div>
     )

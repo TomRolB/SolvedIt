@@ -1,5 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     const Question = sequelize.define("Question", {
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         classId: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -21,8 +25,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     })
+
     Question.associate = (models) => {
+        Question.hasMany(models.Answer, {foreignKey: "questionId"})
+        Question.belongsTo(models.Users, {foreignKey: "userId"})
         Question.hasMany(models.TaggedBy, {foreignKey: "questionId"})
     }
+
     return Question
 }

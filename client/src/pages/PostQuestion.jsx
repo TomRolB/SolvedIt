@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import Select from "react-select";
 
@@ -27,6 +27,7 @@ export function PostQuestion() {
         setDescription(event.target.value)
     }
 
+    const navigate = useNavigate()
     function handleFormSubmit(event) {
         event.preventDefault()
         axios
@@ -37,7 +38,10 @@ export function PostQuestion() {
                 description: description,
                 tags: selectedOptions
             })
-            .then((res) => console.log(res))
+            .then((res) => {
+                console.log(res)
+                navigate("/class/" + id)
+            })
             .catch((err) => console.log(err))
     }
 
