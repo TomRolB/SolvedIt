@@ -28,12 +28,43 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 for (let question of res.data) {
                     if (questions[question.id] === undefined) {
                         if (question.tagName === null) {
-                            questions[question.id] = [question.title, question.description, []]
+                            questions[question.id] = {
+                                id: question.id,
+                                title: question.title,
+                                description: question.description,
+                                classId: question.classId,
+                                wasReported: question.wasReported,
+                                isActive: question.isActive,
+                                tagId: question.tagId,
+                                tagName: question.tagName,
+                                userId: question.userId,
+                                User: {
+                                    userId: question.userId,
+                                    firstName: question.firstName,
+                                    lastName: question.lastName,
+                                },
+                                tags: []
+                            }
                         } else {
-                            questions[question.id] = [question.title, question.description, [question.tagName]]
+                            questions[question.id] = {
+                                id: question.id,
+                                title: question.title,
+                                description: question.description,
+                                classId: question.classId,
+                                wasReported: question.wasReported,
+                                isActive: question.isActive,
+                                tagId: question.tagId,
+                                tagName: question.tagName,
+                                User: {
+                                    userId: question.userId,
+                                    firstName: question.firstName,
+                                    lastName: question.lastName,
+                                },
+                                tags: [question.tagName]
+                            }
                         }
                     } else {
-                        questions[question.id][2].push(question.tagName)
+                        questions[question.id].tags.push(question.tagName)
                     }
                 }
                 console.log(questions)
@@ -122,7 +153,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 }
                 <Questions/>
                 {/*<Questions/>*/}
-//                 {questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>}
+{/*//                 {questions.length > 0 ? questions : <h1>{"There are no questions yet"}</h1>}*/}
             </div>
         </div>
     )

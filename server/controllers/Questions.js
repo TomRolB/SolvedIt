@@ -11,10 +11,11 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
 
 exports.getQuestionsWithTags = async (classId) => {
     const questionsWithTags = await db.sequelize.query(`
-        SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName
+        SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions 
         LEFT JOIN TaggedBies ON Questions.id = TaggedBies.questionId
         LEFT JOIN Tags ON TaggedBies.tagId = Tags.id
+        LEFT JOIN Users ON Questions.userId = Users.id
         WHERE Questions.classId = ?`, {
             replacements: [classId],
             type: QueryTypes.SELECT,
