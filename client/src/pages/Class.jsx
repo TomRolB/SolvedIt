@@ -86,7 +86,8 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log(err)
                 console.log("Question error")
             })
-    }, [questions]);
+    // }, [questions]);
+    }, []);
 
     const navigate = useNavigate()
     function handleQuestionClick(questionInfo) {

@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import * as PropTypes from "prop-types";
+import {Navbar} from "../components/Navbar";
 
 function Question({questionInfo}) {
     const [isBeingReplied, setIsBeingReplied] = useState(false)
     const [answerDescription, setAnswerDescription] = useState("")
-
     function handleTextChange(event) {
         setAnswerDescription(event.target.value)
     }
@@ -50,6 +50,8 @@ export function QuestionPage() {
     const location = useLocation()
     const questionInfo = location.state
     const [answers, setAnswers] = useState([])
+    const navigate = useNavigate()
+    let {id} = useParams()
 
     useEffect(() => {
         axios
@@ -103,7 +105,9 @@ export function QuestionPage() {
     }
 
     function createAnswersRecursively(answer, answerMap, result) {
-        result.push(<h1 key={answer.id}>{answer.description}</h1>)
+        // result.push(<h1 key={answer.id}>{answer.description}</h1>)
+        result.push(<Reply key={answer.id} answer={answer}/>)
+        console.log(answer)
         console.log(`Result up to now: ${result}`)
 
 
@@ -112,8 +116,31 @@ export function QuestionPage() {
         }
     }
 
-    return <>
-        <Question questionInfo={questionInfo}/>
-        {answers.length > 0 ? answers : <h1>{"This question has no answers. Be the first to reply!"}</h1>}
-    </>
+    const handleReturn = () => {
+        navigate("/class/" + id)
+    }
+
+    const Reply = ({answer}) => {
+        return (
+            <div className="flex items-start gap-2.5 m-2">
+                <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                    </div>
+                    <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            <Navbar></Navbar>
+            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
+                <Question questionInfo={questionInfo}/>
+                {answers.length > 0 ? answers : <h1>{"This question has no answers. Be the first to reply!"}</h1>}
+            </div>
+        </div>
+    )
 }
