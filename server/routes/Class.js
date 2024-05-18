@@ -6,6 +6,7 @@ const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const {Sequelize} = require("sequelize");
+const Tags = require("../controllers/Tags");
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -42,6 +43,21 @@ router.put("/byId/:id/edit", async (req, res) => {
     console.log(id)
     await Class.update({name: classInfo.name, description: classInfo.description}, {where: {id: id}})
     res.json({message: "Class updated"})
+})
+
+router.post('/byId/:id/create-tag', async (req, res) => {
+    const tagInfo = req.body
+    // const userId = await Auth.getUserId(tagInfo.uuid).id
+    console.log("sanofinsnnsnsnssnsnssvvvvvvvvv")
+    console.log(tagInfo)
+    const result = await Tags.addTag(tagInfo.name, tagInfo.classId)
+    res.send(result)
+})
+
+router.get("/byId/:id/post-question", async (req, res) => {
+    const classId = req.params.id
+    const result = await Tags.getTagsOfClass(classId)
+    res.json(result)
 })
 
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
