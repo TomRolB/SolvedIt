@@ -168,7 +168,7 @@ export function Invites() {
                     <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
                 </form>
                 <Subtitle text={"Link"}></Subtitle>
-                <Copy text={`http://www.solvedit.com/enroll-to/${id}`}></Copy>
+                <Copy text={`http://localhost:3000/enroll-to/${id}`}></Copy>
             </div>
         </div>
     ) : null

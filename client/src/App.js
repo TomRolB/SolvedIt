@@ -11,12 +11,12 @@ import {DeleteUser} from "./pages/deleteUser";
 import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
-import {ClassEnroll} from "./pages/ClassEnroll";
 import {PostQuestion} from "./pages/PostQuestion";
 import {QuestionPage} from "./pages/QuestionPage";
 import {CreateTag} from "./pages/CreateTag";
 import {ViewTags} from "./pages/ViewTags";
 import {EditTag} from "./pages/EditTag";
+import {ClassEnroll} from "./utils/ClassEnroll";
 
 
 function App(props) {
@@ -38,6 +38,11 @@ function App(props) {
             .catch(err => console.log(err))
 
         return uuid != null ? page : <Login uuid={uuid} setUuid={setUuid}/>;
+    }
+
+    function redirectPath() {
+        let cond = ClassEnroll()
+        return cond ? <Class uuid={uuid} setUuid={setUuid} /> : <Home uuid={uuid} setUuid={setUuid()}/> ;
     }
 
     return (
@@ -63,7 +68,7 @@ function App(props) {
                 <Route path="/class/:id/edit-tag/:tagId" element={getPageIfLoggedIn(<EditTag/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
-                <Route path="/enroll-class" element={getPageIfLoggedIn(<ClassEnroll uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/enroll-to/:id" element={getPageIfLoggedIn(redirectPath())}></Route>
             </Routes>
         </BrowserRouter>
     );
