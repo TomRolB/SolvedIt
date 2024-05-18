@@ -93,6 +93,7 @@ export function Invites() {
 
     useEffect(() => {
         checkUserIsAdmin()
+        console.log(isAdmin)
         if (isAdmin) fetchCodes()
     }, [isAdmin])
 
