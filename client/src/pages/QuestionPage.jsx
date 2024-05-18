@@ -33,6 +33,7 @@ function Question({questionInfo}) {
     return <div className="bg-gray-800 rounded-2xl p-3 m-1">
         <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
         <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+        {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
         <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
         {!isBeingReplied
             ? <button className="text-amber-50" onClick={() => setIsBeingReplied(true)}>Reply</button>
