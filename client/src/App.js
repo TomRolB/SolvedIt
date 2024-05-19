@@ -11,8 +11,12 @@ import {DeleteUser} from "./pages/deleteUser";
 import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
-import {ClassEnroll} from "./utils/ClassEnroll";
 import {PostQuestion} from "./pages/PostQuestion";
+import {QuestionPage} from "./pages/QuestionPage";
+import {CreateTag} from "./pages/CreateTag";
+import {ViewTags} from "./pages/ViewTags";
+import {EditTag} from "./pages/EditTag";
+import {ClassEnroll} from "./utils/ClassEnroll";
 
 
 function App(props) {
@@ -58,6 +62,10 @@ function App(props) {
                 <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
                 <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
+                <Route path="/class/:id/question/:qid" element={getPageIfLoggedIn(<QuestionPage/>)}></Route>
+                <Route path="/class/:id/create-tag" element={getPageIfLoggedIn(<CreateTag/>)}></Route>
+                <Route path="/class/:id/view-tags" element={getPageIfLoggedIn(<ViewTags/>)}></Route>
+                <Route path="/class/:id/edit-tag/:tagId" element={getPageIfLoggedIn(<EditTag/>)}></Route>
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/enroll-to/:id" element={getPageIfLoggedIn(redirectPath())}></Route>
