@@ -4,52 +4,11 @@ import axios from "axios";
 import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
 
-function Question({questionInfo}) {
-    const [isBeingReplied, setIsBeingReplied] = useState(false)
-    const [answerDescription, setAnswerDescription] = useState("")
-    function handleTextChange(event) {
-        setAnswerDescription(event.target.value)
-    }
-
-    function handleAnswerSubmit(event) {
-        event.preventDefault() //Prevents page from refreshing
-        // TODO: this only allows answer creation for the question, not
-        //  for the subAnswers. Have to handle the case of the latter.
-        axios
-            .post("/question/post-answer", {
-                uuid: localStorage.getItem("uuid"),
-                classId: questionInfo.classId,
-                questionId: questionInfo.id,
-                parentId: null,
-                description: answerDescription
-            })
-            .then((res) => {
-                // TODO: refresh so that answer is rendered
-                console.log(res)
-            })
-            .catch(err => console.log(err))
-    }
-
-    return <div className="bg-gray-800 rounded-2xl p-3 m-1">
-        <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-        <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
-        {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
-        <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
-        {!isBeingReplied
-            ? <button className="text-amber-50" onClick={() => setIsBeingReplied(true)}>Reply</button>
-            : <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/>
-                <input type="submit" value="Submit"/>
-            </form>}
-    </div>;
-}
-
-Question.propTypes = {questionInfo: PropTypes.any};
-
 export function QuestionPage() {
     const location = useLocation()
     const questionInfo = location.state
     const [answers, setAnswers] = useState([])
+    const [answersLen, setAnswersLen] = useState(0)
     const navigate = useNavigate()
     let {id} = useParams()
 
@@ -66,7 +25,47 @@ export function QuestionPage() {
                 console.log(err)
                 console.log("Answer error")
             })
-    }, []);
+    }, [answersLen]);
+
+    function Question({questionInfo}) {
+        const [isBeingReplied, setIsBeingReplied] = useState(false)
+        const [answerDescription, setAnswerDescription] = useState("")
+        function handleTextChange(event) {
+            setAnswerDescription(event.target.value)
+        }
+
+        function handleAnswerSubmit(event) {
+            event.preventDefault() //Prevents page from refreshing
+            // TODO: this only allows answer creation for the question, not
+            //  for the subAnswers. Have to handle the case of the latter.
+            axios
+                .post("/question/post-answer", {
+                    uuid: localStorage.getItem("uuid"),
+                    classId: questionInfo.classId,
+                    questionId: questionInfo.id,
+                    parentId: null,
+                    description: answerDescription
+                })
+                .then((res) => {
+                    setAnswersLen(0)
+                })
+                .catch(err => console.log(err))
+        }
+
+        return <div className="bg-gray-800 rounded-2xl p-3 m-1">
+            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+            {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+            <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
+            {!isBeingReplied
+                ? <button className="text-amber-50" onClick={() => setIsBeingReplied(true)}>Reply</button>
+                : <form onSubmit={handleAnswerSubmit}>
+                    <input type="text" onChange={handleTextChange}/>
+                    <input type="submit" value="Submit"/>
+                </form>}
+        </div>;
+    }
+
 
     // TODO: could definitely be improved (you can probably create
     //  the tree using only collection methods)
@@ -100,6 +99,7 @@ export function QuestionPage() {
         })
 
         setAnswers(result)
+        setAnswersLen(result.length)
     }
 
     function createAnswersRecursively(answer, answerMap, result, extraMargin) {
@@ -135,20 +135,17 @@ export function QuestionPage() {
                     description: answerDescription
                 })
                 .then((res) => {
-                    // TODO: refresh so that answer is rendered
-                    console.log(res)
+                    setAnswersLen(0)
                 })
                 .catch(err => console.log(err))
         }
 
-        console.log(`extraMargin for answer ${answer.id}: ${extraMargin}`)
         function getDynamicClassName() {
             // TODO: make it dynamic, if possible
             if (extraMargin === 1) return "flex items-start justify-start gap-2.5 ml-5 m-2";
             if (extraMargin === 2) return "flex items-start justify-start gap-2.5 ml-10 m-2";
             if (extraMargin === 3) return "flex items-start justify-start gap-2.5 ml-20 m-2";
-            if (extraMargin === 4) return "flex items-start justify-start gap-2.5 ml-25 m-2";
-            if (extraMargin === 5) return "flex items-start justify-start gap-2.5 ml-30 m-2";
+            if (extraMargin === 4) return "flex items-start justify-start gap-2.5 ml-30 m-2";
         }
 
         return (
