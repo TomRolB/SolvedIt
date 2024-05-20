@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink} = require("../models")
+const { Class, IsInClass, InviteLink, Users} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
@@ -80,7 +80,6 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
 })
 
 router.get("/byId/:id/members", async(req,res) =>{
-    console.log("Entré gato")
     const id = req.params.id
     let idString = id.toString()
     let query = `SELECT u.id, firstName, lastName, email, password, u.createdAt, u.updatedAt, permissions, isTeacher
@@ -88,5 +87,18 @@ from users u
 JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = ${idString}`
     const classMembers = await db.sequelize.query(query, {type: QueryTypes.SELECT})
     res.send(classMembers)
+})
+
+router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
+    const classId = req.params.id
+    const userId = req.params.userId
+    console.log(userId)
+    await IsInClass.destroy({
+        where:{
+            userId: userId,
+            classId: classId
+        }
+    })
+    res.send("User successfully kicked")
 })
 module.exports = router

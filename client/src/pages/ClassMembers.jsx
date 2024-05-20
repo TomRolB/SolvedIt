@@ -2,12 +2,9 @@ import {Navbar} from "../components/Navbar";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import axios from "axios";
-import {useUserUuid} from "../hooks/useUserUuid";
 
 export const ClassMembers =() =>{
-    const [uuid, setUuid] = useUserUuid()
     const classId = useParams().id
-    console.log(classId)
     let [members, setMembers] = useState([])
     const [isAdmin, setIsAdmin] = useState(false)
 
@@ -31,7 +28,8 @@ export const ClassMembers =() =>{
     }, [classId, isAdmin]);
 
     let image = require("../media/image.jpg")
-    let getStudentEntry = (student) =>{
+    const getStudentEntry = (student) =>{
+        if(student.permissions !== "owner")
         return <tbody>
         <tr>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -57,11 +55,23 @@ export const ClassMembers =() =>{
                 </p>
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-									<button><a href="#">Kick student from class</a></button>
+                {/*TODO: create the button to report them (but that's further)*/}
+									<button onClick={()=>handleUserKick(student)} type="button"
+                                            className="focus:outline-none text-white bg-red-700 hover:bg-green-800 focus:ring-4
+                                            focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600
+                                            dark:hover:bg-red-700 dark:focus:ring-red-800"><a>Kick student from class</a></button>
             </td>
         </tr>
         </tbody>
     }
+
+    const handleUserKick = async (student) => {
+        console.log(student.id)
+        await axios.post(`/class/byId/${classId}/kick-user/${student.id}`).
+        then(res => console.log(res)).
+        catch(err => console.log(err))
+    }
+
     return (
         <div>
         <Navbar></Navbar>
@@ -73,23 +83,23 @@ export const ClassMembers =() =>{
                 <div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                            <table class="min-w-full leading-normal">
+                            <table className="min-w-full leading-normal">
                                 <thead>
                                 <tr>
                                     <th
-                                        class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Name
                                     </th>
                                     <th
-                                        class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Role
                                     </th>
                                     <th
-                                        class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Created at
                                     </th>
                                     <th
-                                        class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Action
                                     </th>
                                 </tr>
