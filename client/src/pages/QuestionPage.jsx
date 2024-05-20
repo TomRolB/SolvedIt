@@ -126,31 +126,61 @@ export function QuestionPage() {
         confirmAlert({
             title: 'Report Question:',                        // Title dialog
             message: `Question: ${questionInfo.title}`,               // Message dialog
-            confirmLabel: 'Confirm',                           // Text button confirm
-            cancelLabel: 'Cancel',                             // Text button cancel
-            onConfirm: () => confirmQuestionReport(questionInfo),    // Action after Confirm
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => confirmQuestionReport(questionInfo)
+                },
+                {
+                    label: 'No',
+                    onClick: () => {}
+                }
+            ],
             overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
         })
     }
 
     const confirmQuestionReport = (questionInfo) => {
-
+        axios
+            .put("/question/report-question", {
+                uuid: localStorage.getItem("uuid"),
+                id: questionInfo.id
+            })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch(err => console.log(err))
     }
 
     function handleAnswerReport(answer) {
         console.log(answer)
         confirmAlert({
-            title: 'Report Question:',                        // Title dialog
-            message: `Question: ${answer.description}`,               // Message dialog
-            confirmLabel: 'Confirm',                           // Text button confirm
-            cancelLabel: 'Cancel',                             // Text button cancel
-            onConfirm: () => alert('Action after Confirm'),    // Action after Confirm
+            title: 'Report Answer:',                        // Title dialog
+            message: `Answer: ${answer.description}`,               // Message dialog
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => confirmAnswerReport(answer)
+                },
+                {
+                    label: 'No',
+                    onClick: () => {}
+                }
+            ],
             overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
         })
     }
 
     const confirmAnswerReport = (answer) => {
-
+        axios
+            .put("/question/report-answer", {
+                uuid: localStorage.getItem("uuid"),
+                id: answer.id
+            })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch(err => console.log(err))
     }
 
     const Reply = ({answer, extraMargin}) => {
