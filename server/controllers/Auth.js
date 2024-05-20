@@ -151,7 +151,6 @@ exports.getUserId = (uuid) => {
 }
 
 exports.isAdmin = async (uuid, classId) => {
-    console.log(`Checking if user with uuid ${uuid} is admin`)
     const userId = this.getUserId(uuid).id
 
     const dbUserInClass = await IsInClass.findOne({

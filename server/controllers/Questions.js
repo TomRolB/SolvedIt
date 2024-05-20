@@ -25,12 +25,21 @@ exports.getQuestionsWithTags = async (classId) => {
     return questionsWithTags
 }
 
-exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
-    where: {
-        questionId: questionId
-    },
-    include: Users
-});
+exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
+    const answers = await Answer
+        .findAll({
+            where: {
+                questionId: questionId
+            },
+            include: Users
+        })
+
+    answers.forEach((answer) => {
+        return answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+    })
+
+    return answers
+};
 
 
 exports.addQuestion = async (userId, classId, title, description, tags) => {

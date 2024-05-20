@@ -33,7 +33,9 @@ router.get("/answers", async (req, res) => {
 
     if (!isInClass) return
 
-    const result = await Questions.getAnswersToQuestion(questionId)
+    const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
+
+    const result = await Questions.getAnswersToQuestion(questionId, userId, isAdmin)
     res.send(result)
 })
 

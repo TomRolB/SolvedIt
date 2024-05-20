@@ -94,7 +94,7 @@ export function QuestionPage() {
     }
 
     function createAnswersRecursively(answer, answerMap, result, extraMargin) {
-        // result.push(<h1 key={answer.id}>{answer.description}</h1>)
+        console.log(answer)
         result.push(<Reply key={answer.id} answer={answer} extraMargin={extraMargin}/>)
 
         if (answerMap.has(answer.id)) {
@@ -162,9 +162,12 @@ export function QuestionPage() {
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
                 </button>
-                <button onClick={handleReplyDelete}
-                        className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
-                </button>
+
+                {answer.canBeDeleted
+                    ? <button onClick={handleReplyDelete}
+                              className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
+                    </button>
+                    : null}
             </div>;
         }
 
