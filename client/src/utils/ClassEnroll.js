@@ -16,7 +16,6 @@ export const ClassEnroll = async () => {
         if(!response){
             return false;
         }
-        console.log(id)
         return responseValue.length !== 0;
     }
 
