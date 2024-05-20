@@ -75,4 +75,21 @@ router.post('/post-answer', async (req, res) => {
     res.send(result)
 })
 
+router.delete('/answer', async (req, res) => {
+    const classId = req.body.classId
+    const userId = Auth.getUserId(req.body.uuid).id
+    const isInClass = await IsInClass.findOne({
+        where: {
+            classId: classId,
+            userId: userId
+        }
+    })
+
+    if (!isInClass) return
+
+    console.log(`router.delete(${req.body.answerId})`)
+    await Questions.deleteAnswer(req.body.answerId)
+    res.send("Deleted question")
+})
+
 module.exports = router
