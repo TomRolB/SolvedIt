@@ -1,17 +1,21 @@
 import {useUserUuid} from "../hooks/useUserUuid";
 import "../styles/LinkEnterPopUp.css"
+import {useEffect, useState} from "react";
 
 export const ClassEnroll = async () => {
     let [uuid, setUuid] = useUserUuid()
     let link = window.location.href
-    const classIdFormat = /[^/]+(?=\/$|$)/i
+    const classIdFormat = /\d+(?!.*\d)/i
     let id = Number(link.match(classIdFormat))
 
     let redirectable = false;
 
-    async function notEmptyResponse(s) {
-        const response = await fetch(s)
+    async function notEmptyResponse(endpoint) {
+        const response = await fetch(endpoint)
         const responseValue = await response.json()
+        if(!response){
+            return false;
+        }
         return responseValue.length !== 0;
     }
 
@@ -41,7 +45,7 @@ export const ClassEnroll = async () => {
             }
             else{
                 let response = await fetch(`http://localhost:3001/class/${uuid}/enroll-to/${id}`, {method:'POST'})
-                let message = response.json().message
+                let message = await response.json().message
                 return message === "Successfully enrolled"
             }
         }
