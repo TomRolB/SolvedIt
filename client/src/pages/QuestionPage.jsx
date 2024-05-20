@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 export function QuestionPage() {
     const location = useLocation()
@@ -53,7 +54,10 @@ export function QuestionPage() {
         }
 
         return <div className="bg-gray-800 rounded-2xl p-3 m-1">
-            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+            <div className="flex justify-between">
+                <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
+            </div>
             <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
             {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
             <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
@@ -117,6 +121,38 @@ export function QuestionPage() {
         navigate("/class/" + id)
     }
 
+    const handleQuestionReport = (questionInfo) => {
+        console.log(questionInfo)
+        confirmAlert({
+            title: 'Report Question:',                        // Title dialog
+            message: `Question: ${questionInfo.title}`,               // Message dialog
+            confirmLabel: 'Confirm',                           // Text button confirm
+            cancelLabel: 'Cancel',                             // Text button cancel
+            onConfirm: () => confirmQuestionReport(questionInfo),    // Action after Confirm
+            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
+        })
+    }
+
+    const confirmQuestionReport = (questionInfo) => {
+
+    }
+
+    function handleAnswerReport(answer) {
+        console.log(answer)
+        confirmAlert({
+            title: 'Report Question:',                        // Title dialog
+            message: `Question: ${answer.description}`,               // Message dialog
+            confirmLabel: 'Confirm',                           // Text button confirm
+            cancelLabel: 'Cancel',                             // Text button cancel
+            onConfirm: () => alert('Action after Confirm'),    // Action after Confirm
+            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
+        })
+    }
+
+    const confirmAnswerReport = (answer) => {
+
+    }
+
     const Reply = ({answer, extraMargin}) => {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
@@ -151,8 +187,9 @@ export function QuestionPage() {
         return (
             <div className={getDynamicClassName()}>
                 <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                    <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                         <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                        <button type="button" onClick={() => handleAnswerReport(answer)} className="px-1.5 py-1 text-xs focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
                     </div>
                     <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
                     {!isBeingReplied
