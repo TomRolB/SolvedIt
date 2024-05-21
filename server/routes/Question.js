@@ -86,6 +86,7 @@ router.put('/report-answer', async (req, res) => {
     const id = req.body.id
     const result = await Questions.reportAnswer(id)
     res.send(result)
+})
 
 router.delete('/answer', async (req, res) => {
     const classId = req.body.classId
