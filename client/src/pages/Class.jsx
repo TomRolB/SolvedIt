@@ -38,6 +38,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 tagId: question.tagId,
                                 tagName: question.tagName,
                                 userId: question.userId,
+                                canBeDeleted: question.canBeDeleted,
                                 User: {
                                     userId: question.userId,
                                     firstName: question.firstName,
@@ -55,6 +56,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 isActive: question.isActive,
                                 tagId: question.tagId,
                                 tagName: question.tagName,
+                                canBeDeleted: question.canBeDeleted,
                                 User: {
                                     userId: question.userId,
                                     firstName: question.firstName,
@@ -67,10 +69,8 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         questions[question.id].tags.push(question.tagName)
                     }
                 }
-                console.log(questions)
                 setQuestions(
                     questions.map((questionInfo) => {
-                        console.log(questionInfo)
                         if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
                             return (
                               <Question key={questionInfo.id} questionInfo={questionInfo}/>
@@ -98,9 +98,14 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     const Question = ({questionInfo}) => {
         return <div onClick={() => handleQuestionClick(questionInfo)} className="bg-gray-800 rounded-2xl p-3 m-1">
-            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
-            {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+            {!questionInfo.isActive
+                ? <p className="text-amber-50">This question has been deleted. However, you can still see its answers.</p>
+                :<>
+                    <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                    <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+                    {questionInfo.tags.length > 0 ?
+                        <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+                </>}
         </div>
     }
 
