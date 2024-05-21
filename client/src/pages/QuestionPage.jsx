@@ -48,7 +48,7 @@ export function QuestionPage() {
                     description: answerDescription
                 })
                 .then((res) => {
-                    setAnswersLen(0)
+                    setAnswersLen(answersLen + 1)
                 })
                 .catch(err => console.log(err))
         }
