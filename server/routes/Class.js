@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink} = require("../models")
+const { Class, IsInClass, InviteLink, Users} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
-const {Sequelize} = require("sequelize");
+const sequelize = require("sequelize");
 const Tags = require("../controllers/Tags");
+const {Sequelize, QueryTypes} = require("sequelize");
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -48,7 +49,6 @@ router.put("/byId/:id/edit", async (req, res) => {
 router.post('/byId/:id/create-tag', async (req, res) => {
     const tagInfo = req.body
     // const userId = await Auth.getUserId(tagInfo.uuid).id
-    console.log("sanofinsnnsnsnssnsnssvvvvvvvvv")
     console.log(tagInfo)
     const result = await Tags.addTag(tagInfo.name, tagInfo.classId)
     res.send(result)
@@ -79,4 +79,26 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     res.send(isInClass)
 })
 
+router.get("/byId/:id/members", async(req,res) =>{
+    const id = req.params.id
+    let idString = id.toString()
+    let query = `SELECT u.id, firstName, lastName, email, password, u.createdAt, u.updatedAt, permissions, isTeacher
+from users u
+JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = ${idString}`
+    const classMembers = await db.sequelize.query(query, {type: QueryTypes.SELECT})
+    res.send(classMembers)
+})
+
+router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
+    const classId = req.params.id
+    const userId = req.params.userId
+    console.log(userId)
+    await IsInClass.destroy({
+        where:{
+            userId: userId,
+            classId: classId
+        }
+    })
+    res.send("User successfully kicked")
+})
 module.exports = router

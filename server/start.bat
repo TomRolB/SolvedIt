@@ -1,2 +1,2 @@
-start cmd /k "npm start"
-start cmd /k "cd ../client && npm start"
+start cmd /k "TITLE server && npm start"
+start cmd /k "cd ../client && TITLE client && npm start"
