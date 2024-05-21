@@ -121,4 +121,22 @@ router.delete('/question', async (req, res) => {
     res.send("Deleted question")
 })
 
+router.get("/reported-questions", async (req, res) => {
+    console.log(req)
+    const classId = req.query.classId
+    console.log(classId)
+    const reportedQuestions = await Questions.getReportedQuestions(classId)
+    console.log(reportedQuestions)
+    res.send(reportedQuestions)
+})
+
+router.get("/reported-answers", async (req, res) => {
+    console.log(req)
+    const classId = req.query.classId
+    console.log(classId)
+    const reportedQuestions = await Questions.getReportedAnswers(classId)
+    console.log(reportedQuestions)
+    res.send(reportedQuestions)
+})
+
 module.exports = router

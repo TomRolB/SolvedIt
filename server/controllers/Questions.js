@@ -123,3 +123,27 @@ exports.deleteQuestion = async (questionId) => {
     await entry.save()
 }
 
+exports.getReportedQuestions = async (classId) => {
+    return await db.sequelize.query(`
+        SELECT DISTINCT userId, firstName, lastName, Questions.id as questionId, title, description, wasReported
+        FROM Questions
+        INNER JOIN Users ON Users.id = userId
+        WHERE Questions.wasReported > 0 AND Questions.classId = ? AND Questions.isActive = true
+    `, {
+        replacements: [classId],
+        type: QueryTypes.SELECT,
+    });
+}
+
+exports.getReportedAnswers = async (classId) => {
+    return await db.sequelize.query(`
+        SELECT DISTINCT Answers.userId, Users.firstName, Users.lastName, Questions.id as questionId, title as parentTitle, Questions.description as parentDescription, Answers.description as answerDescription, Answers.id as answerId, Answers.wasReported as wasReported
+        FROM Answers
+        INNER JOIN Users ON Users.id = Answers.userId
+        INNER JOIN Questions ON Questions.id = Answers.questionId
+        WHERE Answers.wasReported > 0 AND Questions.classId = ? AND Answers.isActive = true
+    `, {
+        replacements: [classId],
+        type: QueryTypes.SELECT,
+    });
+}
