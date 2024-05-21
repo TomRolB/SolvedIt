@@ -218,6 +218,8 @@ export function QuestionPage() {
     const Reply = ({answer, extraMargin}) => {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
+        const [voteCount, setVoteCount] = useState(answer.voteCount)
+
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
         }
@@ -261,10 +263,29 @@ export function QuestionPage() {
             setAnswersLen(0)
         }
 
+        function handleUpVote() {
+            axios
+                .post('votes/upvote', {
+                    uuid: localStorage.getItem("uuid"),
+                    classId: answer.classId,
+                    answerId: answer.id
+                })
+                .then((res) => {
+                    setVoteCount(voteCount + 1)
+                })
+                .catch((err) => console.log(err))
+        }
+
         function renderButtons() {
             return <div>
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
+                </button>
+
+                <button onClick={handleUpVote}
+                        className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
+                    <i className="fa-solid fa-arrow-up"></i>
+                    {" " + voteCount}
                 </button>
 
                 {answer.canBeDeleted

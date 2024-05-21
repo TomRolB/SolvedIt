@@ -3,6 +3,7 @@ const router = express.Router()
 const Auth = require('../controllers/Auth')
 const {IsInClass} = require('../models/')
 const Questions = require('../controllers/Questions.js')
+const VoteController = require('../controllers/VoteController.js')
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
     const userId = Auth.getUserId(req.query.uuid).id
@@ -35,6 +36,11 @@ router.get("/answers", async (req, res) => {
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
     const result = await Questions.getAnswersToQuestion(questionId, userId, isAdmin)
+
+    for (const answer of result) {
+        answer.voteCount = await VoteController.voteCount(answer.id);
+    }
+
     res.send(result)
 })
 
