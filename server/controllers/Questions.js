@@ -9,7 +9,7 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     include: Users
 });
 
-exports.getQuestionsWithTags = async (classId) => {
+exports.getQuestionsWithTags = async (classId, userId, isAdmin) => {
     const questionsWithTags = await db.sequelize.query(`
         SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions 
@@ -21,16 +21,30 @@ exports.getQuestionsWithTags = async (classId) => {
             type: QueryTypes.SELECT,
         }
     );
-    console.log(questionsWithTags)
+
+    questionsWithTags.forEach((question) => {
+        console.log(question)
+        return question.canBeDeleted = question.userId === userId || isAdmin;
+    })
+
     return questionsWithTags
 }
 
-exports.getAnswersToQuestion = async (questionId) => await Answer.findAll({
-    where: {
-        questionId: questionId
-    },
-    include: Users
-});
+exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
+    const answers = await Answer
+        .findAll({
+            where: {
+                questionId: questionId
+            },
+            include: Users
+        })
+
+    answers.forEach((answer) => {
+        return answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+    })
+
+    return answers
+};
 
 
 exports.addQuestion = async (userId, classId, title, description, tags) => {
@@ -67,3 +81,45 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
 
     return "Created an answer"
 };
+
+
+exports.reportQuestion = async (questionId) => {
+    let answer = await Question.findOne({ where: { id : questionId } })
+    await Question.update({wasReported: answer.wasReported + 1}, {where: {id: questionId}})
+    return "Question reported"
+}
+
+exports.reportAnswer = async (answerId) => {
+    let answer = await Answer.findOne({ where: { id : answerId } })
+    await Answer.update({wasReported: answer.wasReported + 1}, {where: {id: answerId}})
+    return "Answer reported"
+}
+
+exports.deleteAnswer = async (answerId) => {
+    const entry = await Answer.findOne({
+        where: {
+            id: answerId
+        }
+    })
+
+    await entry.update({
+        isActive: false
+    })
+
+    await entry.save()
+}
+
+exports.deleteQuestion = async (questionId) => {
+    const entry = await Question.findOne({
+        where: {
+            id: questionId
+        }
+    })
+
+    await entry.update({
+        isActive: false
+    })
+
+    await entry.save()
+}
+

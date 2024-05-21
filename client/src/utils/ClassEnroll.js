@@ -1,4 +1,5 @@
 import "../styles/LinkEnterPopUp.css"
+import {useEffect, useState} from "react";
 
 export async function ClassEnroll()   {
     let uuid = localStorage.getItem("uuid");
@@ -16,9 +17,9 @@ export async function ClassEnroll()   {
     const alreadyEnrolled = !uuid || !id ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
     const classExists = await notEmptyResponse(`/class/byId/${id}`)
 
+
     if (!classExists) return false
     if(alreadyEnrolled) return true
-
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
     let message = await response.json()
     return message === "Successfully enrolled"
