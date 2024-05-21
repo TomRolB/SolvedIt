@@ -78,10 +78,23 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
 };
 
 exports.deleteAnswer = async (answerId) => {
-    console.log(`Deleting answer with id ${answerId}`)
     const entry = await Answer.findOne({
         where: {
             id: answerId
+        }
+    })
+
+    await entry.update({
+        isActive: false
+    })
+
+    await entry.save()
+}
+
+exports.deleteQuestion = async (questionId) => {
+    const entry = await Question.findOne({
+        where: {
+            id: questionId
         }
     })
 

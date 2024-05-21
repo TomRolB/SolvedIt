@@ -89,8 +89,24 @@ router.delete('/answer', async (req, res) => {
 
     if (!isInClass) return
 
-    console.log(`router.delete(${req.body.answerId})`)
     await Questions.deleteAnswer(req.body.answerId)
+    res.send("Deleted answer")
+})
+
+
+router.delete('/question', async (req, res) => {
+    const classId = req.body.classId
+    const userId = Auth.getUserId(req.body.uuid).id
+    const isInClass = await IsInClass.findOne({
+        where: {
+            classId: classId,
+            userId: userId
+        }
+    })
+
+    if (!isInClass) return
+
+    await Questions.deleteQuestion(req.body.questionId)
     res.send("Deleted question")
 })
 

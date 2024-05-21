@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
 
 export function QuestionPage() {
     const location = useLocation()
     const questionInfo = location.state
+    const [isQuestionActive, setIsQuestionActive] = useState(questionInfo.isActive)
     const [answers, setAnswers] = useState([])
     // The state below is simply used to refresh the page when needed
     const [answersLen, setAnswersLen] = useState(0)
@@ -51,17 +51,55 @@ export function QuestionPage() {
                 .catch(err => console.log(err))
         }
 
+        function handleQuestionDelete() {
+            axios
+                .delete('/question/question', {
+                    data: {
+                        uuid: localStorage.getItem("uuid"),
+                        classId: questionInfo.classId,
+                        questionId: questionInfo.id
+                    }
+                })
+                .then((res) => console.log(res))
+                .catch((err) => console.log(err))
+
+            setIsQuestionActive(false)
+        }
+
+        function renderButtons() {
+            return <>
+                <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={() => setIsBeingReplied(true)}>Reply</button>
+                <button onClick={handleQuestionDelete}
+                        className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
+                </button>
+            </>
+        }
+
+        function renderForm() {
+            return <form onSubmit={handleAnswerSubmit}>
+                <input type="text" onChange={handleTextChange}/>
+                <input type="submit" value="Submit"/>
+            </form>;
+        }
+
+        function renderContents() {
+            return <>
+                <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+                {questionInfo.tags.length > 0 ?
+                    <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+                <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
+                {!isBeingReplied
+                    ? renderButtons()
+                    : renderForm()
+                }
+            < />
+        }
+
         return <div className="bg-gray-800 rounded-2xl p-3 m-1">
-            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
-            {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
-            <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
-            {!isBeingReplied
-                ? <button className="text-amber-50" onClick={() => setIsBeingReplied(true)}>Reply</button>
-                : <form onSubmit={handleAnswerSubmit}>
-                    <input type="text" onChange={handleTextChange}/>
-                    <input type="submit" value="Submit"/>
-                </form>}
+            {!isQuestionActive
+                ? <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{"This question has been deleted. However, you can still see its answers."}</p>
+                : renderContents()}
         </div>;
     }
 
@@ -140,9 +178,6 @@ export function QuestionPage() {
         }
 
         function handleReplyDelete() {
-            console.log("Deleting answer:")
-            console.log(answer)
-
             axios
                 .delete('/question/answer', {
                     data: {
@@ -196,7 +231,7 @@ export function QuestionPage() {
                 <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
                     {!answer.isActive
                         ?
-                        <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{"This answer was deleted"}</p>
+                        <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{"This answer has been deleted"}</p>
                         : renderContents()}
                 </div>
             </div>
