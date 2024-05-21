@@ -29,9 +29,11 @@ function App(props) {
     // }, []);
 
     const [uuid, setUuid] = useState(localStorage.getItem("uuid") || null)
+    const [isEnrolled, setIsEnrolled] = useState(false)
 
     function getPageIfLoggedIn(page) {
-        axios
+        if (uuid === null)
+            axios
             .post("/users/isLoggedIn", {uuid: uuid})
             .then((res) => {
                 if (!res.data.isLoggedIn) setUuid(null)
@@ -41,9 +43,9 @@ function App(props) {
         return uuid != null ? page : <Login uuid={uuid} setUuid={setUuid}/>;
     }
 
-    async function redirectPath() {
-        let cond = await ClassEnroll()
-        return cond ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
+    function redirectPath() {
+        ClassEnroll().then(value => setIsEnrolled(value))
+        return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
     }
 
     return (
