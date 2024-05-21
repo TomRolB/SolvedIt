@@ -273,7 +273,11 @@ export function QuestionPage() {
                     undoingVote: hasUserVotedIt
                 })
                 .then((res) => {
-                    setVoteCount(voteCount + hasUserVotedIt? -1 : 1)
+                    console.log(voteCount)
+                    console.log(hasUserVotedIt)
+                    if (hasUserVotedIt) setVoteCount(voteCount - 1)
+                    else setVoteCount(voteCount + 1)
+
                     setHasUserVotedIt(!hasUserVotedIt)
                 })
                 .catch((err) => console.log(err))
