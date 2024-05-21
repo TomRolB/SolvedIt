@@ -14,15 +14,15 @@ router.get("/questions", async (req, res) => {
     })
 
     if (!isInClass) return
+    const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
-    const result = await Questions.getQuestionsWithTags(classId)
+    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin)
     res.send(result)
 })
 
 router.get("/answers", async (req, res) => {
     const classId = req.query.classId
     const questionId = req.query.questionId
-    console.log(`When querying answers, got questionId ${questionId}`)
     const userId = Auth.getUserId(req.query.uuid).id
     const isInClass = await IsInClass.findOne({
         where: {
@@ -32,7 +32,6 @@ router.get("/answers", async (req, res) => {
     })
 
     if (!isInClass) return
-
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
     const result = await Questions.getAnswersToQuestion(questionId, userId, isAdmin)

@@ -9,7 +9,7 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     include: Users
 });
 
-exports.getQuestionsWithTags = async (classId) => {
+exports.getQuestionsWithTags = async (classId, userId, isAdmin) => {
     const questionsWithTags = await db.sequelize.query(`
         SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions 
@@ -21,7 +21,12 @@ exports.getQuestionsWithTags = async (classId) => {
             type: QueryTypes.SELECT,
         }
     );
-    console.log(questionsWithTags)
+
+    questionsWithTags.forEach((question) => {
+        console.log(question)
+        return question.canBeDeleted = question.userId === userId || isAdmin;
+    })
+
     return questionsWithTags
 }
 

@@ -38,6 +38,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 tagId: question.tagId,
                                 tagName: question.tagName,
                                 userId: question.userId,
+                                canBeDeleted: question.canBeDeleted,
                                 User: {
                                     userId: question.userId,
                                     firstName: question.firstName,
@@ -55,6 +56,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 isActive: question.isActive,
                                 tagId: question.tagId,
                                 tagName: question.tagName,
+                                canBeDeleted: question.canBeDeleted,
                                 User: {
                                     userId: question.userId,
                                     firstName: question.firstName,
@@ -67,10 +69,8 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         questions[question.id].tags.push(question.tagName)
                     }
                 }
-                console.log(questions)
                 setQuestions(
                     questions.map((questionInfo) => {
-                        console.log(questionInfo)
                         if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
                             return (
                               <Question key={questionInfo.id} questionInfo={questionInfo}/>
