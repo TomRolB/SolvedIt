@@ -18,6 +18,7 @@ import {ViewTags} from "./pages/ViewTags";
 import {EditTag} from "./pages/EditTag";
 import {ClassEnroll} from "./utils/ClassEnroll";
 import {ClassMembers} from "./pages/ClassMembers";
+import {ReportedQuestions} from "./pages/ReportedQuestions";
 
 
 function App(props) {
@@ -57,11 +58,9 @@ function App(props) {
                 <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid} />, uuid, setUuid) }></Route>
                 <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
                 <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
-
                 <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
                 <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
                 <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
-
                 <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
                 <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
@@ -72,8 +71,8 @@ function App(props) {
                 <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
                 <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/view-members" element={getPageIfLoggedIn(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
-
                 <Route path="/enroll-to/:id" element={getPageIfLoggedIn(redirectPath())}></Route>
+                <Route path="/class/:id/reported" element={getPageIfLoggedIn(<ReportedQuestions></ReportedQuestions>)}></Route>
             </Routes>
         </BrowserRouter>
     );
