@@ -69,7 +69,7 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
 };
 
 exports.reportQuestion = async (questionId) => {
-    let answer = await Answer.findOne({ where: { id : questionId } })
+    let answer = await Question.findOne({ where: { id : questionId } })
     await Question.update({wasReported: answer.wasReported + 1}, {where: {id: questionId}})
     return "Question reported"
 }
