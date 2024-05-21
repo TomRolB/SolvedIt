@@ -40,7 +40,8 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
         })
 
     answers.forEach((answer) => {
-        return answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+        answer.dataValues.belongsToThisUser = answer.userId === userId;
+        answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
     })
 
     return answers

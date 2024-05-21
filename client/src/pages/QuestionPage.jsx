@@ -265,6 +265,8 @@ export function QuestionPage() {
         }
 
         function handleVote() {
+            if (answer.belongsToThisUser) return
+
             axios
                 .post('/votes/upvote', {
                     uuid: localStorage.getItem("uuid"),
