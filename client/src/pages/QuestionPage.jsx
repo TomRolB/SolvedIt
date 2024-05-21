@@ -14,6 +14,7 @@ export function QuestionPage() {
     const [answersLen, setAnswersLen] = useState(0)
     const navigate = useNavigate()
     let {id} = useParams()
+    let [isTeacher, setIsTeacher] = useState(false)
 
     useEffect(() => {
         axios
@@ -28,7 +29,16 @@ export function QuestionPage() {
                 console.log(err)
                 console.log("Answer error")
             })
-    }, [answersLen]);
+
+        let uuid = localStorage.getItem("uuid")
+        axios.get(`/${uuid}/enrolled-in/${questionInfo.classId}` )
+            .then(res => setIsTeacher(res.data.isTeacher))
+            .catch(err => console.log(err))
+
+        console.log(isTeacher)
+
+
+    }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
@@ -261,17 +271,30 @@ export function QuestionPage() {
             setAnswersLen(0)
         }
 
+        function handleVerify() {
+            axios.put("/question/answer/validate", {data: {
+                    uuid: localStorage.getItem("uuid"),
+                    classId: answer.classId,
+                    answerId: answer.id
+                }}).then(res => console.log("updated: " + res)).catch(err=> console.log(err))
+        }
+
         function renderButtons() {
             return <div>
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
                 </button>
-
                 {answer.canBeDeleted
                     ? <button onClick={handleReplyDelete}
                               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
                     </button>
                     : null}
+                {isTeacher ?
+                    <button className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm
+                    px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+                            onClick={handleVerify}>
+                        Validate</button> :null}
+                {/*TODO: replace "validate" with a green tick*/}
             </div>;
         }
 
