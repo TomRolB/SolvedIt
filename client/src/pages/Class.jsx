@@ -98,9 +98,14 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     const Question = ({questionInfo}) => {
         return <div onClick={() => handleQuestionClick(questionInfo)} className="bg-gray-800 rounded-2xl p-3 m-1">
-            <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-            <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
-            {questionInfo.tags.length > 0 ? <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+            {!questionInfo.isActive
+                ? <p className="text-amber-50">This question has been deleted. However, you can still see its answers.</p>
+                :<>
+                    <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                    <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
+                    {questionInfo.tags.length > 0 ?
+                        <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
+                </>}
         </div>
     }
 
