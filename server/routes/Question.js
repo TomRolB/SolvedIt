@@ -38,7 +38,8 @@ router.get("/answers", async (req, res) => {
     const result = await Questions.getAnswersToQuestion(questionId, userId, isAdmin)
 
     for (const answer of result) {
-        answer.voteCount = await VoteController.voteCount(answer.id);
+        answer.dataValues.voteCount = await VoteController.voteCount(answer.id);
+        answer.dataValues.hasUserVotedIt = await VoteController.hasUserVoted(answer.id, userId)
     }
 
     res.send(result)
