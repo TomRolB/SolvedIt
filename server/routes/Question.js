@@ -76,6 +76,17 @@ router.post('/post-answer', async (req, res) => {
     res.send(result)
 })
 
+router.put('/report-question', async (req, res) => {
+    const id = req.body.id
+    const result = await Questions.reportQuestion(id)
+    res.send(result)
+})
+
+router.put('/report-answer', async (req, res) => {
+    const id = req.body.id
+    const result = await Questions.reportAnswer(id)
+    res.send(result)
+
 router.delete('/answer', async (req, res) => {
     const classId = req.body.classId
     const userId = Auth.getUserId(req.body.uuid).id

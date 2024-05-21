@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 export function QuestionPage() {
     const location = useLocation()
@@ -86,7 +88,10 @@ export function QuestionPage() {
 
         function renderContents() {
             return <>
-                <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                <div className="flex justify-between">
+                  <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                  <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
+                </div>
                 <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
@@ -146,6 +151,68 @@ export function QuestionPage() {
 
     const handleReturn = () => {
         navigate("/class/" + id)
+    }
+
+    const handleQuestionReport = (questionInfo) => {
+        console.log(questionInfo)
+        confirmAlert({
+            title: 'Report Question:',                        // Title dialog
+            message: `Question: ${questionInfo.title}`,               // Message dialog
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => confirmQuestionReport(questionInfo)
+                },
+                {
+                    label: 'No',
+                    onClick: () => {}
+                }
+            ],
+            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
+        })
+    }
+
+    const confirmQuestionReport = (questionInfo) => {
+        axios
+            .put("/question/report-question", {
+                uuid: localStorage.getItem("uuid"),
+                id: questionInfo.id
+            })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch(err => console.log(err))
+    }
+
+    function handleAnswerReport(answer) {
+        console.log(answer)
+        confirmAlert({
+            title: 'Report Answer:',                        // Title dialog
+            message: `Answer: ${answer.description}`,               // Message dialog
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => confirmAnswerReport(answer)
+                },
+                {
+                    label: 'No',
+                    onClick: () => {}
+                }
+            ],
+            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
+        })
+    }
+
+    const confirmAnswerReport = (answer) => {
+        axios
+            .put("/question/report-answer", {
+                uuid: localStorage.getItem("uuid"),
+                id: answer.id
+            })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch(err => console.log(err))
     }
 
     const Reply = ({answer, extraMargin}) => {
@@ -217,9 +284,9 @@ export function QuestionPage() {
 
         function renderContents() {
             return <>
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                        <span
-                            className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                    <button type="button" onClick={() => handleAnswerReport(answer)} className="px-1.5 py-1 text-xs focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
                 </div>
                 <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
                 {!isBeingReplied
