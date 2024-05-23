@@ -33,8 +33,7 @@ function App(props) {
     const [isEnrolled, setIsEnrolled] = useState(false)
 
     function getPageIfLoggedIn(page) {
-        if (uuid === null)
-            axios
+        axios
             .post("/users/isLoggedIn", {uuid: uuid})
             .then((res) => {
                 if (!res.data.isLoggedIn) setUuid(null)
@@ -55,27 +54,31 @@ function App(props) {
         // app.get, for instance) and associate a page, which is also
         // a component
         <BrowserRouter>
-            <Routes>
-                <Route index element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid}/>, uuid, setUuid) }/>
-                <Route path="/home" element={ getPageIfLoggedIn(<Home uuid={uuid} setUuid={setUuid} />, uuid, setUuid) }></Route>
-                <Route path="/login" element={ <Login uuid={uuid} setUuid={setUuid}/> }/>
-                <Route path="/users/register" element={ <Register uuid={uuid} setUuid={setUuid} /> }/>
-                <Route path="/profile" element={getPageIfLoggedIn(<Profile uuid={uuid}/>, uuid, setUuid)}/>
-                <Route path="/update-user" element={getPageIfLoggedIn(<ProfileChanger/>, uuid, setUuid)}/>
-                <Route path="/delete-user" element={getPageIfLoggedIn(<DeleteUser uuid={uuid}/>, uuid, setUuid)}/>
-                <Route path="/class/create-class" element={getPageIfLoggedIn(<CreateClass/>)}></Route>
-                <Route path="/class/:id" element={getPageIfLoggedIn(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
-                <Route path="/class/:id/post-question" element={getPageIfLoggedIn(<PostQuestion/>)}></Route>
-                <Route path="/class/:id/question/:qid" element={getPageIfLoggedIn(<QuestionPage/>)}></Route>
-                <Route path="/class/:id/create-tag" element={getPageIfLoggedIn(<CreateTag/>)}></Route>
-                <Route path="/class/:id/view-tags" element={getPageIfLoggedIn(<ViewTags/>)}></Route>
-                <Route path="/class/:id/edit-tag/:tagId" element={getPageIfLoggedIn(<EditTag/>)}></Route>
-                <Route path="/class/:id/invites" element={getPageIfLoggedIn(<Invites/>)}></Route>
-                <Route path="/class/:id/edit" element={getPageIfLoggedIn(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
-                <Route path="/class/:id/view-members" element={getPageIfLoggedIn(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={getPageIfLoggedIn(redirectPath())}></Route>
-                <Route path="/class/:id/reported" element={getPageIfLoggedIn(<ReportedQuestions></ReportedQuestions>)}></Route>
-            </Routes>
+            {getPageIfLoggedIn(<Routes>
+                <Route index element={(<Home uuid={uuid} setUuid={setUuid}/>)}/>
+                <Route path="/home"
+                       element={(<Home uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/login" element={<Login uuid={uuid} setUuid={setUuid}/>}/>
+                <Route path="/users/register" element={<Register uuid={uuid} setUuid={setUuid}/>}/>
+                <Route path="/profile" element={(<Profile uuid={uuid}/>)}/>
+                <Route path="/update-user" element={(<ProfileChanger/>)}/>
+                <Route path="/delete-user" element={(<DeleteUser uuid={uuid}/>)}/>
+                <Route path="/class/create-class" element={(<CreateClass/>)}></Route>
+                <Route path="/class/:id" element={(<Class uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/class/:id/post-question" element={(<PostQuestion/>)}></Route>
+                <Route path="/class/:id/question/:qid" element={(<QuestionPage/>)}></Route>
+                <Route path="/class/:id/create-tag" element={(<CreateTag/>)}></Route>
+                <Route path="/class/:id/view-tags" element={(<ViewTags/>)}></Route>
+                <Route path="/class/:id/edit-tag/:tagId" element={(<EditTag/>)}></Route>
+                <Route path="/class/:id/invites" element={(<Invites/>)}></Route>
+                <Route path="/class/:id/edit"
+                       element={(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
+                <Route path="/class/:id/view-members"
+                       element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
+                <Route path="/enroll-to/:id" element={(redirectPath())}></Route>
+                <Route path="/class/:id/reported"
+                       element={(<ReportedQuestions></ReportedQuestions>)}></Route>
+            </Routes>, uuid, setUuid)}
         </BrowserRouter>
     );
 }
