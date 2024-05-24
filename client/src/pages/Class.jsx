@@ -2,7 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {ClassFilter} from "./ClassFilter";
+import {QuestionFilter} from "./QuestionFilter";
 
 export function Class({uuid, setUuid, classId, setClassId}) {
 
@@ -178,7 +178,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         <i className="fa-solid fa-filter"></i> Filter Questions by Tags
                     </button>
                     {showFilter ?
-                        <ClassFilter/>
+                        <QuestionFilter questions={questions} setQuestions={setQuestions}/>
                         :
                         <>
                         </>
