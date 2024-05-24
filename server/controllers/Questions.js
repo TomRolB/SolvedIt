@@ -1,6 +1,7 @@
 const {Question, Answer, Users, TaggedBy} = require("../models/")
 const db = require("../models/index")
 const {QueryTypes} = require("sequelize");
+const fs = require('fs')
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -57,6 +58,7 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         wasReported: false,
         isActive: true
     })
+
     const maxId = await Question.max('id')
     if (tags === undefined || tags === null) return "Created a question"
     for (let tag of tags) {
@@ -68,6 +70,12 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
 
     return "Created a question"
 };
+
+exports.addQuestionImage = async (userId, file) => {
+    console.log("Writing file:")
+    console.log(file)
+    await fs.writeFile(`../user_files/questions/${userId}.png`, file, (err) => console.log(err))
+}
 
 exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
     await Answer.create({

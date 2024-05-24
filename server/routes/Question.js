@@ -4,6 +4,10 @@ const Auth = require('../controllers/Auth')
 const {IsInClass} = require('../models/')
 const Questions = require('../controllers/Questions.js')
 const VoteController = require('../controllers/VoteController.js')
+
+const multer  = require('multer')
+const upload = multer({ dest: './public/data/uploads/' })
+
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
     const userId = Auth.getUserId(req.query.uuid).id
@@ -57,8 +61,28 @@ router.post('/post-question', async (req, res) => {
 
     if (!isInClass) return
 
-    const result = await Questions.addQuestion(userId, classId, req.body.title, req.body.description, req.body.tags)
+    const result = await Questions.addQuestion(
+        userId,
+        classId,
+        req.body.title,
+        req.body.description,
+        req.body.tags
+    )
     res.send(result)
+})
+
+router.post('/image', upload.single('file'), async (req, res) => {
+    try {
+        console.log("Received req:")
+        console.log(req)
+        console.log("Received image:")
+        console.log(req.file)
+        await Questions.addQuestionImage(1, req.file)
+    } catch (e) {
+        console.log("Something went wrong when writing the image:")
+        console.log(e)
+    }
+    res.send("Received image")
 })
 
 router.post('/post-answer', async (req, res) => {

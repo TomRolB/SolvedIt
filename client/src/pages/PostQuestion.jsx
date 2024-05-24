@@ -7,6 +7,7 @@ import Select from "react-select";
 export function PostQuestion() {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
+    const [file, setFile] = useState(null)
     const [tags, setTags] = useState([])
     const [selectedOptions, setSelectedOptions] = useState(null);
     let {id} = useParams()
@@ -30,19 +31,31 @@ export function PostQuestion() {
     const navigate = useNavigate()
     function handleFormSubmit(event) {
         event.preventDefault()
+
+        console.log(file)
+
+        const formData = new FormData()
+        formData.append('file', file)
+
         axios
-            .post("/question/post-question", {
-                classId: id,
-                uuid: localStorage.getItem("uuid"),
-                title: title,
-                description: description,
-                tags: selectedOptions
-            })
-            .then((res) => {
-                console.log(res)
-                navigate("/class/" + id)
-            })
+            .post('/question/image', formData)
+            .then((res) => console.log(res))
             .catch((err) => console.log(err))
+
+        // axios
+        //     .post("/question/post-question", {
+        //         classId: id,
+        //         uuid: localStorage.getItem("uuid"),
+        //         title: title,
+        //         description: description,
+        //         // file: formData,
+        //         tags: selectedOptions
+        //     })
+        //     .then((res) => {
+        //         console.log(res)
+        //         navigate("/class/" + id)
+        //     })
+        //     .catch((err) => console.log(err))
     }
 
     const options = tags.map((tag) => {
@@ -52,6 +65,11 @@ export function PostQuestion() {
     const handleChange = (opts) => {
         setSelectedOptions(opts.map((opt) => opt.value));
     };
+
+    function handleFileChange(event) {
+        console.log(event.target.files[0])
+        setFile(event.target.files[0])
+    }
 
     return (
         <div>
@@ -65,6 +83,7 @@ export function PostQuestion() {
                             <input onChange={handleTitleChange} type={"text"} className={"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
                             <label className="block text-lg font-bold dark:text-white mb-2">Description</label>
                             <input className={"block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"} onChange={handleDescriptionChange} type={"text"}/><br/>
+                            <input type="file" onChange={handleFileChange}/><br/>
                             <Select
                                 closeMenuOnSelect={false}
                                 isMulti
