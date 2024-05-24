@@ -2,12 +2,14 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {ClassFilter} from "./ClassFilter";
 
 export function Class({uuid, setUuid, classId, setClassId}) {
 
     const [classInfo, setClassInfo] = useState([{}])
     const [isAdmin, setIsAdmin] = useState(false)
     const [questions, setQuestions] = useState([])
+    const [showFilter, setShowFilter] = useState(false)
     let {id} = useParams()
 
     useEffect(() => {
@@ -170,6 +172,18 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         </button>
                     </div>
                 }
+                <div>
+                    <button type="button" onClick={() => setShowFilter(!showFilter)}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <i className="fa-solid fa-filter"></i> Filter Questions by Tags
+                    </button>
+                    {showFilter ?
+                        <ClassFilter/>
+                        :
+                        <>
+                        </>
+                    }
+                </div>
                 <Questions/>
             </div>
         </div>
