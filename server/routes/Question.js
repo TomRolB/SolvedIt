@@ -17,7 +17,7 @@ router.get("/questions", async (req, res) => {
     if (!isInClass) return
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
-    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin)
+    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
     res.send(result)
 })
 

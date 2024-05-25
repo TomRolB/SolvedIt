@@ -9,15 +9,15 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     include: Users
 });
 
-exports.getQuestionsWithTags = async (classId, userId, isAdmin) => {
+exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
     const questionsWithTags = await db.sequelize.query(`
         SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions 
         LEFT JOIN TaggedBies ON Questions.id = TaggedBies.questionId
         LEFT JOIN Tags ON TaggedBies.tagId = Tags.id
         LEFT JOIN Users ON Questions.userId = Users.id
-        WHERE Questions.classId = ? AND isActive = 1`, {
-            replacements: [classId],
+        WHERE Questions.classId = ? AND (isActive = ? OR isActive = 1)`, {
+            replacements: [classId, isActive],
             type: QueryTypes.SELECT,
         }
     );

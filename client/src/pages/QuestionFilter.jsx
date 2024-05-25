@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Select from "react-select";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 
 export const QuestionFilter = ({questions, createQuestionElements}) => {
@@ -9,7 +9,6 @@ export const QuestionFilter = ({questions, createQuestionElements}) => {
     const [selectedOptions, setSelectedOptions] = useState(null);
     const [showDeleted, setShowDeleted] = useState(false)
     let {id} = useParams()
-    const navigate = useNavigate()
 
     useEffect(() => {
         axios
@@ -22,7 +21,9 @@ export const QuestionFilter = ({questions, createQuestionElements}) => {
 
     function handleSubmit() {
         axios
-            .get("/filter/filter-by-tags", {params: {classId: id, tags: selectedOptions, showDeleted: showDeleted}})
+            .get("/filter/filter-by-tags", {params:
+                    {classId: id, tags: selectedOptions, showDeleted: showDeleted, uuid: localStorage.getItem("uuid")}
+            })
             .then((res) => {
                 createQuestionElements(res.data)
             })
