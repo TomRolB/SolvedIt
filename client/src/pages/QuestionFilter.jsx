@@ -61,7 +61,7 @@ export const QuestionFilter = ({questions, createQuestionElements}) => {
                     <span className="ms-3 text-sm font-medium text-gray-900 dark:text-black-300">Show Deleted Questions</span>
                 </label>
             </div>
-            <button onClick={handleSubmit} className="bg-green-500 rounded-2xl p-3 m-1">Submit</button>
+            <button onClick={handleSubmit} type="button" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i className="fa-solid fa-magnifying-glass"></i> Search</button>
         </div>
     )
 
