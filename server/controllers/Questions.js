@@ -16,7 +16,7 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin) => {
         LEFT JOIN TaggedBies ON Questions.id = TaggedBies.questionId
         LEFT JOIN Tags ON TaggedBies.tagId = Tags.id
         LEFT JOIN Users ON Questions.userId = Users.id
-        WHERE Questions.classId = ?`, {
+        WHERE Questions.classId = ? AND isActive = 1`, {
             replacements: [classId],
             type: QueryTypes.SELECT,
         }
