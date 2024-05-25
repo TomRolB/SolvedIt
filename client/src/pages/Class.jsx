@@ -30,42 +30,9 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 for (let question of res.data) {
                     if (questions[question.id] === undefined) {
                         if (question.tagName === null) {
-                            questions[question.id] = {
-                                id: question.id,
-                                title: question.title,
-                                description: question.description,
-                                classId: question.classId,
-                                wasReported: question.wasReported,
-                                isActive: question.isActive,
-                                tagId: question.tagId,
-                                tagName: question.tagName,
-                                userId: question.userId,
-                                canBeDeleted: question.canBeDeleted,
-                                User: {
-                                    userId: question.userId,
-                                    firstName: question.firstName,
-                                    lastName: question.lastName,
-                                },
-                                tags: []
-                            }
+                            questions[question.id] = createQuestionWithoutTags(question)
                         } else {
-                            questions[question.id] = {
-                                id: question.id,
-                                title: question.title,
-                                description: question.description,
-                                classId: question.classId,
-                                wasReported: question.wasReported,
-                                isActive: question.isActive,
-                                tagId: question.tagId,
-                                tagName: question.tagName,
-                                canBeDeleted: question.canBeDeleted,
-                                User: {
-                                    userId: question.userId,
-                                    firstName: question.firstName,
-                                    lastName: question.lastName,
-                                },
-                                tags: [question.tagName]
-                            }
+                            questions[question.id] = createQuestionWithTags(question)
                         }
                     } else {
                         questions[question.id].tags.push(question.tagName)
@@ -90,6 +57,47 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             })
     // }, [questions]);
     }, []);
+
+    const createQuestionWithTags = (question) => {
+        return {
+            id: question.id,
+            title: question.title,
+            description: question.description,
+            classId: question.classId,
+            wasReported: question.wasReported,
+            isActive: question.isActive,
+            tagId: question.tagId,
+            tagName: question.tagName,
+            canBeDeleted: question.canBeDeleted,
+            User: {
+                userId: question.userId,
+                firstName: question.firstName,
+                lastName: question.lastName,
+            },
+            tags: [question.tagName]
+        }
+    }
+
+    const createQuestionWithoutTags = (question) => {
+        return {
+            id: question.id,
+            title: question.title,
+            description: question.description,
+            classId: question.classId,
+            wasReported: question.wasReported,
+            isActive: question.isActive,
+            tagId: question.tagId,
+            tagName: question.tagName,
+            userId: question.userId,
+            canBeDeleted: question.canBeDeleted,
+            User: {
+                userId: question.userId,
+                firstName: question.firstName,
+                lastName: question.lastName,
+            },
+            tags: []
+        }
+    }
 
     const navigate = useNavigate()
     function handleQuestionClick(questionInfo) {
