@@ -4,7 +4,7 @@ import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 
 
-export const QuestionFilter = ({questions, setQuestions}) => {
+export const QuestionFilter = ({questions, createQuestionElements}) => {
     const [tags, setTags] = useState([])
     const [selectedOptions, setSelectedOptions] = useState(null);
     const [showDeleted, setShowDeleted] = useState(false)
@@ -19,99 +19,17 @@ export const QuestionFilter = ({questions, setQuestions}) => {
         }).catch(err => console.log(err))
     }, [])
 
-    function handleQuestionClick(questionInfo) {
-        navigate(
-            "/class/" + id + "/question/" + questionInfo.id,
-            { state: questionInfo })
-    }
-    const Question = ({questionInfo}) => {
-        return <div onClick={() => handleQuestionClick(questionInfo)} className="bg-gray-800 rounded-2xl p-3 m-1">
-            {!questionInfo.isActive
-                ? <p className="text-amber-50">This question has been deleted. However, you can still see its answers.</p>
-                :<>
-                    <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-                    <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
-                    {questionInfo.tags.length > 0 ?
-                        <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
-                </>}
-        </div>
-    }
 
-    // TODO improve code
     function handleSubmit() {
         axios
             .get("/filter/filter-by-tags", {params: {classId: id, tags: selectedOptions, showDeleted: showDeleted}})
             .then((res) => {
-                console.log(selectedOptions)
-                let questions = []
-                for (let question of res.data) {
-                    if (questions[question.id] === undefined) {
-                        if (question.tagName === null) {
-                            questions[question.id] = createQuestionWithoutTags(question)
-                        } else {
-                            questions[question.id] = createQuestionWithTags(question)
-                        }
-                    } else {
-                        questions[question.id].tags.push(question.tagName)
-                    }
-                }
-                setQuestions(
-                    questions.map((questionInfo) => {
-                        if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
-                            return (
-                                <Question key={questionInfo.id} questionInfo={questionInfo}/>
-                            )
-                        }
-                        return(
-                            <Question key={questionInfo.id} questionInfo={questionInfo}/>
-                        )
-                    })
-                )
+                createQuestionElements(res.data)
             })
             .catch((err) => {
                 console.log(err)
                 console.log("Question error")
             })
-    }
-    const createQuestionWithTags = (question) => {
-        return {
-            id: question.id,
-            title: question.title,
-            description: question.description,
-            classId: question.classId,
-            wasReported: question.wasReported,
-            isActive: question.isActive,
-            tagId: question.tagId,
-            tagName: question.tagName,
-            canBeDeleted: question.canBeDeleted,
-            User: {
-                userId: question.userId,
-                firstName: question.firstName,
-                lastName: question.lastName,
-            },
-            tags: [question.tagName]
-        }
-    }
-
-    const createQuestionWithoutTags = (question) => {
-        return {
-            id: question.id,
-            title: question.title,
-            description: question.description,
-            classId: question.classId,
-            wasReported: question.wasReported,
-            isActive: question.isActive,
-            tagId: question.tagId,
-            tagName: question.tagName,
-            userId: question.userId,
-            canBeDeleted: question.canBeDeleted,
-            User: {
-                userId: question.userId,
-                firstName: question.firstName,
-                lastName: question.lastName,
-            },
-            tags: []
-        }
     }
 
     const options = tags.map((tag) => {
@@ -121,6 +39,7 @@ export const QuestionFilter = ({questions, setQuestions}) => {
     const handleChange = (opts) => {
         setSelectedOptions(opts.map((opt) => opt.value));
     };
+
     return (
         <div>
             <div className="w-1/4 inline-block">

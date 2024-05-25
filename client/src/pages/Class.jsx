@@ -25,31 +25,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         axios
             .get("/question/questions", {params: {classId: id, uuid: uuid}})
             .then((res) => {
-                console.log(res);
-                let questions = []
-                for (let question of res.data) {
-                    if (questions[question.id] === undefined) {
-                        if (question.tagName === null) {
-                            questions[question.id] = createQuestionWithoutTags(question)
-                        } else {
-                            questions[question.id] = createQuestionWithTags(question)
-                        }
-                    } else {
-                        questions[question.id].tags.push(question.tagName)
-                    }
-                }
-                setQuestions(
-                    questions.map((questionInfo) => {
-                        if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
-                            return (
-                              <Question key={questionInfo.id} questionInfo={questionInfo}/>
-                            )
-                        }
-                        return(
-                             <Question key={questionInfo.id} questionInfo={questionInfo}/>
-                        )
-                    })
-                )
+                createQuestionElements(res.data)
             })
             .catch((err) => {
                 console.log(err)
@@ -57,6 +33,33 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             })
     // }, [questions]);
     }, []);
+
+    const createQuestionElements = (data) => {
+        let questions = []
+        for (let question of data) {
+            if (questions[question.id] === undefined) {
+                if (question.tagName === null) {
+                    questions[question.id] = createQuestionWithoutTags(question)
+                } else {
+                    questions[question.id] = createQuestionWithTags(question)
+                }
+            } else {
+                questions[question.id].tags.push(question.tagName)
+            }
+        }
+        setQuestions(
+            questions.map((questionInfo) => {
+                if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
+                    return (
+                        <Question key={questionInfo.id} questionInfo={questionInfo}/>
+                    )
+                }
+                return(
+                    <Question key={questionInfo.id} questionInfo={questionInfo}/>
+                )
+            })
+        )
+    }
 
     const createQuestionWithTags = (question) => {
         return {
@@ -186,7 +189,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         <i className="fa-solid fa-filter"></i> Filter Questions by Tags
                     </button>
                     {showFilter ?
-                        <QuestionFilter questions={questions} setQuestions={setQuestions}/>
+                        <QuestionFilter questions={questions} createQuestionElements={createQuestionElements}/>
                         :
                         <>
                         </>
