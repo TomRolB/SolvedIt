@@ -6,7 +6,19 @@ const Questions = require('../controllers/Questions.js')
 const VoteController = require('../controllers/VoteController.js')
 
 const multer  = require('multer')
-const upload = multer({ dest: './public/data/uploads/' })
+
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
+    }
+})
+const upload = multer({ storage: storage })
 
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
@@ -77,7 +89,6 @@ router.post('/image', upload.single('file'), async (req, res) => {
         console.log(req)
         console.log("Received image:")
         console.log(req.file)
-        await Questions.addQuestionImage(1, req.file)
     } catch (e) {
         console.log("Something went wrong when writing the image:")
         console.log(e)
