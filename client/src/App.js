@@ -19,6 +19,8 @@ import {EditTag} from "./pages/EditTag";
 import {ClassEnroll} from "./utils/ClassEnroll";
 import {ClassMembers} from "./pages/ClassMembers";
 import {ReportedQuestions} from "./pages/ReportedQuestions";
+import {Notifications} from "./pages/Notifications";
+import {NotificationSettings} from "./pages/NotificationSettings";
 
 
 function App(props) {
@@ -80,6 +82,8 @@ function App(props) {
                 <Route path="/enroll-to/:id" element={redirectPath()}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
+                <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
+                <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}
         </BrowserRouter>
     );
