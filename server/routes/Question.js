@@ -40,7 +40,7 @@ router.get("/questions", async (req, res) => {
     if (!isInClass) return
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
-    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin)
+    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
     res.send(result)
 })
 
@@ -143,6 +143,29 @@ router.delete('/answer', async (req, res) => {
 
     await Questions.deleteAnswer(req.body.answerId)
     res.send("Deleted answer")
+})
+
+router.put('/answer/validate', async (req,res) =>{
+    console.log("body: " + req.body)
+    console.log("uuid: " + req.body.uuid)
+    console.log("classId: " + req.body.classId)
+    console.log("answerId: " + req.body.answerId)
+    console.log("")
+    console.log(JSON.stringify(req.body))
+    const classId = req.body.classId
+    const userId = Auth.getUserId(req.body.uuid).id
+    const isInClass = await IsInClass.findOne({
+        where: {
+            classId: classId,
+            userId: userId
+        }
+    })
+
+    if (!isInClass) return
+
+    let isVerified = await Questions.updateAnswerVeridity(req.body.answerId)
+    res.send(isVerified)
+
 })
 
 

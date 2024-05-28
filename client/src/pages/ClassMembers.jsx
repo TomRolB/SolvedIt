@@ -1,12 +1,13 @@
 import {Navbar} from "../components/Navbar";
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 
 export const ClassMembers =() =>{
     const classId = useParams().id
     let [members, setMembers] = useState([])
     const [isAdmin, setIsAdmin] = useState(false)
+    let navigate = useNavigate()
 
     function checkUserIsAdmin() {
         axios
@@ -71,6 +72,9 @@ export const ClassMembers =() =>{
         then(res => console.log(res)).
         catch(err => console.log(err))
     }
+    function handleReturn(){
+        navigate("/class/" + classId)
+    }
 
     return (
         <div>
@@ -80,6 +84,9 @@ export const ClassMembers =() =>{
                     <div className="flex items-center justify-between">
                     </div>
                 </div>
+                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
                 <div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">

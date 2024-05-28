@@ -30,6 +30,7 @@ const inviteRouter = require('./routes/Invite')
 const questionRouter = require('./routes/Question.js')
 const tagRouter = require('./routes/Tags.js')
 const voteRouter = require('./routes/VoteRoutes')
+const FilterRouter = require('./routes/Filter')
 app.use("/users", userRouter)
 app.use("/class", classRouter)
 app.use("/home", homeRouter)
@@ -37,6 +38,7 @@ app.use("/invite", inviteRouter)
 app.use("/question", questionRouter)
 app.use("/tag", tagRouter)
 app.use("/votes", voteRouter)
+app.use("/filter", FilterRouter)
 
 
 db.sequelize.sync().then(() => {

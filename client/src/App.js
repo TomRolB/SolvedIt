@@ -44,6 +44,7 @@ function App(props) {
     }
 
     function redirectPath() {
+        if(!uuid) return;
         ClassEnroll().then(value => setIsEnrolled(value))
         return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
     }
@@ -54,12 +55,14 @@ function App(props) {
         // app.get, for instance) and associate a page, which is also
         // a component
         <BrowserRouter>
+            <Routes>
+            <Route path="/login" element={<Login uuid={uuid} setUuid={setUuid}/>}/>
+            <Route path="/users/register" element={<Register uuid={uuid} setUuid={setUuid}/>}/>
+            </Routes>
             {getPageIfLoggedIn(<Routes>
                 <Route index element={(<Home uuid={uuid} setUuid={setUuid}/>)}/>
                 <Route path="/home"
                        element={(<Home uuid={uuid} setUuid={setUuid}/>)}></Route>
-                <Route path="/login" element={<Login uuid={uuid} setUuid={setUuid}/>}/>
-                <Route path="/users/register" element={<Register uuid={uuid} setUuid={setUuid}/>}/>
                 <Route path="/profile" element={(<Profile uuid={uuid}/>)}/>
                 <Route path="/update-user" element={(<ProfileChanger/>)}/>
                 <Route path="/delete-user" element={(<DeleteUser uuid={uuid}/>)}/>
@@ -75,7 +78,7 @@ function App(props) {
                        element={(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/view-members"
                        element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={(redirectPath())}></Route>
+                <Route path="/enroll-to/:id" element={redirectPath()}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
             </Routes>, uuid, setUuid)}
