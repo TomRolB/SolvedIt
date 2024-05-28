@@ -8,12 +8,14 @@ export async function ClassEnroll()   {
     const classIdFormat =/\d+(?!.*\d)/i
     let id = Number(link.match(classIdFormat))
     if(id === 0) return
-    console.log(id)
+    // console.log(id)
 
     async function notEmptyResponse(endpoint) {
         const response = await fetch(endpoint)
         if(!response) return false;
-        return response.length !== 0;
+        let responseValue = await response.json()
+        // console.log(responseValue)
+        return responseValue.length !== 0;
     }
 
     const alreadyEnrolled = !uuid || !id ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)

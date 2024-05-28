@@ -14,7 +14,7 @@ router.post("/create-class", async (req, res) => {
     const userId = await Auth.getUserId(classInfo.uuid).id
     await Class.create({name: classInfo.name, description: classInfo.description})
     const maxId = await Class.max('id');
-    await console.log(maxId)
+    // await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
     InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
     res.send("Created class!")
@@ -41,7 +41,7 @@ router.put("/byId/:id/edit", async (req, res) => {
 
     const classInfo = req.body
     const id = req.params.id
-    console.log(id)
+    // console.log(id)
     await Class.update({name: classInfo.name, description: classInfo.description}, {where: {id: id}})
     res.json({message: "Class updated"})
 })
@@ -49,7 +49,7 @@ router.put("/byId/:id/edit", async (req, res) => {
 router.post('/byId/:id/create-tag', async (req, res) => {
     const tagInfo = req.body
     // const userId = await Auth.getUserId(tagInfo.uuid).id
-    console.log(tagInfo)
+    // console.log(tagInfo)
     const result = await Tags.addTag(tagInfo.name, tagInfo.classId)
     res.send(result)
 })
@@ -76,7 +76,11 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
     const isInClass = await IsInClass.findOne({where:{classId: Number(classId), userId: userId}})
-    res.send(isInClass)
+    if(!isInClass) {
+        res.send([])
+        return
+    }
+    res.send([isInClass])
 })
 
 router.get("/byId/:id/members", async(req,res) =>{
@@ -89,10 +93,25 @@ JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = ${idString}`
     res.send(classMembers)
 })
 
+router.get("byId/:id/leaderboard", async(req,res) =>{
+    const id = req.params.id
+    let idString = id.toString()
+    let query = `SELECT a.id, a.description, count(v.answerId) as upvotes, u.id, u.firstName, u.lastName  from answers a
+    JOIN votes v on v.answerId = a.id
+    JOIN users u ON a.userId = u.id
+    JOIN classes c ON c.id = a.classId
+    WHERE c.id = ${idString}
+    group by a.id
+    order by upvotes desc;`
+    const leaderBoard = await db.sequelize.query(query, {type: QueryTypes.SELECT})
+    res.send(leaderBoard)
+})
+
+
 router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
     const classId = req.params.id
     const userId = req.params.userId
-    console.log(userId)
+    // console.log(userId)
     await IsInClass.destroy({
         where:{
             userId: userId,
