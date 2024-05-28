@@ -11,6 +11,8 @@ router.get("/get-general-notification-settings", async (req, res) => {
 
 router.get("/get-notification-settings-of-class/:classId", async (req, res) => {
     const info = req.query
+    console.log(req)
+    console.log(req.params)
     const userId = await Auth.getUserId(info.uuid).id
     const settings = await NotificationSettings.getNotificationSettingsOfClass(req.params.classId, userId)
     res.json(settings)
@@ -20,6 +22,13 @@ router.post("/update-general-notification-settings", async (req, res) => {
     const info = req.body
     const userId = await Auth.getUserId(info.uuid).id
     await NotificationSettings.updateNotificationSettings(null, userId, info, true)
+    res.json("Settings updated")
+})
+
+router.post("/update-notification-settings-of-class/:classId", async (req, res) => {
+    const info = req.body
+    const userId = await Auth.getUserId(info.uuid).id
+    await NotificationSettings.updateNotificationSettings(req.params.classId, userId, info, false)
     res.json("Settings updated")
 })
 
