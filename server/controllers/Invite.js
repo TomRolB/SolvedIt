@@ -1,5 +1,4 @@
-const {Users, IsInClass, InviteCode} = require("../models");
-const {NotificationSettings} = require("../controllers/NotificationSettings");
+const {Users, IsInClass, InviteCode, NotificationSettings} = require("../models");
 const crypto = require("crypto")
 const Auth = require("./Auth")
 
@@ -77,7 +76,16 @@ async function successfulCodeUsage(dbCodeRegister, userId) {
         })
         .save()
 
-    await NotificationSettings.createNotificationSettings(userId, dbCodeRegister.classId)
+    await NotificationSettings
+        .build({
+            userId: userId,
+            classId: dbCodeRegister.classId,
+            newQuestions: "None",
+            newAnswers: "None",
+            answerValidation: "Never",
+            notifyByEmail: false,
+            isActive: false
+        }).save()
 
     // Increment the count of users that used this code
     await dbCodeRegister

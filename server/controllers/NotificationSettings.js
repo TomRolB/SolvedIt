@@ -24,7 +24,7 @@ exports.updateNotificationSettings = async (classId, userId, info, isActive) => 
 
 exports.createNotificationSettings = async (userId, classId) => {
    await NotificationSettings
-        .build({
+        .create({
             userId: userId,
             classId: classId,
             newQuestions: "None",

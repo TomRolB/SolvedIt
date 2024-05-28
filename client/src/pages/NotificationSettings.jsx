@@ -33,7 +33,6 @@ export const NotificationSettings = () => {
         fetchCourseInfo();
     }, []);
 
-
     return (
         <div>
             <Navbar></Navbar>
