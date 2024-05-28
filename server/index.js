@@ -31,6 +31,7 @@ const questionRouter = require('./routes/Question.js')
 const tagRouter = require('./routes/Tags.js')
 const voteRouter = require('./routes/VoteRoutes')
 const FilterRouter = require('./routes/Filter')
+const notificationRouter = require('./routes/Notification')
 app.use("/users", userRouter)
 app.use("/class", classRouter)
 app.use("/home", homeRouter)
@@ -39,6 +40,7 @@ app.use("/question", questionRouter)
 app.use("/tag", tagRouter)
 app.use("/votes", voteRouter)
 app.use("/filter", FilterRouter)
+app.use("/notification", notificationRouter)
 
 
 db.sequelize.sync().then(() => {

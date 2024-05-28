@@ -1,4 +1,4 @@
-const { Users, IsInClass } = require("../models")
+const { Users, IsInClass, NotificationSettings } = require("../models")
 const crypto = require("crypto")
 const cron = require("cron")
 
@@ -122,6 +122,16 @@ exports.registerUser = async (form) => {
         lastName: form.body.lastName,
         email: form.body.email,
         password: form.body.password
+    }).save()
+
+    await NotificationSettings.build({
+        userId: user.id,
+        classId: null,
+        newQuestions: "None",
+        newAnswers: "None",
+        answerValidation: "Never",
+        notifyByEmail: false,
+        isActive: true
     }).save()
 
     const uuid = crypto.randomUUID()
