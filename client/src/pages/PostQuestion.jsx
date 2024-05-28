@@ -43,21 +43,7 @@ export function PostQuestion() {
         formData.append('tags', selectedOptions)
 
         axios
-            .post('/question/image', formData)
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err))
-
-        axios
-            .post("/question/post-question",
-            //     {
-            //     classId: id,
-            //     uuid: localStorage.getItem("uuid"),
-            //     title: title,
-            //     description: description,
-            //     tags: selectedOptions
-            // }
-                formData
-            )
+            .post("/question/post-question", formData)
             .then((res) => {
                 console.log(res)
                 navigate("/class/" + id)

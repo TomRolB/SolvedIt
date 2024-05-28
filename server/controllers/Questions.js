@@ -50,7 +50,7 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
 
 
 exports.addQuestion = async (userId, classId, title, description, tags) => {
-    await Question.create({
+    const result = await Question.create({
         userId: userId,
         classId: classId,
         title: title,
@@ -58,6 +58,8 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         wasReported: false,
         isActive: true
     })
+
+    fs.rename('./uploads/awaiting_id', `./uploads/${result.id}`,() => {})
 
     const maxId = await Question.max('id')
     if (tags === undefined || tags === null) return "Created a question"

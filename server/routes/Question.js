@@ -6,11 +6,17 @@ const Questions = require('../controllers/Questions.js')
 const VoteController = require('../controllers/VoteController.js')
 
 const multer  = require('multer')
-
+const fs= require('fs');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads')
+        let dir = './uploads/awaiting_id';
+
+        if (fs.existsSync(dir)){
+            throw Error("There's a file which wasn't assigned an id")
+        }
+        fs.mkdirSync(dir);
+        cb(null, dir)
         req.body.classId
     },
     filename: function (req, file, cb) {
@@ -62,16 +68,8 @@ router.get("/answers", async (req, res) => {
     res.send(result)
 })
 
-router.post('/post-question', async (req, res) => {
-    console.log('POST BODY')
-    console.log(req.body)
-    res.send("Did nothing")
-})
-
-router.post('/image', upload.single('file'), async (req, res) => {
-    console.log('REQ')
-    console.log(req)
-    console.log('BODY')
+router.post('/post-question', upload.single('file'), async (req, res) => {
+    console.log("BODY")
     console.log(req.body)
 
     const classId = Number(req.body.classId)
@@ -91,9 +89,10 @@ router.post('/image', upload.single('file'), async (req, res) => {
         req.body.title,
         req.body.description,
         // Have to parse it, since in this particular case we use formData
-        req.body.tags === 'null'? null : req.body.tags.split(',').map(Number)
+        req.body.tags === 'null' ? null : req.body.tags.split(',').map(Number)
     )
-    res.send(result)
+
+    res.send("Posted question")
 })
 
 router.post('/post-answer', async (req, res) => {
