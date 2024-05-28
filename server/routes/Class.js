@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink, Users} = require("../models")
+const { Class, IsInClass, InviteLink, NotificationSettings} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
@@ -16,6 +16,15 @@ router.post("/create-class", async (req, res) => {
     const maxId = await Class.max('id');
     await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
+    await NotificationSettings.create({
+        userId: userId,
+        classId: maxId,
+        newQuestions: "None",
+        newAnswers: "None",
+        answerValidation: "Never",
+        notifyByEmail: false,
+        isActive: false
+    })
     InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
     res.send("Created class!")
 })
