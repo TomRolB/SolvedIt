@@ -9,15 +9,15 @@ exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     include: Users
 });
 
-exports.getQuestionsWithTags = async (classId, userId, isAdmin) => {
+exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
     const questionsWithTags = await db.sequelize.query(`
         SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions 
         LEFT JOIN TaggedBies ON Questions.id = TaggedBies.questionId
         LEFT JOIN Tags ON TaggedBies.tagId = Tags.id
         LEFT JOIN Users ON Questions.userId = Users.id
-        WHERE Questions.classId = ?`, {
-            replacements: [classId],
+        WHERE Questions.classId = ? AND (isActive = ? OR isActive = 1)`, {
+            replacements: [classId, isActive],
             type: QueryTypes.SELECT,
         }
     );
@@ -40,7 +40,8 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
         })
 
     answers.forEach((answer) => {
-        return answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+        answer.dataValues.belongsToThisUser = answer.userId === userId;
+        answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
     })
 
     return answers
@@ -54,7 +55,8 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         title: title,
         description: description,
         wasReported: false,
-        isActive: true
+        isActive: true,
+        isVerified: false
     })
     const maxId = await Question.max('id')
     if (tags === undefined || tags === null) return "Created a question"
@@ -76,7 +78,8 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         parentId: parentId,
         description: description,
         wasReported: false,
-        isActive: true
+        isActive: true,
+        isVerified: false
     })
 
     return "Created an answer"
@@ -122,4 +125,33 @@ exports.deleteQuestion = async (questionId) => {
 
     await entry.save()
 }
+exports.updateAnswerVeridity = async(answerId)=> {
+    let answer = await Answer.findOne({where:{id: answerId}})
+    await Answer.update({isVerified: !answer.isVerified}, {where: {id: answerId}})
+    return !answer.isVerified
+}
 
+exports.getReportedQuestions = async (classId) => {
+    return await db.sequelize.query(`
+        SELECT DISTINCT userId, firstName, lastName, Questions.id as questionId, title, description, wasReported
+        FROM Questions
+        INNER JOIN Users ON Users.id = userId
+        WHERE Questions.wasReported > 0 AND Questions.classId = ? AND Questions.isActive = true
+    `, {
+        replacements: [classId],
+        type: QueryTypes.SELECT,
+    });
+}
+
+exports.getReportedAnswers = async (classId) => {
+    return await db.sequelize.query(`
+        SELECT DISTINCT Answers.userId, Users.firstName, Users.lastName, Questions.id as questionId, title as parentTitle, Questions.description as parentDescription, Answers.description as answerDescription, Answers.id as answerId, Answers.wasReported as wasReported
+        FROM Answers
+        INNER JOIN Users ON Users.id = Answers.userId
+        INNER JOIN Questions ON Questions.id = Answers.questionId
+        WHERE Answers.wasReported > 0 AND Questions.classId = ? AND Answers.isActive = true
+    `, {
+        replacements: [classId],
+        type: QueryTypes.SELECT,
+    });
+}

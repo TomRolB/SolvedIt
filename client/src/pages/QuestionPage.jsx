@@ -14,21 +14,28 @@ export function QuestionPage() {
     const [answersLen, setAnswersLen] = useState(0)
     const navigate = useNavigate()
     let {id} = useParams()
+    let [isTeacher, setIsTeacher] = useState(false)
 
     useEffect(() => {
+        let uuid = localStorage.getItem("uuid")
         axios
             .get("/question/answers", {
                 params: {
                     classId: questionInfo.classId,
                     questionId: questionInfo.id,
-                    uuid: localStorage.getItem("uuid")}
+                    uuid: uuid}
             })
             .then((res) => buildQuestionTree(res.data))
             .catch((err) => {
                 console.log(err)
                 console.log("Answer error")
             })
-    }, [answersLen]);
+        axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
+            .then(res => {
+                setIsTeacher(res.data.isTeacher) //TODO: change, it's awkward to see
+            })
+            .catch(err => console.log(err))
+    }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
@@ -48,7 +55,7 @@ export function QuestionPage() {
                     description: answerDescription
                 })
                 .then((res) => {
-                    setAnswersLen(0)
+                    setAnswersLen(answersLen + 1)
                 })
                 .catch(err => console.log(err))
         }
@@ -139,7 +146,7 @@ export function QuestionPage() {
     }
 
     function createAnswersRecursively(answer, answerMap, result, extraMargin) {
-        console.log(answer)
+        // console.log(answer)
         result.push(<Reply key={answer.id} answer={answer} extraMargin={extraMargin}/>)
 
         if (answerMap.has(answer.id)) {
@@ -218,6 +225,10 @@ export function QuestionPage() {
     const Reply = ({answer, extraMargin}) => {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
+        const [hasUserVotedIt, setHasUserVotedIt] = useState(answer.hasUserVotedIt)
+        const [voteCount, setVoteCount] = useState(answer.voteCount)
+        const [isVerified, setIsVerified] = useState(false)
+
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
         }
@@ -261,10 +272,55 @@ export function QuestionPage() {
             setAnswersLen(0)
         }
 
+        function handleVerify() {
+            let uuid = localStorage.getItem("uuid");
+            console.log(uuid);
+            axios.put('/question/answer/validate',  {
+                    uuid: uuid,
+                    classId: answer.classId,
+                    answerId: answer.id
+
+            }).then(res => {
+                console.log(res)
+                setIsVerified(res.data)
+            }).catch(err=> console.log(err))
+        }
+
+        function handleVote() {
+            if (answer.belongsToThisUser) return
+
+            axios
+                .post('/votes/upvote', {
+                    uuid: localStorage.getItem("uuid"),
+                    classId: answer.classId,
+                    answerId: answer.id,
+                    undoingVote: hasUserVotedIt
+                })
+                .then((res) => {
+                    console.log(voteCount)
+                    console.log(hasUserVotedIt)
+                    if (hasUserVotedIt) setVoteCount(voteCount - 1)
+                    else setVoteCount(voteCount + 1)
+
+                    setHasUserVotedIt(!hasUserVotedIt)
+                })
+                .catch((err) => console.log(err))
+        }
+
         function renderButtons() {
             return <div>
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
+                </button>
+
+                <button onClick={handleVote}
+                        className={
+                            hasUserVotedIt
+                                ? "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+                                : "text-white bg-gray-700 px-5 py-2.5 me-2 mb-2 cursor-default"
+                }>
+                    <i className="fa-solid fa-arrow-up"></i>
+                    {" " + voteCount}
                 </button>
 
                 {answer.canBeDeleted
@@ -272,6 +328,12 @@ export function QuestionPage() {
                               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
                     </button>
                     : null}
+                {isTeacher ?
+                    <button onClick={handleVerify}
+                        className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm
+                    px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+                            >
+                        Validate</button> :null}
             </div>;
         }
 
@@ -286,7 +348,11 @@ export function QuestionPage() {
             return <>
                 <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                    {isVerified ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" className={"position: absolute; top: 0; right: 0;"}>
+                        <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path><path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
+                    </svg> : null}
                     <button type="button" onClick={() => handleAnswerReport(answer)} className="px-1.5 py-1 text-xs focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
+
                 </div>
                 <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
                 {!isBeingReplied

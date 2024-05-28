@@ -3,6 +3,7 @@ const router = express.Router()
 const Auth = require('../controllers/Auth')
 const {IsInClass} = require('../models/')
 const Questions = require('../controllers/Questions.js')
+const VoteController = require('../controllers/VoteController.js')
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
     const userId = Auth.getUserId(req.query.uuid).id
@@ -16,7 +17,7 @@ router.get("/questions", async (req, res) => {
     if (!isInClass) return
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
-    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin)
+    const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
     res.send(result)
 })
 
@@ -35,6 +36,12 @@ router.get("/answers", async (req, res) => {
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
     const result = await Questions.getAnswersToQuestion(questionId, userId, isAdmin)
+
+    for (const answer of result) {
+        answer.dataValues.voteCount = await VoteController.voteCount(answer.id);
+        answer.dataValues.hasUserVotedIt = await VoteController.hasUserVoted(answer.id, userId)
+    }
+
     res.send(result)
 })
 
@@ -104,6 +111,29 @@ router.delete('/answer', async (req, res) => {
     res.send("Deleted answer")
 })
 
+router.put('/answer/validate', async (req,res) =>{
+    console.log("body: " + req.body)
+    console.log("uuid: " + req.body.uuid)
+    console.log("classId: " + req.body.classId)
+    console.log("answerId: " + req.body.answerId)
+    console.log("")
+    console.log(JSON.stringify(req.body))
+    const classId = req.body.classId
+    const userId = Auth.getUserId(req.body.uuid).id
+    const isInClass = await IsInClass.findOne({
+        where: {
+            classId: classId,
+            userId: userId
+        }
+    })
+
+    if (!isInClass) return
+
+    let isVerified = await Questions.updateAnswerVeridity(req.body.answerId)
+    res.send(isVerified)
+
+})
+
 
 router.delete('/question', async (req, res) => {
     const classId = req.body.classId
@@ -119,6 +149,24 @@ router.delete('/question', async (req, res) => {
 
     await Questions.deleteQuestion(req.body.questionId)
     res.send("Deleted question")
+})
+
+router.get("/reported-questions", async (req, res) => {
+    console.log(req)
+    const classId = req.query.classId
+    console.log(classId)
+    const reportedQuestions = await Questions.getReportedQuestions(classId)
+    console.log(reportedQuestions)
+    res.send(reportedQuestions)
+})
+
+router.get("/reported-answers", async (req, res) => {
+    console.log(req)
+    const classId = req.query.classId
+    console.log(classId)
+    const reportedQuestions = await Questions.getReportedAnswers(classId)
+    console.log(reportedQuestions)
+    res.send(reportedQuestions)
 })
 
 module.exports = router
