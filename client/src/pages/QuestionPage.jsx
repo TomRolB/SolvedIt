@@ -334,7 +334,6 @@ export function QuestionPage() {
                     px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
                             >
                         Validate</button> :null}
-                {/*TODO: replace "validate" with a green tick*/}
             </div>;
         }
 
