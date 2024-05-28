@@ -21,6 +21,7 @@ import {ClassMembers} from "./pages/ClassMembers";
 import {ReportedQuestions} from "./pages/ReportedQuestions";
 import {Notifications} from "./pages/Notifications";
 import {NotificationSettings} from "./pages/NotificationSettings";
+import {ClassNotificationSettings} from "./pages/ClassNotificationSettings";
 
 
 function App(props) {
@@ -85,6 +86,7 @@ function App(props) {
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
                 <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
+                <Route path="/class/:id/notification-settings" element={(<ClassNotificationSettings></ClassNotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}
         </BrowserRouter>
     );
