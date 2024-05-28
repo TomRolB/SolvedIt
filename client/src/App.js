@@ -44,6 +44,7 @@ function App(props) {
     }
 
     function redirectPath() {
+        if(!uuid) return;
         ClassEnroll().then(value => setIsEnrolled(value))
         return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
     }

@@ -55,7 +55,8 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         title: title,
         description: description,
         wasReported: false,
-        isActive: true
+        isActive: true,
+        isVerified: false
     })
     const maxId = await Question.max('id')
     if (tags === undefined || tags === null) return "Created a question"
@@ -77,7 +78,8 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         parentId: parentId,
         description: description,
         wasReported: false,
-        isActive: true
+        isActive: true,
+        isVerified: false
     })
 
     return "Created an answer"
@@ -122,6 +124,11 @@ exports.deleteQuestion = async (questionId) => {
     })
 
     await entry.save()
+}
+exports.updateAnswerVeridity = async(answerId)=> {
+    let answer = await Answer.findOne({where:{id: answerId}})
+    await Answer.update({isVerified: !answer.isVerified}, {where: {id: answerId}})
+    return !answer.isVerified
 }
 
 exports.getReportedQuestions = async (classId) => {

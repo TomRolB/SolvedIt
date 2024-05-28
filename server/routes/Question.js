@@ -111,6 +111,29 @@ router.delete('/answer', async (req, res) => {
     res.send("Deleted answer")
 })
 
+router.put('/answer/validate', async (req,res) =>{
+    console.log("body: " + req.body)
+    console.log("uuid: " + req.body.uuid)
+    console.log("classId: " + req.body.classId)
+    console.log("answerId: " + req.body.answerId)
+    console.log("")
+    console.log(JSON.stringify(req.body))
+    const classId = req.body.classId
+    const userId = Auth.getUserId(req.body.uuid).id
+    const isInClass = await IsInClass.findOne({
+        where: {
+            classId: classId,
+            userId: userId
+        }
+    })
+
+    if (!isInClass) return
+
+    let isVerified = await Questions.updateAnswerVeridity(req.body.answerId)
+    res.send(isVerified)
+
+})
+
 
 router.delete('/question', async (req, res) => {
     const classId = req.body.classId
