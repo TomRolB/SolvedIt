@@ -8,24 +8,22 @@ export const Leaderboard =() =>{
     let [members, setMembers] = useState([])
     let navigate = useNavigate()
 
+
     useEffect(() => {
         const getClassMembers = async () => {
-            const response = await fetch(`/class/byId/${classId}/leaderboard`)
-            const responseValue = await response.json()
-            if (responseValue.length > 0) {
-                setMembers( responseValue)
-            }
+            await axios.get(`/class/byId/${classId}/leaderboard`).then(res => {
+                console.log(res.data);
+                setMembers(res.data)
+            })
+                .catch(err => console.log(err))
         }
         getClassMembers()
-        console.log(members)
+        console.log(members);
     }, [classId]);
 
-
     let image = require("../media/image.jpg")
-    const getStudentEntry = (student) => {
-        console.log(student)
-
-        if (student.permissions !== "owner")
+    const getStudentEntry = (student) =>{
+        if(student.permissions !== "owner")
             return <tbody>
             <tr>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -33,7 +31,7 @@ export const Leaderboard =() =>{
                         <div className="flex-shrink-0 w-10 h-10">
                             <img className="w-full h-full rounded-full"
                                  src={image}
-                                 alt=""/>
+                                 alt="" />
                         </div>
                         <div className="ml-3">
                             <p className="text-gray-900 whitespace-no-wrap">
@@ -43,7 +41,12 @@ export const Leaderboard =() =>{
                     </div>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{student.permissions}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{student.email}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {student.createdAt}
+                    </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
@@ -80,7 +83,11 @@ export const Leaderboard =() =>{
                                     </th>
                                     <th
                                         className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Role
+                                        Email Address
+                                    </th>
+                                    <th
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Created at
                                     </th>
                                     <th
                                         className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">

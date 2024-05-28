@@ -93,20 +93,6 @@ JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = ${idString}`
     res.send(classMembers)
 })
 
-router.get("byId/:id/leaderboard", async(req,res) =>{
-    const id = req.params.id
-    let idString = id.toString()
-    let query = `SELECT a.id, a.description, count(v.answerId) as upvotes, u.id, u.firstName, u.lastName  from answers a
-    JOIN votes v on v.answerId = a.id
-    JOIN users u ON a.userId = u.id
-    JOIN classes c ON c.id = a.classId
-    WHERE c.id = ${idString}
-    group by a.id
-    order by upvotes desc;`
-    const leaderBoard = await db.sequelize.query(query, {type: QueryTypes.SELECT})
-    res.send(leaderBoard)
-})
-
 
 router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
     const classId = req.params.id
@@ -120,4 +106,21 @@ router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
     })
     res.send("User successfully kicked")
 })
+
+router.get("/byId/:id/leaderboard", async(req,res) =>{
+    const id = req.params.id
+    console.log("Id: " + id);
+    let query = `SELECT u.id, firstName, lastName, email, u.createdAt, count(v.answerId) as upvotes
+from users u
+JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = ${id}
+JOIN votes v ON v.userId = u.id
+group by u.id
+order by upvotes desc`
+    const leaderBoard = await db.sequelize.query(query, {type: QueryTypes.SELECT})
+    console.log("Leaderbaord: " + leaderBoard);
+    res.send(leaderBoard)
+})
+
+
+
 module.exports = router
