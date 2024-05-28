@@ -36,26 +36,33 @@ export function PostQuestion() {
 
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('classId', id)
+        formData.append('uuid', localStorage.getItem("uuid"))
+        formData.append('title', title)
+        formData.append('description', description)
+        formData.append('tags', selectedOptions)
 
         axios
             .post('/question/image', formData)
             .then((res) => console.log(res))
             .catch((err) => console.log(err))
 
-        // axios
-        //     .post("/question/post-question", {
-        //         classId: id,
-        //         uuid: localStorage.getItem("uuid"),
-        //         title: title,
-        //         description: description,
-        //         // file: formData,
-        //         tags: selectedOptions
-        //     })
-        //     .then((res) => {
-        //         console.log(res)
-        //         navigate("/class/" + id)
-        //     })
-        //     .catch((err) => console.log(err))
+        axios
+            .post("/question/post-question",
+            //     {
+            //     classId: id,
+            //     uuid: localStorage.getItem("uuid"),
+            //     title: title,
+            //     description: description,
+            //     tags: selectedOptions
+            // }
+                formData
+            )
+            .then((res) => {
+                console.log(res)
+                navigate("/class/" + id)
+            })
+            .catch((err) => console.log(err))
     }
 
     const options = tags.map((tag) => {

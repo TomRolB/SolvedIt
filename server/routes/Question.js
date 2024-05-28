@@ -11,11 +11,12 @@ const multer  = require('multer')
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads')
+        req.body.classId
     },
     filename: function (req, file, cb) {
         let extArray = file.mimetype.split("/");
         let extension = extArray[extArray.length - 1];
-        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
+        cb(null, file.originalname + '.' +extension)
     }
 })
 const upload = multer({ storage: storage })
@@ -62,7 +63,18 @@ router.get("/answers", async (req, res) => {
 })
 
 router.post('/post-question', async (req, res) => {
-    const classId = req.body.classId
+    console.log('POST BODY')
+    console.log(req.body)
+    res.send("Did nothing")
+})
+
+router.post('/image', upload.single('file'), async (req, res) => {
+    console.log('REQ')
+    console.log(req)
+    console.log('BODY')
+    console.log(req.body)
+
+    const classId = Number(req.body.classId)
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({
         where: {
@@ -78,22 +90,10 @@ router.post('/post-question', async (req, res) => {
         classId,
         req.body.title,
         req.body.description,
-        req.body.tags
+        // Have to parse it, since in this particular case we use formData
+        req.body.tags === 'null'? null : req.body.tags.split(',').map(Number)
     )
     res.send(result)
-})
-
-router.post('/image', upload.single('file'), async (req, res) => {
-    try {
-        console.log("Received req:")
-        console.log(req)
-        console.log("Received image:")
-        console.log(req.file)
-    } catch (e) {
-        console.log("Something went wrong when writing the image:")
-        console.log(e)
-    }
-    res.send("Received image")
 })
 
 router.post('/post-answer', async (req, res) => {
