@@ -128,6 +128,7 @@ exports.deleteQuestion = async (questionId) => {
 exports.updateAnswerVeridity = async(answerId)=> {
     let answer = await Answer.findOne({where:{id: answerId}})
     await Answer.update({isVerified: !answer.isVerified}, {where: {id: answerId}})
+    return !answer.isVerified
 }
 
 exports.getReportedQuestions = async (classId) => {

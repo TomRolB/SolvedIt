@@ -75,7 +75,7 @@ router.post("/:uuid/enroll-to/:id", async(req,res) =>{
 router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    const isInClass = await IsInClass.findAll({where:{classId: Number(classId), userId: userId}})
+    const isInClass = await IsInClass.findOne({where:{classId: Number(classId), userId: userId}})
     res.send(isInClass)
 })
 
