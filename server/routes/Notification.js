@@ -28,7 +28,7 @@ router.post("/update-general-notification-settings", async (req, res) => {
 router.post("/update-notification-settings-of-class/:classId", async (req, res) => {
     const info = req.body
     const userId = await Auth.getUserId(info.uuid).id
-    await NotificationSettings.updateNotificationSettings(req.params.classId, userId, info, false)
+    await NotificationSettings.updateNotificationSettings(req.params.classId, userId, info, info.isActive)
     res.json("Settings updated")
 })
 
