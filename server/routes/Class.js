@@ -1,11 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink, Users} = require("../models")
+const { Class, IsInClass, InviteLink} = require("../models")
 const bodyParser = require("body-parser")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
-const sequelize = require("sequelize");
 const Tags = require("../controllers/Tags");
 const {Sequelize, QueryTypes} = require("sequelize");
 router.post("/create-class", async (req, res) => {
@@ -85,11 +84,10 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
 
 router.get("/byId/:id/members", async(req,res) =>{
     const id = req.params.id
-    let idString = id.toString()
     let query = `SELECT u.id, firstName, lastName, email, password, u.createdAt, u.updatedAt, permissions, isTeacher
 from users u
-JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = ${idString}`
-    const classMembers = await db.sequelize.query(query, {type: QueryTypes.SELECT})
+JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = :id`
+    const classMembers = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
     res.send(classMembers)
 })
 
@@ -112,11 +110,11 @@ router.get("/byId/:id/leaderboard", async(req,res) =>{
     console.log("Id: " + id);
     let query = `SELECT u.id, firstName, lastName, email, u.createdAt, count(v.answerId) as upvotes
 from users u
-JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = ${id}
+JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = :id
 JOIN votes v ON v.userId = u.id
 group by u.id
 order by upvotes desc`
-    const leaderBoard = await db.sequelize.query(query, {type: QueryTypes.SELECT})
+    const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
     console.log("Leaderbaord: " + leaderBoard);
     res.send(leaderBoard)
 })
