@@ -169,6 +169,6 @@ exports.isAdmin = async (uuid, classId) => {
             classId: classId
         }
     })
-
+    if(!dbUserInClass) return {isAdmin: false};
     return {isAdmin: dbUserInClass.permissions !== "normal"}
 }
