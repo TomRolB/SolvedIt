@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { Class, IsInClass, InviteLink} = require("../models")
 const bodyParser = require("body-parser")
+const NotificationSettings = require("../controllers/NotificationSettings")
 const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
@@ -15,6 +16,7 @@ router.post("/create-class", async (req, res) => {
     const maxId = await Class.max('id');
     // await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
+    await NotificationSettings.createNotificationSettings(userId, maxId)
     InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
     res.send("Created class!")
 })
@@ -67,6 +69,7 @@ router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     const userId = Auth.getUserId(req.params.uuid).id
     const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
     if(!created)
+    await NotificationSettings.createNotificationSettings(userId, classId)
     InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
     res.json({message: "Successfully enrolled"})
 })

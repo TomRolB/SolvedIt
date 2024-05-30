@@ -20,6 +20,9 @@ import {ClassEnroll} from "./utils/ClassEnroll";
 import {ClassMembers} from "./pages/ClassMembers";
 import {ReportedQuestions} from "./pages/ReportedQuestions";
 import {Leaderboard} from "./pages/Leaderboard";
+import {Notifications} from "./pages/Notifications";
+import {NotificationSettings} from "./pages/NotificationSettings";
+import {ClassNotificationSettings} from "./pages/ClassNotificationSettings";
 
 
 function App(props) {
@@ -84,6 +87,9 @@ function App(props) {
                 <Route path="/enroll-to/:id" element={redirectPath()}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
+                <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
+                <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
+                <Route path="/class/:id/notification-settings" element={(<ClassNotificationSettings></ClassNotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}
         </BrowserRouter>
     );
