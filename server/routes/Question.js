@@ -42,14 +42,11 @@ router.get("/questions", async (req, res) => {
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
     const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
-    console.log("Going to send result:")
-    console.log(result)
     res.send(result)
 })
 
 router.get("/file", async (req, res) => {
     const filepath = path.resolve(__dirname + `/../uploads/${req.query.questionId}/${req.query.fileName}`)
-    console.log(`Sending file at path ${filepath}`)
     res.sendFile(filepath)
 })
 
@@ -78,9 +75,6 @@ router.get("/answers", async (req, res) => {
 })
 
 router.post('/post-question', upload.single('file'), async (req, res) => {
-    console.log("BODY")
-    console.log(req.body)
-
     const classId = Number(req.body.classId)
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({

@@ -15,7 +15,7 @@ export function QuestionPage() {
     const navigate = useNavigate()
     let {id} = useParams()
     let [isTeacher, setIsTeacher] = useState(false)
-    const [files, setFiles] = useState()
+    const [files, setFiles] = useState([])
 
     useEffect(() => {
         console.log("location:")
@@ -35,12 +35,11 @@ export function QuestionPage() {
                 console.log(err)
                 console.log("Answer error")
             })
-        console.log(`Going to start fetching files: ${questionInfo.fileNames}`)
         if (questionInfo.fileNames instanceof String) questionInfo.fileNames = [questionInfo.fileNames]
         for (const fileName of questionInfo.fileNames) {
-            console.log(`Going to fetch file: ${fileName}`)
             axios
                 .get("/question/file", {
+                        responseType: "blob",
                         params: {
                             questionId: questionInfo.id,
                             fileName: fileName
@@ -48,19 +47,22 @@ export function QuestionPage() {
                     }
                 )
                 .then((res) => {
-                    console.log(`res.data = ${res.data}`)
-                    setFiles(files + res.data);
+                    console.log("DATA:")
+                    console.log(res.data)
+                    setFiles([...files, URL.createObjectURL(res.data)]);
+                    console.log(`Updated file array:`)
+                    console.log(files)
                 })
                 .catch(err => console.log(err))
         }
+
+
         axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
             .then(res => {
                 setIsTeacher(res.data.isTeacher) //TODO: change, it's awkward to see
             })
             .catch(err => console.log(err))
 
-
-        console.log(files)
     }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
@@ -129,6 +131,9 @@ export function QuestionPage() {
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
                 <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
+                {files
+                    .map(file => <img src={file} alt={"No image"}/>)
+                }
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()
