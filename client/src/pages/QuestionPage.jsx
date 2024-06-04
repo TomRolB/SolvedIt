@@ -15,8 +15,13 @@ export function QuestionPage() {
     const navigate = useNavigate()
     let {id} = useParams()
     let [isTeacher, setIsTeacher] = useState(false)
+    const [files, setFiles] = useState()
 
     useEffect(() => {
+        console.log("location:")
+        console.log(location)
+        console.log("questionInfo:")
+        console.log(questionInfo)
         let uuid = localStorage.getItem("uuid")
         axios
             .get("/question/answers", {
@@ -30,11 +35,31 @@ export function QuestionPage() {
                 console.log(err)
                 console.log("Answer error")
             })
+        console.log(`Going to start fetching files: ${questionInfo.fileNames}`)
+        for (const fileName in questionInfo.fileNames) {
+            console.log(`Going to fetch file: ${fileName}`)
+            axios
+                .get("/question/file", {
+                        params: {
+                            questionId: questionInfo.id,
+                            fileName: fileName
+                        }
+                    }
+                )
+                .then((res) => {
+                    console.log(`res.data = ${res.data}`)
+                    setFiles(files + res.data);
+                })
+                .catch(err => console.log(err))
+        }
         axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
             .then(res => {
                 setIsTeacher(res.data.isTeacher) //TODO: change, it's awkward to see
             })
             .catch(err => console.log(err))
+
+
+        console.log(files)
     }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {

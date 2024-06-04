@@ -24,9 +24,31 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
     );
 
     questionsWithTags.forEach((question) => {
-        console.log(question)
-        return question.canBeDeleted = question.userId === userId || isAdmin;
+        question.canBeDeleted = question.userId === userId || isAdmin;
     })
+
+    questionsWithTags.forEach((question) => {
+        let path = `./uploads/${question.id}`;
+        console.log(`Does ${path} exist? ${fs.existsSync(path)}`)
+        if (fs.existsSync(path)) {
+            // Async version which did not work. Leaving it here
+            // until commit, just in case
+
+            // fs.readdir(path,(err, files) => {
+            //     console.log(`Found files ${files}`)
+            //     question.fileNames = files
+            //     console.log(question)
+            // })
+            const files = fs.readdirSync(path)
+            console.log(`Found files ${files}`)
+            question.fileNames = files
+            console.log(question)
+        }
+        else question.fileNames = []
+    })
+
+    console.log("Final result:")
+    console.log(questionsWithTags)
 
     return questionsWithTags
 }

@@ -72,6 +72,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             tagId: question.tagId,
             tagName: question.tagName,
             canBeDeleted: question.canBeDeleted,
+            fileNames: question.fileNames,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,
@@ -93,6 +94,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             tagName: question.tagName,
             userId: question.userId,
             canBeDeleted: question.canBeDeleted,
+            fileNames: question.fileNames,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,

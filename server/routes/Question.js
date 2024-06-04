@@ -41,7 +41,13 @@ router.get("/questions", async (req, res) => {
     const isAdmin = (await Auth.isAdmin(req.query.uuid, classId)).isAdmin
 
     const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
+    console.log("Going to send result:")
+    console.log(result)
     res.send(result)
+})
+
+router.get("/file", async (req, res) => {
+    res.sendFile(__dirname + `/uploads/${req.query.questionId}/${req.query.fileName}`)
 })
 
 router.get("/answers", async (req, res) => {
