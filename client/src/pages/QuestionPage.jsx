@@ -36,7 +36,8 @@ export function QuestionPage() {
                 console.log("Answer error")
             })
         console.log(`Going to start fetching files: ${questionInfo.fileNames}`)
-        for (const fileName in questionInfo.fileNames) {
+        if (questionInfo.fileNames instanceof String) questionInfo.fileNames = [questionInfo.fileNames]
+        for (const fileName of questionInfo.fileNames) {
             console.log(`Going to fetch file: ${fileName}`)
             axios
                 .get("/question/file", {

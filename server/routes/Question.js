@@ -7,6 +7,7 @@ const VoteController = require('../controllers/VoteController.js')
 
 const multer  = require('multer')
 const fs= require('fs');
+const path = require('path');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -47,7 +48,9 @@ router.get("/questions", async (req, res) => {
 })
 
 router.get("/file", async (req, res) => {
-    res.sendFile(__dirname + `/uploads/${req.query.questionId}/${req.query.fileName}`)
+    const filepath = path.resolve(__dirname + `/../uploads/${req.query.questionId}/${req.query.fileName}`)
+    console.log(`Sending file at path ${filepath}`)
+    res.sendFile(filepath)
 })
 
 router.get("/answers", async (req, res) => {
