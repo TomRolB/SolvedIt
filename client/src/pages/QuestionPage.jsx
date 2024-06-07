@@ -18,7 +18,10 @@ export function QuestionPage() {
     const [files, setFiles] = useState([])
 
     function fetchFilesRecursively(fetchedFiles, idx) {
-        if (idx >= questionInfo.fileNames.length) return
+        if (idx >= questionInfo.fileNames.length) {
+            setFiles(fetchedFiles)
+            return
+        }
 
         console.log(`Gonna fetch ${questionInfo.fileNames[idx]}`)
         const fileName = questionInfo.fileNames[idx]
@@ -35,7 +38,6 @@ export function QuestionPage() {
                 fetchedFiles.push({fileName: fileName, url: URL.createObjectURL(res.data)});
                 console.log("Updated array len:")
                 console.log(fetchedFiles.length)
-                setFiles(fetchedFiles)
                 fetchFilesRecursively(fetchedFiles, idx + 1)
             })
             .catch(err => console.log(err))
