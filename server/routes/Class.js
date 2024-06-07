@@ -122,6 +122,15 @@ order by upvotes desc`
     res.send(leaderBoard)
 })
 
+router.put("/byId/:id/change-permissions", async(req,res) =>{
+    const classId = req.params.id
+    const userId = req.body.userId
+    const newPermission = req.body.permissions
+    const isTeacher = req.body.isTeacher
+    await IsInClass.update({permissions: newPermission, isTeacher: isTeacher}, {where: {userId: userId, classId: classId}})
+    res.send("Role successfully changed")
+})
+
 
 
 module.exports = router
