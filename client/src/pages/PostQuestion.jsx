@@ -7,7 +7,7 @@ import Select from "react-select";
 export function PostQuestion() {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [file, setFile] = useState(null)
+    const [files, setFiles] = useState([])
     const [tags, setTags] = useState([])
     const [selectedOptions, setSelectedOptions] = useState(null);
     let {id} = useParams()
@@ -32,10 +32,14 @@ export function PostQuestion() {
     function handleFormSubmit(event) {
         event.preventDefault()
 
-        console.log(file)
+        console.log(files)
 
         const formData = new FormData()
-        formData.append('file', file)
+
+        for (const file of files) {
+            formData.append('file', file)
+        }
+
         formData.append('classId', id)
         formData.append('uuid', localStorage.getItem("uuid"))
         formData.append('title', title)
@@ -61,7 +65,7 @@ export function PostQuestion() {
 
     function handleFileChange(event) {
         console.log(event.target.files[0])
-        setFile(event.target.files[0])
+        setFiles([...files, event.target.files[0]])
     }
 
     return (

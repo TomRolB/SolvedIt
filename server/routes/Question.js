@@ -13,10 +13,20 @@ let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let dir = './uploads/awaiting_id';
 
-        if (fs.existsSync(dir)){
-            throw Error("There's a file which wasn't assigned an id")
+        // The following validation was initially performed to avoid having files
+        // located permanently at the 'awaiting_id' directory. However,
+        // this broke multi-file uploading.
+        // TODO: should think of how to re-introduce this validation
+
+        // if (fs.existsSync(dir)){
+        //     throw Error("There's a file which wasn't assigned an id")
+        // }
+
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
         }
-        fs.mkdirSync(dir);
+
         cb(null, dir)
         req.body.classId
     },
@@ -74,7 +84,7 @@ router.get("/answers", async (req, res) => {
     res.send(result)
 })
 
-router.post('/post-question', upload.single('file'), async (req, res) => {
+router.post('/post-question', upload.array('file', 10), async (req, res) => {
     const classId = Number(req.body.classId)
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({
