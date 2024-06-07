@@ -17,11 +17,34 @@ export function QuestionPage() {
     let [isTeacher, setIsTeacher] = useState(false)
     const [files, setFiles] = useState([])
 
+    function fetchFilesRecursively(fetchedFiles, idx) {
+        if (idx >= questionInfo.fileNames.length) return
+
+        console.log(`Gonna fetch ${questionInfo.fileNames[idx]}`)
+        const fileName = questionInfo.fileNames[idx]
+        axios
+            .get("/question/file", {
+                    responseType: "blob",
+                    params: {
+                        questionId: questionInfo.id,
+                        fileName: fileName
+                    }
+                }
+            )
+            .then((res) => {
+                fetchedFiles.push({fileName: fileName, url: URL.createObjectURL(res.data)});
+                console.log("Updated array len:")
+                console.log(fetchedFiles.length)
+                setFiles(fetchedFiles)
+                fetchFilesRecursively(fetchedFiles, idx + 1)
+            })
+            .catch(err => console.log(err))
+    }
+
     useEffect(() => {
-        console.log("location:")
-        console.log(location)
-        console.log("questionInfo:")
-        console.log(questionInfo)
+        // setFiles([]) // Used to avoid fetching the same files many times
+        // ^^^ TODO: not actually working, though
+        
         let uuid = localStorage.getItem("uuid")
         axios
             .get("/question/answers", {
@@ -30,32 +53,38 @@ export function QuestionPage() {
                     questionId: questionInfo.id,
                     uuid: uuid}
             })
-            .then((res) => buildQuestionTree(res.data))
+            .then((res) => {
+                if (questionInfo.fileNames instanceof String) questionInfo.fileNames = [questionInfo.fileNames]
+                // const files = questionInfo.fileNames.map(fileName => {
+                //         let fileData
+                //         axios
+                //             .get("/question/file", {
+                //                     responseType: "blob",
+                //                     params: {
+                //                         questionId: questionInfo.id,
+                //                         fileName: fileName
+                //                     }
+                //                 }
+                //             )
+                //             .then((res) => {
+                //                 fileData = {fileName: fileName, url: URL.createObjectURL(res.data)}
+                //             })
+                //             .catch(err => console.log(err))
+                //
+                //         return fileData
+                //     }
+                // );
+                // console.log("Files:")
+                // console.log(files)
+                // setFiles(files)
+
+                fetchFilesRecursively([], 0);
+                buildQuestionTree(res.data);
+            })
             .catch((err) => {
                 console.log(err)
                 console.log("Answer error")
             })
-        if (questionInfo.fileNames instanceof String) questionInfo.fileNames = [questionInfo.fileNames]
-        for (const fileName of questionInfo.fileNames) {
-            axios
-                .get("/question/file", {
-                        responseType: "blob",
-                        params: {
-                            questionId: questionInfo.id,
-                            fileName: fileName
-                        }
-                    }
-                )
-                .then((res) => {
-                    console.log("DATA:")
-                    console.log(res.data)
-                    setFiles([...files, URL.createObjectURL(res.data)]);
-                    console.log(`Updated file array:`)
-                    console.log(files)
-                })
-                .catch(err => console.log(err))
-        }
-
 
         axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
             .then(res => {
@@ -66,6 +95,10 @@ export function QuestionPage() {
     }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
+        useEffect(() => {
+
+        }, []);
+
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
         function handleTextChange(event) {
@@ -121,6 +154,24 @@ export function QuestionPage() {
             </form>;
         }
 
+        function renderFiles() {
+            console.log("FILES")
+            console.log(files)
+            console.log(`File amount to render: ${files.length}`)
+            return files
+                .map(file => {
+                    console.log(`Rendering ${file.fileName}`)
+                    const imageExtensions = ['.jpg', '.jpeg', '.png'] // Add more
+                    if (imageExtensions.some(ext => file.fileName.endsWith(ext))) {
+                        return <img key={file.fileName} className="mt-1" src={file.url} alt={file.fileName}/>
+                    } else return <a key={file.fileName} href={file.url} download>
+                        <p className="text-amber-50 rounded-2xl bg-gray-600 p-2 mb-1">{file.fileName}</p>
+                        <br/>
+                    </a>
+
+                });
+        }
+
         function renderContents() {
             return <>
                 <div className="flex justify-between">
@@ -131,9 +182,7 @@ export function QuestionPage() {
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
                 <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
-                {files
-                    .map(file => <img src={file} alt={"No image"}/>)
-                }
+                {renderFiles()}
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()
@@ -177,7 +226,6 @@ export function QuestionPage() {
     }
 
     function createAnswersRecursively(answer, answerMap, result, extraMargin) {
-        // console.log(answer)
         result.push(<Reply key={answer.id} answer={answer} extraMargin={extraMargin}/>)
 
         if (answerMap.has(answer.id)) {
@@ -192,7 +240,6 @@ export function QuestionPage() {
     }
 
     const handleQuestionReport = (questionInfo) => {
-        console.log(questionInfo)
         confirmAlert({
             title: 'Report Question:',                        // Title dialog
             message: `Question: ${questionInfo.title}`,               // Message dialog
@@ -223,7 +270,6 @@ export function QuestionPage() {
     }
 
     function handleAnswerReport(answer) {
-        console.log(answer)
         confirmAlert({
             title: 'Report Answer:',                        // Title dialog
             message: `Answer: ${answer.description}`,               // Message dialog
@@ -305,7 +351,6 @@ export function QuestionPage() {
 
         function handleVerify() {
             let uuid = localStorage.getItem("uuid");
-            console.log(uuid);
             axios.put('/question/answer/validate',  {
                     uuid: uuid,
                     classId: answer.classId,
@@ -328,8 +373,6 @@ export function QuestionPage() {
                     undoingVote: hasUserVotedIt
                 })
                 .then((res) => {
-                    console.log(voteCount)
-                    console.log(hasUserVotedIt)
                     if (hasUserVotedIt) setVoteCount(voteCount - 1)
                     else setVoteCount(voteCount + 1)
 
