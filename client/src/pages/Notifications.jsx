@@ -1,20 +1,59 @@
 import {Navbar} from "../components/Navbar";
 import {useNavigate} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
 
 
 export const Notifications = () => {
     const navigate = useNavigate()
+    let [notifications, setNotifications] = useState([])
 
     const goToNotificationSettings = () => {
         navigate("/notifications/settings")
+    }
+
+    useEffect(() => {
+        const getNotifications = async () => {
+            let response = await fetch(`/notification/getAllNotifications/${localStorage.getItem('uuid')}`)
+            let responseValue = await response.json()
+            console.log(responseValue);
+            if (responseValue.length > 0) {
+                setNotifications(responseValue)
+            }
+        }
+        getNotifications().catch(err => console.log(err))
+    }, []);
+
+    console.log(notifications);
+
+    function createEntry(notification) {
+        return (
+            <tr>
+            <th scope="col" className="px-6 py-3">
+                {notification.userId}
+            </th>
+            <th scope="col" className="px-6 py-3">
+                {notification.title}
+            </th>
+            <th scope="col" className="px-6 py-3">
+                {notification.description}
+            </th>
+            <th scope="col" className="px-6 py-3">
+                {notification.createdAt}
+            </th>
+            <th scope="col" className="px-6 py-3">
+                {notification.notificationType}
+            </th>
+                <th scope="col" className="px-6 py-3">
+                {notification.classId}
+            </th>
+        </tr>);
     }
 
     return (
         <>
             <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
-                <h1>Notifications</h1>
                 <button onClick={goToNotificationSettings} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Notification Settings</button>
                 <div className='p-5 grid grid-cols-3 divide-x'>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg col-span-3">
@@ -31,15 +70,18 @@ export const Notifications = () => {
                                     Description
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Times Reported
+                                    When
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Action
+                                    Type
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Class
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
-                            {/*{questionRows}*/}
+                            {notifications.map(notification => createEntry(notification))}
                             </tbody>
                         </table>
                     </div>
