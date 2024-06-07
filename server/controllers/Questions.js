@@ -29,20 +29,8 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
 
     questionsWithTags.forEach((question) => {
         let path = `./uploads/${question.id}`;
-        console.log(`Does ${path} exist? ${fs.existsSync(path)}`)
         if (fs.existsSync(path)) {
-            // Async version which did not work. Leaving it here
-            // until commit, just in case
-
-            // fs.readdir(path,(err, files) => {
-            //     console.log(`Found files ${files}`)
-            //     question.fileNames = files
-            //     console.log(question)
-            // })
-            const files = fs.readdirSync(path)
-            console.log(`Found files ${files}`)
-            question.fileNames = files
-            console.log(question)
+            question.fileNames = fs.readdirSync(path)
         }
         else question.fileNames = []
     })
@@ -65,6 +53,14 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
     answers.forEach((answer) => {
         answer.dataValues.belongsToThisUser = answer.userId === userId;
         answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+    })
+
+    answers.forEach((answer) => {
+        let path = `./uploads/a${answer.id}`;
+        if (fs.existsSync(path)) {
+            answer.dataValues.fileNames = fs.readdirSync(path)
+        }
+        else answer.dataValues.fileNames = []
     })
 
     return answers
@@ -103,7 +99,7 @@ exports.addQuestionImage = async (userId, file) => {
 }
 
 exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
-    await Answer.create({
+    const result = await Answer.create({
         userId: userId,
         classId: classId,
         questionId: questionId,
@@ -113,6 +109,8 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         isActive: true,
         isVerified: false
     })
+
+    fs.rename('./uploads/awaiting_id', `./uploads/a${result.id}`,() => {})
 
     return "Created an answer"
 };

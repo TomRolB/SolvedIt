@@ -3,7 +3,51 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
 import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import 'react-confirm-alert/src/react-confirm-alert.css'
+import {FileUpload} from "../components/FileUpload"; // Import css
+
+function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
+    if (idx >= fileNames.length) {
+        setter(fetchedFiles)
+        return
+    }
+
+    console.log(`Gonna fetch ${fileNames[idx]}`)
+    const fileName = fileNames[idx]
+    axios
+        .get("/question/file", {
+                responseType: "blob",
+                params: {
+                    id: id,
+                    fileName: fileName,
+                    isAnswer: isAnswer
+                }
+            }
+        )
+        .then((res) => {
+            fetchedFiles.push({fileName: fileName, url: URL.createObjectURL(res.data)});
+            console.log("Updated array len:")
+            console.log(fetchedFiles.length)
+            fetchFilesRecursively(fileNames, id, fetchedFiles, idx + 1, setter, isAnswer)
+        })
+        .catch(err => console.log(err))
+}
+
+function Files({files}) {
+    return <>
+        {files
+            .map(file => {
+                const imageExtensions = ['.jpg', '.jpeg', '.png'] // Add more
+                if (imageExtensions.some(ext => file.fileName.endsWith(ext))) {
+                    return <img key={file.fileName} className="mt-1" src={file.url} alt={file.fileName}/>
+                } else return <a key={file.fileName} href={file.url} download>
+                    <p className="text-amber-50 rounded-2xl bg-gray-600 p-2 mb-1">{file.fileName}</p>
+                    <br/>
+                </a>
+
+            })}
+    </>
+}
 
 export function QuestionPage() {
     const location = useLocation()
@@ -17,36 +61,8 @@ export function QuestionPage() {
     let [isTeacher, setIsTeacher] = useState(false)
     const [files, setFiles] = useState([])
 
-    function fetchFilesRecursively(fetchedFiles, idx) {
-        if (idx >= questionInfo.fileNames.length) {
-            setFiles(fetchedFiles)
-            return
-        }
-
-        console.log(`Gonna fetch ${questionInfo.fileNames[idx]}`)
-        const fileName = questionInfo.fileNames[idx]
-        axios
-            .get("/question/file", {
-                    responseType: "blob",
-                    params: {
-                        questionId: questionInfo.id,
-                        fileName: fileName
-                    }
-                }
-            )
-            .then((res) => {
-                fetchedFiles.push({fileName: fileName, url: URL.createObjectURL(res.data)});
-                console.log("Updated array len:")
-                console.log(fetchedFiles.length)
-                fetchFilesRecursively(fetchedFiles, idx + 1)
-            })
-            .catch(err => console.log(err))
-    }
 
     useEffect(() => {
-        // setFiles([]) // Used to avoid fetching the same files many times
-        // ^^^ TODO: not actually working, though
-        
         let uuid = localStorage.getItem("uuid")
         axios
             .get("/question/answers", {
@@ -56,31 +72,7 @@ export function QuestionPage() {
                     uuid: uuid}
             })
             .then((res) => {
-                if (questionInfo.fileNames instanceof String) questionInfo.fileNames = [questionInfo.fileNames]
-                // const files = questionInfo.fileNames.map(fileName => {
-                //         let fileData
-                //         axios
-                //             .get("/question/file", {
-                //                     responseType: "blob",
-                //                     params: {
-                //                         questionId: questionInfo.id,
-                //                         fileName: fileName
-                //                     }
-                //                 }
-                //             )
-                //             .then((res) => {
-                //                 fileData = {fileName: fileName, url: URL.createObjectURL(res.data)}
-                //             })
-                //             .catch(err => console.log(err))
-                //
-                //         return fileData
-                //     }
-                // );
-                // console.log("Files:")
-                // console.log(files)
-                // setFiles(files)
-
-                fetchFilesRecursively([], 0);
+                fetchFilesRecursively(questionInfo.fileNames, questionInfo.id, [], 0, setFiles, false);
                 buildQuestionTree(res.data);
             })
             .catch((err) => {
@@ -97,26 +89,38 @@ export function QuestionPage() {
     }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
-        useEffect(() => {
-
-        }, []);
-
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
+        const [replyFiles, setReplyFiles] = useState([])
+
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
         }
 
         function handleAnswerSubmit(event) {
             event.preventDefault() //Prevents page from refreshing
+
+            const formData = new FormData()
+            for (const file of replyFiles) {
+                formData.append('file', file)
+            }
+            formData.append('classId', questionInfo.classId)
+            formData.append('uuid', localStorage.getItem("uuid"))
+            formData.append('questionId', questionInfo.id)
+            formData.append('description', answerDescription)
+            formData.append('parentId', null)
+
             axios
-                .post("/question/post-answer", {
-                    uuid: localStorage.getItem("uuid"),
-                    classId: questionInfo.classId,
-                    questionId: questionInfo.id,
-                    parentId: null,
-                    description: answerDescription
-                })
+                .post("/question/post-answer",
+                //     {
+                //     uuid: localStorage.getItem("uuid"),
+                //     classId: questionInfo.classId,
+                //     questionId: questionInfo.id,
+                //     parentId: null,
+                //     description: answerDescription
+                // }
+                    formData
+                )
                 .then((res) => {
                     setAnswersLen(answersLen + 1)
                 })
@@ -151,27 +155,10 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/>
-                <input type="submit" value="Submit"/>
+                <input type="text" onChange={handleTextChange}/><br/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" /><br/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
             </form>;
-        }
-
-        function renderFiles() {
-            console.log("FILES")
-            console.log(files)
-            console.log(`File amount to render: ${files.length}`)
-            return files
-                .map(file => {
-                    console.log(`Rendering ${file.fileName}`)
-                    const imageExtensions = ['.jpg', '.jpeg', '.png'] // Add more
-                    if (imageExtensions.some(ext => file.fileName.endsWith(ext))) {
-                        return <img key={file.fileName} className="mt-1" src={file.url} alt={file.fileName}/>
-                    } else return <a key={file.fileName} href={file.url} download>
-                        <p className="text-amber-50 rounded-2xl bg-gray-600 p-2 mb-1">{file.fileName}</p>
-                        <br/>
-                    </a>
-
-                });
         }
 
         function renderContents() {
@@ -184,7 +171,7 @@ export function QuestionPage() {
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
                 <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
-                {renderFiles()}
+                <Files files={files}/>
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()
@@ -307,6 +294,17 @@ export function QuestionPage() {
         const [hasUserVotedIt, setHasUserVotedIt] = useState(answer.hasUserVotedIt)
         const [voteCount, setVoteCount] = useState(answer.voteCount)
         const [isVerified, setIsVerified] = useState(false)
+        const [replyFiles, setReplyFiles] = useState([])
+        const [fetchedFiles, setFetchedFiles] = useState([])
+
+        console.log("ATTRS:")
+        console.log(answer)
+
+        useEffect(() => {
+            fetchFilesRecursively(
+                answer.fileNames, answer.id, [], 0, setFetchedFiles, true
+            )
+        }, []);
 
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
@@ -314,14 +312,28 @@ export function QuestionPage() {
 
         function handleAnswerSubmit(event) {
             event.preventDefault() //Prevents page from refreshing
+
+            const formData = new FormData()
+            for (const file of replyFiles) {
+                formData.append('file', file)
+            }
+            formData.append('classId', answer.classId)
+            formData.append('uuid', localStorage.getItem("uuid"))
+            formData.append('questionId', answer.questionId)
+            formData.append('description', answerDescription)
+            formData.append('parentId', answer.id)
+
             axios
-                .post("/question/post-answer", {
-                    uuid: localStorage.getItem("uuid"),
-                    classId: answer.classId,
-                    questionId: answer.questionId,
-                    parentId: answer.id,
-                    description: answerDescription
-                })
+                .post("/question/post-answer",
+                //     {
+                //     uuid: localStorage.getItem("uuid"),
+                //     classId: answer.classId,
+                //     questionId: answer.questionId,
+                //     parentId: answer.id,
+                //     description: answerDescription
+                // }
+                    formData
+                )
                 .then((res) => {
                     setAnswersLen(0)
                 })
@@ -415,8 +427,9 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/>
-                <input type="submit" value="Submit"/>
+                <input type="text" onChange={handleTextChange}/><br/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"/><br/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
             </form>;
         }
 
@@ -431,6 +444,7 @@ export function QuestionPage() {
 
                 </div>
                 <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
+                <Files files={fetchedFiles}/>
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()}

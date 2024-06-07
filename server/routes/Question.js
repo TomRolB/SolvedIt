@@ -56,7 +56,11 @@ router.get("/questions", async (req, res) => {
 })
 
 router.get("/file", async (req, res) => {
-    const filepath = path.resolve(__dirname + `/../uploads/${req.query.questionId}/${req.query.fileName}`)
+    const prefix = req.query.isAnswer === "true"? "a" : ""
+    console.log(`Type of isAnswer ${typeof req.query.isAnswer}`)
+    console.log(`Is it an answer? ${req.query.isAnswer}`)
+    console.log(`Prefix: ${prefix}`)
+    const filepath = path.resolve(__dirname + `/../uploads/${prefix + req.query.id}/${req.query.fileName}`)
     res.sendFile(filepath)
 })
 
@@ -84,6 +88,10 @@ router.get("/answers", async (req, res) => {
     res.send(result)
 })
 
+function parsedTags(req) {
+    return req.body.tags === 'null' ? null : req.body.tags.split(',').map(Number);
+}
+
 router.post('/post-question', upload.array('file', 10), async (req, res) => {
     const classId = Number(req.body.classId)
     const userId = Auth.getUserId(req.body.uuid).id
@@ -101,14 +109,17 @@ router.post('/post-question', upload.array('file', 10), async (req, res) => {
         classId,
         req.body.title,
         req.body.description,
-        // Have to parse it, since in this particular case we use formData
-        req.body.tags === 'null' ? null : req.body.tags.split(',').map(Number)
+        parsedTags(req)
     )
 
     res.send("Posted question")
 })
 
-router.post('/post-answer', async (req, res) => {
+function parsedParentId(req) {
+    return req.body.parentId === 'null' ? null : Number(req.body.parentId);
+}
+
+router.post('/post-answer', upload.array('file', 10), async (req, res) => {
     const classId = req.body.classId
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({
@@ -124,7 +135,7 @@ router.post('/post-answer', async (req, res) => {
         userId,
         classId,
         req.body.questionId,
-        req.body.parentId,
+        parsedParentId(req),
         req.body.description
     )
     res.send(result)
