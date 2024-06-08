@@ -30,15 +30,23 @@ export function PostQuestion() {
     const navigate = useNavigate()
     function handleFormSubmit(event) {
         event.preventDefault()
+        let uuid = localStorage.getItem("uuid");
         axios
             .post("/question/post-question", {
+                uuid: uuid,
                 classId: id,
-                uuid: localStorage.getItem("uuid"),
                 title: title,
                 description: description,
                 tags: selectedOptions
-            })
-            .then((res) => {
+            }).then(res => console.log(res))
+
+        axios.post("/notification/notify", {
+            uuid: uuid,
+            classId: id,
+            title: title,
+            description: "New question has been submitted",
+            notificationType: "newQuestion"
+        }).then((res) => {
                 console.log(res)
                 navigate("/class/" + id)
             })
