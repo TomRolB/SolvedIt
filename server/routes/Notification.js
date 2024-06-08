@@ -43,7 +43,6 @@ router.post("/notify", async (req, res) => {
 router.get("/getAllNotifications/:uuid", async (req, res) =>{
     const userId = Auth.getUserId(req.params.uuid).id
     const allNotifications = await NotificationController.getAllNotifications(userId)
-    console.log(allNotifications);
     res.send(allNotifications)
 })
 

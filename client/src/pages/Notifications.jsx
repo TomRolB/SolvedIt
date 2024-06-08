@@ -1,7 +1,6 @@
 import {Navbar} from "../components/Navbar";
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import Select from "react-select";
 
 
@@ -59,7 +58,7 @@ export const Notifications = () => {
         return [{value: "last month", label: "last month"},{value: "last week", label: "last week"},{value: "all", label: "all"}]
     }
 
-    function isAble(notif) {
+    function isAbleByTime(notif) {
         let now = new Date();
         let notifDate = new Date(notif.createdAt);
         let diffTime = Math.abs(now - notifDate);
@@ -77,7 +76,7 @@ export const Notifications = () => {
 
 
     function handleSubmit() {
-        let filtered = notifications.filter(notif => isAble(notif))
+        let filtered = notifications.filter(notif => isAbleByTime(notif))
         setFiltered(filtered)
     }
 
