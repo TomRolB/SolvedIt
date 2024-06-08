@@ -6,6 +6,7 @@ const NotificationController= require('../controllers/NotificationController')
 
 router.get("/get-general-notification-settings", async (req, res) => {
     const uuid = await Auth.getUserId(req.query.uuid)
+    console.log(uuid);
     const settings = await NotificationSettings.getNotificationSettingsOfClass(null, uuid.id)
     res.json(settings)
 })

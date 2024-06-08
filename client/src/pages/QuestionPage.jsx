@@ -3,7 +3,8 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
 import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import 'react-confirm-alert/src/react-confirm-alert.css'
+import {useNotificationSettings} from "../hooks/useNotificationSettings"; // Import css
 
 export function QuestionPage() {
     const location = useLocation()
@@ -58,6 +59,9 @@ export function QuestionPage() {
                     setAnswersLen(answersLen + 1)
                 })
                 .catch(err => console.log(err))
+
+            let [generalSettings, setSettings] = useNotificationSettings(null)
+
             axios.post("/notification/notify", {
                 uuid: localStorage.getItem("uuid"),
                 classId: id,
