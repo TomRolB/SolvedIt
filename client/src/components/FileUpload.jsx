@@ -11,7 +11,8 @@ export function FileUpload({files, setFiles}) {
     }
 
     return <>
-        <input type="file" onChange={handleFileChange} className="text-transparent"/><br/>
-        {displayUploadedFileNames()}
+        <input id="upload" type="file" onChange={handleFileChange} className="hidden"/><br/>
+        <label htmlFor="upload" className="text-amber-50 cursor-pointer ml-2"><i className="fa-solid fa-upload"></i> Upload Files </label><br/>
+        <div className="bg-gray-600 p-2 m-1 rounded">{displayUploadedFileNames()}</div>
     </>;
 }

@@ -39,7 +39,7 @@ function Files({files}) {
             .map(file => {
                 const imageExtensions = ['.jpg', '.jpeg', '.png'] // Add more
                 if (imageExtensions.some(ext => file.fileName.endsWith(ext))) {
-                    return <img key={file.fileName} className="mt-1" src={file.url} alt={file.fileName}/>
+                    return <img key={file.fileName} className="rounded-2xl bg-gray-600 p-2 mb-1" src={file.url} alt={file.fileName}/>
                 } else return <a key={file.fileName} href={file.url} download>
                     <p className="text-amber-50 rounded-2xl bg-gray-600 p-2 mb-1">{file.fileName}</p>
                     <br/>
@@ -144,7 +144,7 @@ export function QuestionPage() {
 
         function renderButtons() {
             return <>
-                <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={() => setIsBeingReplied(true)}>Reply</button>
+                <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={() => setIsBeingReplied(true)}>Reply</button>
                 {questionInfo.canBeDeleted
                     ? <button onClick={handleQuestionDelete}
                               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
@@ -155,9 +155,9 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/><br/>
-                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" /><br/>
+                <textarea  placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm mt-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
                 <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" /><br/>
             </form>;
         }
 
@@ -170,7 +170,7 @@ export function QuestionPage() {
                 <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
-                <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
+                <h1 className="break-words text-sm font-normal py-2.5 text-gray-900 dark:text-white mb-2 mt-2">{questionInfo.description}</h1>
                 <Files files={files}/>
                 {!isBeingReplied
                     ? renderButtons()
@@ -427,9 +427,9 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/><br/>
-                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"/><br/>
+                <textarea placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mt-2 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
                 <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"/><br/>
             </form>;
         }
 
@@ -443,7 +443,7 @@ export function QuestionPage() {
                     <button type="button" onClick={() => handleAnswerReport(answer)} className="px-1.5 py-1 text-xs focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
 
                 </div>
-                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
+                <p className="break-words text-sm font-normal py-2.5 text-gray-900 dark:text-white mb-2">{answer.description}</p>
                 <Files files={fetchedFiles}/>
                 {!isBeingReplied
                     ? renderButtons()

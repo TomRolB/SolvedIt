@@ -57,9 +57,6 @@ router.get("/questions", async (req, res) => {
 
 router.get("/file", async (req, res) => {
     const prefix = req.query.isAnswer === "true"? "a" : ""
-    console.log(`Type of isAnswer ${typeof req.query.isAnswer}`)
-    console.log(`Is it an answer? ${req.query.isAnswer}`)
-    console.log(`Prefix: ${prefix}`)
     const filepath = path.resolve(__dirname + `/../uploads/${prefix + req.query.id}/${req.query.fileName}`)
     res.sendFile(filepath)
 })
