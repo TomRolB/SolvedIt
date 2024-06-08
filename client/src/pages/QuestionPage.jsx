@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 export function QuestionPage() {
     const location = useLocation()
@@ -58,6 +58,15 @@ export function QuestionPage() {
                     setAnswersLen(answersLen + 1)
                 })
                 .catch(err => console.log(err))
+
+            axios.post("/notification/notify", {
+                uuid: localStorage.getItem("uuid"),
+                classId: id,
+                title: "New Answer",
+                description: "New answer has been submitted to one of your questions",
+                notificationType: "newAnswer"
+            }).then(res => console.log(res))
+
         }
 
         function handleQuestionDelete() {
@@ -284,6 +293,14 @@ export function QuestionPage() {
                 console.log(res)
                 setIsVerified(res.data)
             }).catch(err=> console.log(err))
+
+            axios.post("/notification/notify", {
+                uuid: uuid,
+                classId: id,
+                title: "Answer Validation",
+                description: "Your answer validity has been changed",
+                notificationType: "answerValidation"
+            }).then(res => console.log(res))
         }
 
         function handleVote() {
