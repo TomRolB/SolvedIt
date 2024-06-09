@@ -38,20 +38,29 @@ export function PostQuestion() {
     const navigate = useNavigate()
     function handleFormSubmit(event) {
         event.preventDefault()
+        let uuid = localStorage.getItem("uuid");
 
         const formData = new FormData()
         for (const file of files) {
             formData.append('file', file)
         }
         formData.append('classId', id)
-        formData.append('uuid', localStorage.getItem("uuid"))
+        formData.append('uuid', uuid)
         formData.append('title', title)
         formData.append('description', description)
         formData.append('tags', selectedOptions)
 
         axios
             .post("/question/post-question", formData)
-            .then((res) => {
+            .then(res => console.log(res))
+
+        axios.post("/notification/notify", {
+            uuid: uuid,
+            classId: id,
+            title: title,
+            description: "New question has been submitted",
+            notificationType: "newQuestion"
+        }).then((res) => {
                 console.log(res)
                 navigate("/class/" + id)
             })
