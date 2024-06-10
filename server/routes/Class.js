@@ -67,8 +67,7 @@ router.post("/:uuid/enroll-to/:id", async(req,res) =>{
 
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    const [entry, created] = await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
-    if(!created)
+    await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
     await NotificationSettings.createNotificationSettings(userId, classId)
     InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
     res.json({message: "Successfully enrolled"})
