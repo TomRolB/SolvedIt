@@ -82,7 +82,7 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
         res.send([])
         return
     }
-    res.send([isInClass])
+    res.send(isInClass)
 })
 
 router.get("/byId/:id/members", async(req,res) =>{

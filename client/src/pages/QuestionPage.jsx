@@ -82,7 +82,7 @@ export function QuestionPage() {
 
         axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
             .then(res => {
-                setIsTeacher(res.data.isTeacher) //TODO: change, it's awkward to see
+                setIsTeacher(res.data.isTeacher)
             })
             .catch(err => console.log(err))
 
@@ -476,7 +476,6 @@ export function QuestionPage() {
             </div>
         )
     }
-
     return (
         <div>
         <Navbar></Navbar>

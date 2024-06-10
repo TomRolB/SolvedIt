@@ -50,7 +50,8 @@ export const ClassMembers =() =>{
     return (
         <div>
         <Navbar></Navbar>
-            <div className="bg-white p-8 rounded-md w-full">
+            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <h1 className="text-5xl font-extrabold dark:text-black">Class Members</h1>
                 <div className=" flex items-center justify-between pb-6">
                     <div className="flex items-center justify-between">
                     </div>
@@ -83,12 +84,11 @@ export const ClassMembers =() =>{
                                 </tr>
                                 </thead>
                                 {members.map(student => getStudentEntry(student))}
-
                             </table>
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
         </div>
     )
 }
