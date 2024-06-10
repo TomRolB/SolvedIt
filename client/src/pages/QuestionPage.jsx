@@ -4,6 +4,50 @@ import axios from "axios";
 import {Navbar} from "../components/Navbar";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
+import {FileUpload} from "../components/FileUpload";
+
+function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
+    if (idx >= fileNames.length) {
+        setter(fetchedFiles)
+        return
+    }
+
+    console.log(`Gonna fetch ${fileNames[idx]}`)
+    const fileName = fileNames[idx]
+    axios
+        .get("/question/file", {
+                responseType: "blob",
+                params: {
+                    id: id,
+                    fileName: fileName,
+                    isAnswer: isAnswer
+                }
+            }
+        )
+        .then((res) => {
+            fetchedFiles.push({fileName: fileName, url: URL.createObjectURL(res.data)});
+            console.log("Updated array len:")
+            console.log(fetchedFiles.length)
+            fetchFilesRecursively(fileNames, id, fetchedFiles, idx + 1, setter, isAnswer)
+        })
+        .catch(err => console.log(err))
+}
+
+function Files({files}) {
+    return <>
+        {files
+            .map(file => {
+                const imageExtensions = ['.jpg', '.jpeg', '.png'] // Add more
+                if (imageExtensions.some(ext => file.fileName.endsWith(ext))) {
+                    return <img key={file.fileName} className="rounded-2xl bg-gray-600 p-2 mb-1" src={file.url} alt={file.fileName}/>
+                } else return <a key={file.fileName} href={file.url} download>
+                    <p className="text-amber-50 rounded-2xl bg-gray-600 p-2 mb-1">{file.fileName}</p>
+                    <br/>
+                </a>
+
+            })}
+    </>
+}
 
 export function QuestionPage() {
     const location = useLocation()
@@ -15,6 +59,8 @@ export function QuestionPage() {
     const navigate = useNavigate()
     let {id} = useParams()
     let [isTeacher, setIsTeacher] = useState(false)
+    const [files, setFiles] = useState([])
+
 
     useEffect(() => {
         let uuid = localStorage.getItem("uuid")
@@ -25,35 +71,56 @@ export function QuestionPage() {
                     questionId: questionInfo.id,
                     uuid: uuid}
             })
-            .then((res) => buildQuestionTree(res.data))
+            .then((res) => {
+                fetchFilesRecursively(questionInfo.fileNames, questionInfo.id, [], 0, setFiles, false);
+                buildQuestionTree(res.data);
+            })
             .catch((err) => {
                 console.log(err)
                 console.log("Answer error")
             })
+
         axios.get(`/class/${uuid}/enrolled-in/${questionInfo.classId}` )
             .then(res => {
                 setIsTeacher(res.data.isTeacher) //TODO: change, it's awkward to see
             })
             .catch(err => console.log(err))
+
     }, [answersLen, isTeacher]);
 
     function Question({questionInfo}) {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
+        const [replyFiles, setReplyFiles] = useState([])
+
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
         }
 
         function handleAnswerSubmit(event) {
             event.preventDefault() //Prevents page from refreshing
+
+            const formData = new FormData()
+            for (const file of replyFiles) {
+                formData.append('file', file)
+            }
+            formData.append('classId', questionInfo.classId)
+            formData.append('uuid', localStorage.getItem("uuid"))
+            formData.append('questionId', questionInfo.id)
+            formData.append('description', answerDescription)
+            formData.append('parentId', null)
+
             axios
-                .post("/question/post-answer", {
-                    uuid: localStorage.getItem("uuid"),
-                    classId: questionInfo.classId,
-                    questionId: questionInfo.id,
-                    parentId: null,
-                    description: answerDescription
-                })
+                .post("/question/post-answer",
+                //     {
+                //     uuid: localStorage.getItem("uuid"),
+                //     classId: questionInfo.classId,
+                //     questionId: questionInfo.id,
+                //     parentId: null,
+                //     description: answerDescription
+                // }
+                    formData
+                )
                 .then((res) => {
                     setAnswersLen(answersLen + 1)
                 })
@@ -86,7 +153,7 @@ export function QuestionPage() {
 
         function renderButtons() {
             return <>
-                <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={() => setIsBeingReplied(true)}>Reply</button>
+                <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={() => setIsBeingReplied(true)}>Reply</button>
                 {questionInfo.canBeDeleted
                     ? <button onClick={handleQuestionDelete}
                               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
@@ -97,8 +164,9 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/>
-                <input type="submit" value="Submit"/>
+                <textarea  placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm mt-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" /><br/>
             </form>;
         }
 
@@ -111,7 +179,8 @@ export function QuestionPage() {
                 <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
                 {questionInfo.tags.length > 0 ?
                     <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}
-                <h1 className="text-amber-50 pt-6">{questionInfo.description}</h1>
+                <h1 className="break-words text-sm font-normal py-2.5 text-gray-900 dark:text-white mb-2 mt-2">{questionInfo.description}</h1>
+                <Files files={files}/>
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()
@@ -155,7 +224,6 @@ export function QuestionPage() {
     }
 
     function createAnswersRecursively(answer, answerMap, result, extraMargin) {
-        // console.log(answer)
         result.push(<Reply key={answer.id} answer={answer} extraMargin={extraMargin}/>)
 
         if (answerMap.has(answer.id)) {
@@ -170,7 +238,6 @@ export function QuestionPage() {
     }
 
     const handleQuestionReport = (questionInfo) => {
-        console.log(questionInfo)
         confirmAlert({
             title: 'Report Question:',                        // Title dialog
             message: `Question: ${questionInfo.title}`,               // Message dialog
@@ -201,7 +268,6 @@ export function QuestionPage() {
     }
 
     function handleAnswerReport(answer) {
-        console.log(answer)
         confirmAlert({
             title: 'Report Answer:',                        // Title dialog
             message: `Answer: ${answer.description}`,               // Message dialog
@@ -237,6 +303,14 @@ export function QuestionPage() {
         const [hasUserVotedIt, setHasUserVotedIt] = useState(answer.hasUserVotedIt)
         const [voteCount, setVoteCount] = useState(answer.voteCount)
         const [isVerified, setIsVerified] = useState(false)
+        const [replyFiles, setReplyFiles] = useState([])
+        const [fetchedFiles, setFetchedFiles] = useState([])
+
+        useEffect(() => {
+            fetchFilesRecursively(
+                answer.fileNames, answer.id, [], 0, setFetchedFiles, true
+            )
+        }, []);
 
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
@@ -244,14 +318,28 @@ export function QuestionPage() {
 
         function handleAnswerSubmit(event) {
             event.preventDefault() //Prevents page from refreshing
+
+            const formData = new FormData()
+            for (const file of replyFiles) {
+                formData.append('file', file)
+            }
+            formData.append('classId', answer.classId)
+            formData.append('uuid', localStorage.getItem("uuid"))
+            formData.append('questionId', answer.questionId)
+            formData.append('description', answerDescription)
+            formData.append('parentId', answer.id)
+
             axios
-                .post("/question/post-answer", {
-                    uuid: localStorage.getItem("uuid"),
-                    classId: answer.classId,
-                    questionId: answer.questionId,
-                    parentId: answer.id,
-                    description: answerDescription
-                })
+                .post("/question/post-answer",
+                //     {
+                //     uuid: localStorage.getItem("uuid"),
+                //     classId: answer.classId,
+                //     questionId: answer.questionId,
+                //     parentId: answer.id,
+                //     description: answerDescription
+                // }
+                    formData
+                )
                 .then((res) => {
                     setAnswersLen(0)
                 })
@@ -283,7 +371,6 @@ export function QuestionPage() {
 
         function handleVerify() {
             let uuid = localStorage.getItem("uuid");
-            console.log(uuid);
             axios.put('/question/answer/validate',  {
                     uuid: uuid,
                     classId: answer.classId,
@@ -314,8 +401,6 @@ export function QuestionPage() {
                     undoingVote: hasUserVotedIt
                 })
                 .then((res) => {
-                    console.log(voteCount)
-                    console.log(hasUserVotedIt)
                     if (hasUserVotedIt) setVoteCount(voteCount - 1)
                     else setVoteCount(voteCount + 1)
 
@@ -356,8 +441,9 @@ export function QuestionPage() {
 
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
-                <input type="text" onChange={handleTextChange}/>
-                <input type="submit" value="Submit"/>
+                <textarea placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mt-2 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"/><br/>
             </form>;
         }
 
@@ -371,7 +457,8 @@ export function QuestionPage() {
                     <button type="button" onClick={() => handleAnswerReport(answer)} className="px-1.5 py-1 text-xs focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
 
                 </div>
-                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{answer.description}</p>
+                <p className="break-words text-sm font-normal py-2.5 text-gray-900 dark:text-white mb-2">{answer.description}</p>
+                <Files files={fetchedFiles}/>
                 {!isBeingReplied
                     ? renderButtons()
                     : renderForm()}

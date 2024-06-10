@@ -1,11 +1,13 @@
-const {Notification, IsInClass, NotificationSettings} = require('../models/')
+const {Notification, IsInClass} = require('../models/')
+const NotificationSettings = require("./NotificationSettings")
 const Auth = require("./Auth");
 
 async function canBeShown(notification, userId) {
-    let classSettings = await NotificationSettings.findOne({where: {userId: userId, classId: notification.classId}})
+    let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
+    let generalSettings = await NotificationSettings.getNotificationSettingsOfClass(null, userId)
     let isTeacher = await IsInClass.findOne({where: {userId: userId, classId: notification.classId}}).isTeacher
+    console.log("User id: " + userId);
     const notificationTypeCanBeShown = (notificationType, classSettings)=> {
-        console.log("notif type: " + notificationType);
 
         switch (notificationType){
             case "newQuestion":
@@ -17,10 +19,13 @@ async function canBeShown(notification, userId) {
         }
     }
     const isAble = (notification, classSettings) =>{
-        return notificationTypeCanBeShown(notification.notificationType, classSettings) && classSettings.isActive
+        if(classSettings.isActive){
+            return notificationTypeCanBeShown(notification.notificationType, classSettings)
+        }
+        return notificationTypeCanBeShown(notification.notificationType, generalSettings)
     }
     let able = isAble(notification, classSettings)
-    console.log(able);
+    console.log("Is able to be shown: " + able);
     return able;
 }
 
@@ -34,8 +39,6 @@ exports.getAllNotifications = async (userId) => {
     }
 
     let filtered = [];
-    console.log("All notifications: " + notifications.length);
-    console.log(notifications[0].props);
 
     for (let notification of notifications) {
         if (await canBeShown(notification, userId)) {
