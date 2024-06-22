@@ -1,11 +1,26 @@
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export const Navbar = ({uuid, setUuid}) => {
     const navigate = useNavigate()
     const [navbarOpen, setNavbarOpen] = useState(false)
     const [navbarClassName, setNavbarClassName] = useState("hidden w-full md:block md:w-auto" )
+    const [pictureUrl, setPictureUrl] = useState("")
+
+    useEffect(() => {
+        axios
+            .get(`/users/${localStorage.getItem("uuid")}/picture`, {
+                    responseType: "blob"
+                }
+            )
+            .then((res) => {
+                const url = URL.createObjectURL(res.data);
+                setPictureUrl(url);
+            })
+            .catch(err => console.log(err))
+    }, [uuid]);
+
     const handleLogOut = () => {
         axios
             .post("users/logout", {uuid: uuid})
@@ -59,7 +74,7 @@ export const Navbar = ({uuid, setUuid}) => {
                         </li>
                         <li>
                             <a href="/profile" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                                <img className="w-10 h-10 rounded-full" src={localStorage.getItem("pictureUrl")} alt="Rounded avatar"></img>
+                                <img className="w-10 h-10 rounded-full" src={pictureUrl} alt="Rounded avatar"></img>
                             </a>
                         </li>
                     </ul>

@@ -32,7 +32,6 @@ export const ProfileCard = () => {
                 .then((res) => {
                     const url = URL.createObjectURL(res.data);
                     setPictureUrl(url);
-                    localStorage.set("pictureUrl", url)
                 })
                 .catch(err => console.log(err))
         };
