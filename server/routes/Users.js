@@ -100,6 +100,7 @@ router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
     let id = Auth.getUserId(req.params.uuid)?.id
     if (id === undefined) return;
 
+    if (fs.existsSync(`./uploads/p${id}`)) fs.rmdirSync(`./uploads/p${id}`, {recursive: true, force: true})
     await fs.rename('./uploads/awaiting_id', `./uploads/p${id}`,() => {})
 
     res.send("Uploaded file")

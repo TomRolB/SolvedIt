@@ -59,7 +59,7 @@ export const Navbar = ({uuid, setUuid}) => {
                         </li>
                         <li>
                             <a href="/profile" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                                <img className="w-10 h-10 rounded-full" src={require("../media/image.jpg")} alt="Rounded avatar"></img>
+                                <img className="w-10 h-10 rounded-full" src={localStorage.getItem("pictureUrl")} alt="Rounded avatar"></img>
                             </a>
                         </li>
                     </ul>
