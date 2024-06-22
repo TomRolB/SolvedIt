@@ -1,6 +1,7 @@
 const {Question, Answer, Users, TaggedBy} = require("../models/")
 const db = require("../models/index")
 const {QueryTypes} = require("sequelize");
+const fs = require('fs')
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -23,9 +24,19 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
     );
 
     questionsWithTags.forEach((question) => {
-        console.log(question)
-        return question.canBeDeleted = question.userId === userId || isAdmin;
+        question.canBeDeleted = question.userId === userId || isAdmin;
     })
+
+    questionsWithTags.forEach((question) => {
+        let path = `./uploads/${question.id}`;
+        if (fs.existsSync(path)) {
+            question.fileNames = fs.readdirSync(path)
+        }
+        else question.fileNames = []
+    })
+
+    console.log("Final result:")
+    console.log(questionsWithTags)
 
     return questionsWithTags
 }
@@ -44,12 +55,20 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
         answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
     })
 
+    answers.forEach((answer) => {
+        let path = `./uploads/a${answer.id}`;
+        if (fs.existsSync(path)) {
+            answer.dataValues.fileNames = fs.readdirSync(path)
+        }
+        else answer.dataValues.fileNames = []
+    })
+
     return answers
 };
 
 
 exports.addQuestion = async (userId, classId, title, description, tags) => {
-    await Question.create({
+    const result = await Question.create({
         userId: userId,
         classId: classId,
         title: title,
@@ -58,6 +77,9 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         isActive: true,
         isVerified: false
     })
+
+    fs.rename('./uploads/awaiting_id', `./uploads/${result.id}`,() => {})
+
     const maxId = await Question.max('id')
     if (tags === undefined || tags === null) return "Created a question"
     for (let tag of tags) {
@@ -70,8 +92,14 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
     return "Created a question"
 };
 
+exports.addQuestionImage = async (userId, file) => {
+    console.log("Writing file:")
+    console.log(file)
+    await fs.writeFile(`../user_files/questions/${userId}.png`, file, (err) => console.log(err))
+}
+
 exports.addAnswer = async (userId, classId, questionId, parentId, description) => {
-    await Answer.create({
+    const result = await Answer.create({
         userId: userId,
         classId: classId,
         questionId: questionId,
@@ -81,6 +109,8 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         isActive: true,
         isVerified: false
     })
+
+    fs.rename('./uploads/awaiting_id', `./uploads/a${result.id}`,() => {})
 
     return "Created an answer"
 };

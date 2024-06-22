@@ -1,4 +1,4 @@
-const { Users, IsInClass } = require("../models")
+const { Users, IsInClass, NotificationSettings } = require("../models")
 const crypto = require("crypto")
 const cron = require("cron")
 
@@ -124,6 +124,16 @@ exports.registerUser = async (form) => {
         password: form.body.password
     }).save()
 
+    await NotificationSettings.build({
+        userId: user.id,
+        classId: null,
+        newQuestions: "None",
+        newAnswers: "None",
+        answerValidation: "Never",
+        notifyByEmail: false,
+        isActive: true
+    }).save()
+
     const uuid = crypto.randomUUID()
     sessions[uuid] = {
         id: user.id,
@@ -159,6 +169,6 @@ exports.isAdmin = async (uuid, classId) => {
             classId: classId
         }
     })
-
+    if(!dbUserInClass) return {isAdmin: false};
     return {isAdmin: dbUserInClass.permissions !== "normal"}
 }

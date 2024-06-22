@@ -4,6 +4,40 @@ const Auth = require('../controllers/Auth')
 const {IsInClass} = require('../models/')
 const Questions = require('../controllers/Questions.js')
 const VoteController = require('../controllers/VoteController.js')
+
+const multer  = require('multer')
+const fs= require('fs');
+const path = require('path');
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        let dir = './uploads/awaiting_id';
+
+        // The following validation was initially performed to avoid having files
+        // located permanently at the 'awaiting_id' directory. However,
+        // this broke multi-file uploading.
+        // TODO: should think of how to re-introduce this validation
+
+        // if (fs.existsSync(dir)){
+        //     throw Error("There's a file which wasn't assigned an id")
+        // }
+
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+
+        cb(null, dir)
+        req.body.classId
+    },
+    filename: function (req, file, cb) {
+        // let extArray = file.mimetype.split("/");
+        // let extension = extArray[extArray.length - 1];
+        cb(null, file.originalname /*+ '.' +extension*/)
+    }
+})
+const upload = multer({ storage: storage })
+
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
     const userId = Auth.getUserId(req.query.uuid).id
@@ -19,6 +53,12 @@ router.get("/questions", async (req, res) => {
 
     const result = await Questions.getQuestionsWithTags(classId, userId, isAdmin, 1)
     res.send(result)
+})
+
+router.get("/file", async (req, res) => {
+    const prefix = req.query.isAnswer === "true"? "a" : ""
+    const filepath = path.resolve(__dirname + `/../uploads/${prefix + req.query.id}/${req.query.fileName}`)
+    res.sendFile(filepath)
 })
 
 router.get("/answers", async (req, res) => {
@@ -45,8 +85,12 @@ router.get("/answers", async (req, res) => {
     res.send(result)
 })
 
-router.post('/post-question', async (req, res) => {
-    const classId = req.body.classId
+function parsedTags(req) {
+    return req.body.tags === 'null' ? null : req.body.tags.split(',').map(Number);
+}
+
+router.post('/post-question', upload.array('file', 10), async (req, res) => {
+    const classId = Number(req.body.classId)
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({
         where: {
@@ -57,11 +101,22 @@ router.post('/post-question', async (req, res) => {
 
     if (!isInClass) return
 
-    const result = await Questions.addQuestion(userId, classId, req.body.title, req.body.description, req.body.tags)
-    res.send(result)
+    const result = await Questions.addQuestion(
+        userId,
+        classId,
+        req.body.title,
+        req.body.description,
+        parsedTags(req)
+    )
+
+    res.send("Posted question")
 })
 
-router.post('/post-answer', async (req, res) => {
+function parsedParentId(req) {
+    return req.body.parentId === 'null' ? null : Number(req.body.parentId);
+}
+
+router.post('/post-answer', upload.array('file', 10), async (req, res) => {
     const classId = req.body.classId
     const userId = Auth.getUserId(req.body.uuid).id
     const isInClass = await IsInClass.findOne({
@@ -77,7 +132,7 @@ router.post('/post-answer', async (req, res) => {
         userId,
         classId,
         req.body.questionId,
-        req.body.parentId,
+        parsedParentId(req),
         req.body.description
     )
     res.send(result)

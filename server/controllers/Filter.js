@@ -20,7 +20,7 @@ exports.getSelectedQuestionsOfClass = async (classId, tags, showDeleted, userId,
             SELECT DISTINCT Questions.id
             FROM Questions
             INNER JOIN TaggedBies ON Questions.id = TaggedBies.questionId
-            WHERE Questions.classId = ${classId} AND TaggedBies.tagId IN (${tags}) AND ( Questions.isActive = (${isActive}) OR Questions.isActive = 1)
+            WHERE Questions.classId = :classId AND TaggedBies.tagId IN (:tags) AND ( Questions.isActive = (${isActive}) OR Questions.isActive = 1)
         )
         SELECT DISTINCT Questions.id, Questions.title, Questions.description, Questions.classId, Questions.classId, Questions.wasReported, Questions.isActive, Tags.id as tagId, Tags.name as tagName, Users.id as userId, Users.firstName as firstName, Users.lastName as lastName
         FROM Questions
@@ -28,6 +28,7 @@ exports.getSelectedQuestionsOfClass = async (classId, tags, showDeleted, userId,
         INNER JOIN TaggedBies ON Questions.id = TaggedBies.questionId
         LEFT JOIN Tags ON TaggedBies.tagId = Tags.id
         LEFT JOIN Users ON Questions.userId = Users.id`, {
+            replacements: {classId: classId, tags: tags},
             type: QueryTypes.SELECT,
         });
 

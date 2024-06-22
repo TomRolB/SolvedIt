@@ -72,6 +72,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             tagId: question.tagId,
             tagName: question.tagName,
             canBeDeleted: question.canBeDeleted,
+            fileNames: question.fileNames,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,
@@ -93,6 +94,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             tagName: question.tagName,
             userId: question.userId,
             canBeDeleted: question.canBeDeleted,
+            fileNames: question.fileNames,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,
@@ -181,6 +183,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             <a href={"/class/" + id + "/view-members"}><i className="fa-solid fa-pen-to-square"></i> View Class Members</a>
                         </button>
+                        <button type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <a href={"/class/" + id + "/notification-settings"}><i className="fa-solid fa-bell"></i> Notification Settings</a>
+                        </button>
                     </div>
                 }
                 <div>
@@ -194,6 +200,12 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         <>
                         </>
                     }
+                </div>
+                <div>
+                    <button type="button" onClick={() => navigate("/class/" + id + "/leaderboard")}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <i className=""></i> View Leaderboard
+                    </button>
                 </div>
                 <Questions/>
             </div>

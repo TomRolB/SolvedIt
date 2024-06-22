@@ -4,7 +4,8 @@
     "password": "g8k4o2g5",
     "database": "SolvedItNode",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false
   },
   "test": {
     "username": "root",

@@ -47,9 +47,6 @@ export const ProfileCard = () => {
 
     console.log(userData) //Funca :)
     const navigate = useNavigate();
-    const redirectStyle = "flex-col-reverse text-blue-700 underlineflex-col-reverse text-blue-700 underline"
-    const subtitleStyle = "flex-col-reverse text-black-700 underlineflex-col-reverse text-black-700 underline"
-
     if(!userData){
         return <p>Loading...</p>
     }
@@ -76,7 +73,7 @@ export const ProfileCard = () => {
 
                         </div>
                         <div className="col-6 mb-3">
-                            <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Notification Settings</a>
+                            <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={()=>navigate("/notifications/settings")}>Notification Settings</a>
                         </div>
                     </div>
                     <div className="flex mt-4 md:mt-6">

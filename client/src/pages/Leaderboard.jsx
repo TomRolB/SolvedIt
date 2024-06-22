@@ -2,46 +2,59 @@ import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {ClassMember} from "../components/ClassMember";
 
-export const ClassMembers =() =>{
+export const Leaderboard =() =>{
     const classId = useParams().id
     let [members, setMembers] = useState([])
-    const [isAdmin, setIsAdmin] = useState(false)
     let navigate = useNavigate()
 
-    function checkUserIsAdmin() {
-        axios
-            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: classId}})
-            .then((res) => setIsAdmin(res.data.isAdmin))
-            .catch((err) => console.log(err))
-    }
 
     useEffect(() => {
         const getClassMembers = async () => {
-            const response = await fetch(`/class/byId/${classId}/members`)
-            const responseValue = await response.json()
-            if (responseValue.length > 0) {
-                setMembers( responseValue)
-            }
+            await axios.get(`/class/byId/${classId}/leaderboard`).then(res => {
+                console.log(res.data);
+                setMembers(res.data)
+            })
+                .catch(err => console.log(err))
         }
-        checkUserIsAdmin()
         getClassMembers()
-    }, [classId, isAdmin]);
+        console.log(members);
+    }, [classId]);
 
     let image = require("../media/image.jpg")
     const getStudentEntry = (student) =>{
         if(student.permissions !== "owner")
-        return (
-            <ClassMember student={student} isAdmin={isAdmin} classId={classId}></ClassMember>
-        )
-    }
-
-    const handleUserKick = async (student) => {
-        console.log(student.id)
-        await axios.post(`/class/byId/${classId}/kick-user/${student.id}`).
-        then(res => console.log(res)).
-        catch(err => console.log(err))
+            return <tbody>
+            <tr>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <div className="flex items-center">
+                        <div className="flex-shrink-0 w-10 h-10">
+                            <img className="w-full h-full rounded-full"
+                                 src={image}
+                                 alt="" />
+                        </div>
+                        <div className="ml-3">
+                            <p className="text-gray-900 whitespace-no-wrap">
+                                {student.firstName} {student.lastName}
+                            </p>
+                        </div>
+                    </div>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{student.email}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {student.createdAt}
+                    </p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {student.upvotes}
+                    </p>
+                </td>
+            </tr>
+            </tbody>
     }
     function handleReturn(){
         navigate("/class/" + classId)
@@ -49,9 +62,8 @@ export const ClassMembers =() =>{
 
     return (
         <div>
-        <Navbar></Navbar>
-            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
-                <h1 className="text-5xl font-extrabold dark:text-black">Class Members</h1>
+            <Navbar></Navbar>
+            <div className="bg-white p-8 rounded-md w-full">
                 <div className=" flex items-center justify-between pb-6">
                     <div className="flex items-center justify-between">
                     </div>
@@ -71,7 +83,7 @@ export const ClassMembers =() =>{
                                     </th>
                                     <th
                                         className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Role
+                                        Email Address
                                     </th>
                                     <th
                                         className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -79,16 +91,17 @@ export const ClassMembers =() =>{
                                     </th>
                                     <th
                                         className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Action
+                                        Points
                                     </th>
                                 </tr>
                                 </thead>
                                 {members.map(student => getStudentEntry(student))}
+
                             </table>
                         </div>
                     </div>
                 </div>
-        </div>
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-const {Users, IsInClass, InviteCode} = require("../models");
+const {Users, IsInClass, InviteCode, NotificationSettings} = require("../models");
 const crypto = require("crypto")
 const Auth = require("./Auth")
 
@@ -75,6 +75,17 @@ async function successfulCodeUsage(dbCodeRegister, userId) {
             isTeacher: false
         })
         .save()
+
+    await NotificationSettings
+        .build({
+            userId: userId,
+            classId: dbCodeRegister.classId,
+            newQuestions: "None",
+            newAnswers: "None",
+            answerValidation: "Never",
+            notifyByEmail: false,
+            isActive: false
+        }).save()
 
     // Increment the count of users that used this code
     await dbCodeRegister
