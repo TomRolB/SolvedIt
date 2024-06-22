@@ -5,6 +5,9 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const Auth = require("../controllers/Auth");
+const fs = require("fs");
+const path = require('path');
+const {upload} = require("../services/FileService");
 
 router.use(bodyParser.urlencoded({extended: true}))
 
@@ -75,6 +78,31 @@ router.get("/:uuid", async(req,res) =>{
         }
     )
     res.send(data)
+})
+
+router.get("/:uuid/picture", async (req, res) => {
+    let id = Auth.getUserId(req.params.uuid)?.id
+    if (id === undefined) {
+        console.log("Undefined id")
+        return;
+    }
+    if (!fs.existsSync(`./uploads/p${id}`)) {
+        const filePath = path.resolve(__dirname + "/../uploads/default/profile.jpg");
+        res.sendFile(filePath)
+    } else {
+        const fileNames = fs.readdirSync(`./uploads/p${id}`)
+        const filepath = path.resolve(__dirname + `/../uploads/p${id}/${fileNames[0]}`)
+        res.sendFile(filepath)
+    }
+})
+
+router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
+    let id = Auth.getUserId(req.params.uuid)?.id
+    if (id === undefined) return;
+
+    await fs.rename('./uploads/awaiting_id', `./uploads/p${id}`,() => {})
+
+    res.send("Uploaded file")
 })
 
 router.post("/:uuid/delete", async (req,res)=>{

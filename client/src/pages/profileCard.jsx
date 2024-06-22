@@ -3,10 +3,13 @@ import React, {useEffect, useState} from 'react';
 import '../styles/ProfileCard.css';
 import {useUserUuid} from "../hooks/useUserUuid";
 import axios from "axios";
+import {FileUpload} from "../components/FileUpload";
 export const ProfileCard = () => {
     //Profile gets and updates uuid
     let [userData, setData] = useState()
     let [uuid, setUuid] = useUserUuid()
+    const [pictureUrl, setPictureUrl] = useState("")
+    const [files, setFiles] = useState()
 
     useEffect(() => {
         const fetchUserData = async () =>{
@@ -19,8 +22,22 @@ export const ProfileCard = () => {
                     reason => {console.log(reason)}
             )
         }
+
+        const fetchProfilePicture = () => {
+            axios
+                .get(`/users/${uuid}/picture`, {
+                        responseType: "blob"
+                    }
+                )
+                .then((res) => {
+                    setPictureUrl(URL.createObjectURL(res.data));
+                })
+                .catch(err => console.log(err))
+        };
+
         if(uuid) {
             fetchUserData()
+            fetchProfilePicture()
         }
     }, [uuid]);
 
@@ -51,10 +68,33 @@ export const ProfileCard = () => {
         return <p>Loading...</p>
     }
 
+    function handlePictureUpload() {
+
+    }
+
+    function handleFileChange(event) {
+        let uuid = localStorage.getItem("uuid");
+
+        const formData = new FormData()
+        formData.append('file', event.target.files[0])
+        formData.append('uuid', uuid)
+
+        axios
+            .post(`/users/${uuid}/picture`, formData)
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+    }
+
     return (
             <div className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-10 p-5">
                 <div className="pl-5 flex flex-col items-start">
-                    <img className="w-24 h-24 mb-3 rounded-full shadow-lg" src={require("../media/image.jpg")} alt="Bonnie image"/>
+                    <input id="upload" type="file" onChange={handleFileChange} className="hidden"/><br/>
+                    <label htmlFor="upload" className="text-amber-50 cursor-pointer ml-2">
+                        <img
+                        className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer" src={pictureUrl}
+                        alt="Profile picture"/>
+                    </label>
+
                 </div>
                 <div className="card-body p-4">
                     <h3 className="text-3xl font-bold dark:text-white">User Information:</h3>
