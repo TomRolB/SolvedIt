@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import Register from "./pages/register";
@@ -35,6 +35,26 @@ function App(props) {
 
     const [uuid, setUuid] = useState(localStorage.getItem("uuid") || null)
     const [isEnrolled, setIsEnrolled] = useState(false)
+    const [path, setPath] = useState(<Home uuid={uuid} setUuid={setUuid}/>)
+
+
+    async function redirectPath() {
+        if(!uuid) return;
+        let res = await ClassEnroll()
+        setIsEnrolled(res)
+    }
+
+
+    useEffect(() => {
+        if(uuid) redirectPath()
+    }, [uuid]);
+
+
+    useEffect( () => {
+        if (isEnrolled) setPath(<Class uuid={uuid} setUuid={setUuid}/>)
+    }, [isEnrolled, uuid, setUuid]);
+
+
 
     function getPageIfLoggedIn(page) {
         axios
@@ -45,12 +65,6 @@ function App(props) {
             .catch(err => console.log(err))
 
         return uuid != null ? page : <Login uuid={uuid} setUuid={setUuid}/>;
-    }
-
-    function redirectPath() {
-        if(!uuid) return;
-        ClassEnroll().then(value => setIsEnrolled(value))
-        return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
     }
 
     return (
@@ -84,7 +98,7 @@ function App(props) {
                        element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
                 <Route path="/class/:id/leaderboard"
                        element={(<Leaderboard uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={redirectPath()}></Route>
+                <Route path="/enroll-to/:id" element={path}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>

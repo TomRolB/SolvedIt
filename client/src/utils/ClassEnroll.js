@@ -18,13 +18,14 @@ export async function ClassEnroll()   {
         return responseValue.length !== 0;
     }
 
-    const alreadyEnrolled = !uuid || !id ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
+    const alreadyEnrolled = (!uuid || !id) ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
     const classExists = await notEmptyResponse(`/class/byId/${id}`)
 
 
     if (!classExists) return false
     if(alreadyEnrolled) return true
+
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
-    let message = await response.json()
-    return message === "Successfully enrolled"
+    let resVal = await response.json()
+    return resVal.message === "Successfully enrolled"
 }
