@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/login";
 import Register from "./pages/register";
@@ -35,6 +35,26 @@ function App(props) {
 
     const [uuid, setUuid] = useState(localStorage.getItem("uuid") || null)
     const [isEnrolled, setIsEnrolled] = useState(false)
+    const [path, setPath] = useState(<Home uuid={uuid} setUuid={setUuid}/>)
+
+
+    const redirectPath = useCallback(async () => {
+        if(!uuid) return;
+        let res = await ClassEnroll();
+        setIsEnrolled(res);
+    }, [uuid]);
+
+    useEffect(() => {
+        if (uuid) {
+            redirectPath();
+        }
+    }, [uuid, redirectPath]);
+
+    useEffect(() => {
+        if (isEnrolled) setPath(<Class uuid={uuid} setUuid={setUuid}/>)
+    }, [isEnrolled, uuid, setUuid]);
+
+
 
     function getPageIfLoggedIn(page) {
         axios
@@ -47,12 +67,6 @@ function App(props) {
         return uuid != null ? page : <Login uuid={uuid} setUuid={setUuid}/>;
     }
 
-    function redirectPath() {
-        if(!uuid) return;
-        ClassEnroll().then(value => setIsEnrolled(value))
-        return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>;
-    }
-
     return (
         // This is simply the way React handles urls.
         // We define routes as components (in express they are part of
@@ -60,8 +74,8 @@ function App(props) {
         // a component
         <BrowserRouter>
             <Routes>
-            <Route path="/login" element={<Login uuid={uuid} setUuid={setUuid}/>}/>
-            <Route path="/users/register" element={<Register uuid={uuid} setUuid={setUuid}/>}/>
+                <Route path="/login" element={<Login uuid={uuid} setUuid={setUuid}/>}/>
+                <Route path="/users/register" element={<Register uuid={uuid} setUuid={setUuid}/>}/>
             </Routes>
             {getPageIfLoggedIn(<Routes>
                 <Route index element={(<Home uuid={uuid} setUuid={setUuid}/>)}/>
@@ -84,7 +98,7 @@ function App(props) {
                        element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
                 <Route path="/class/:id/leaderboard"
                        element={(<Leaderboard uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={redirectPath()}></Route>
+                <Route path="/enroll-to/:id" element={path}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
