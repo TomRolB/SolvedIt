@@ -27,5 +27,5 @@ export async function ClassEnroll()   {
 
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
     let resVal = await response.json()
-    return resVal.message === "Successfully enrolled"
+    return resVal.length !==0
 }
