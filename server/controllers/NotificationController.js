@@ -1,6 +1,5 @@
 const {Notification, IsInClass} = require('../models/')
 const NotificationSettings = require("./NotificationSettings")
-const Auth = require("./Auth");
 
 async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)

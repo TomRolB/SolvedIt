@@ -1,5 +1,4 @@
 import "../styles/LinkEnterPopUp.css"
-import {useEffect, useState} from "react";
 
 export async function ClassEnroll()   {
     let uuid = localStorage.getItem("uuid");
