@@ -35,24 +35,13 @@ function App(props) {
 
     const [uuid, setUuid] = useState(localStorage.getItem("uuid") || null)
     const [isEnrolled, setIsEnrolled] = useState(false)
-    const [path, setPath] = useState(<Home uuid={uuid} setUuid={setUuid}/>)
 
 
-    async function redirectPath() {
+    function redirectPath() {
         if(!uuid) return;
-        let res = await ClassEnroll()
-        setIsEnrolled(res)
+        ClassEnroll().then(res =>setIsEnrolled(res)).catch(err => console.log(err))
+        return isEnrolled ? <Class uuid={uuid} setUuid={setUuid}/> : <Home uuid={uuid} setUuid={setUuid}/>
     }
-
-
-    useEffect(() => {
-        if(uuid) redirectPath()
-    }, [uuid]);
-
-
-    useEffect( () => {
-        if (isEnrolled) setPath(<Class uuid={uuid} setUuid={setUuid}/>)
-    }, [isEnrolled, uuid, setUuid]);
 
 
 
@@ -98,7 +87,7 @@ function App(props) {
                        element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
                 <Route path="/class/:id/leaderboard"
                        element={(<Leaderboard uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={path}></Route>
+                <Route path="/enroll-to/:id" element={redirectPath()}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
