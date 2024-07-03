@@ -3,13 +3,11 @@ import React, {useEffect, useState} from 'react';
 import '../styles/ProfileCard.css';
 import {useUserUuid} from "../hooks/useUserUuid";
 import axios from "axios";
-import {FileUpload} from "../components/FileUpload";
-export const ProfileCard = () => {
+export const ProfileCard = ({pictureCount, setPictureCount}) => {
     //Profile gets and updates uuid
     let [userData, setData] = useState()
     let [uuid, setUuid] = useUserUuid()
     const [pictureUrl, setPictureUrl] = useState("")
-    const [files, setFiles] = useState()
 
     useEffect(() => {
         const fetchUserData = async () =>{
@@ -40,7 +38,7 @@ export const ProfileCard = () => {
             fetchUserData()
             fetchProfilePicture()
         }
-    }, [uuid]);
+    }, [uuid, pictureCount]);
 
     const handleDelete = () => {
         const deleteUser = async () =>{
@@ -59,18 +57,10 @@ export const ProfileCard = () => {
         }
     };
 
-
-
-
-
     console.log(userData) //Funca :)
     const navigate = useNavigate();
     if(!userData){
         return <p>Loading...</p>
-    }
-
-    function handlePictureUpload() {
-
     }
 
     function handleFileChange(event) {
@@ -84,6 +74,8 @@ export const ProfileCard = () => {
             .post(`/users/${uuid}/picture`, formData)
             .then(res => console.log(res))
             .catch(err => console.log(err))
+
+        setPictureCount(pictureCount + 1)
     }
 
     return (

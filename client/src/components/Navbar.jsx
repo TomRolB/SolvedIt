@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {useEffect, useState} from "react";
 
-export const Navbar = ({uuid, setUuid}) => {
+export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
     const navigate = useNavigate()
     const [navbarOpen, setNavbarOpen] = useState(false)
     const [navbarClassName, setNavbarClassName] = useState("hidden w-full md:block md:w-auto" )
@@ -19,7 +19,7 @@ export const Navbar = ({uuid, setUuid}) => {
                 setPictureUrl(url);
             })
             .catch(err => console.log(err))
-    }, [uuid]);
+    }, [uuid, pictureCount]);
 
     const handleLogOut = () => {
         axios

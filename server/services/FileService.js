@@ -16,7 +16,7 @@ let storage = multer.diskStorage({
 
         // Create directory if it doesn't exist
         if (!fs.existsSync(dir)){
-            fs.mkdirSync(dir);
+            fs.mkdirSync(dir, '0777');
         }
 
         cb(null, dir)
