@@ -96,6 +96,23 @@ router.get("/:uuid/picture", async (req, res) => {
     }
 })
 
+function deleteOldPhoto(id) {
+    if (fs.existsSync(`./uploads/p${id}`)) {
+        const fileName = fs.readdirSync(`./uploads/p${id}`)[0]
+        fs.rmSync(`./uploads/p${id}/${fileName}`)
+    }
+}
+
+function relocateNewPhoto(id) {
+    const fileName = fs.readdirSync(`./uploads/awaiting_id`)[0]
+    console.log(`fileName: ${fileName}`)
+
+    if (!fs.existsSync(`./uploads/p${id}`)) {
+        fs.mkdirSync(`./uploads/p${id}`)
+    }
+    fs.renameSync(`./uploads/awaiting_id/${fileName}`, `./uploads/p${id}/${fileName}`)
+}
+
 router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
     let id = Auth.getUserId(req.params.uuid)?.id
     if (id === undefined) return;
@@ -106,24 +123,8 @@ router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
     //
     // await fs.rename('./uploads/awaiting_id', `./uploads/p${id}`, (err) => {console.log(err)})
 
-    // Try to:
-    // 1. Check if directory exists.
-    // 2. If it does, get file name and delete it
-
-    if (fs.existsSync(`./uploads/p${id}`)) {
-        const fileName = fs.readdirSync(`./uploads/p${id}`)[0]
-        fs.rmSync(`./uploads/p${id}/${fileName}`)
-    }
-
-    // 3. Rename new file in 'awaiting_id' so that it's stored in 'p${id}'
-    const fileName = fs.readdirSync(`./uploads/awaiting_id`)[0]
-    console.log(`fileName: ${fileName}`)
-
-    if (!fs.existsSync(`./uploads/p${id}`)) {
-        fs.mkdirSync(`./uploads/p${id}`)
-    }
-    fs.renameSync(`./uploads/awaiting_id/${fileName}`, `./uploads/p${id}/${fileName}`)
-
+    deleteOldPhoto(id);
+    relocateNewPhoto(id);
 
     res.send("Uploaded file")
 })
