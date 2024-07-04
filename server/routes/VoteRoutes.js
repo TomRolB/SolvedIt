@@ -18,7 +18,6 @@ router.post('/upvote', async (req, res) => {
     if (!req.body.undoingVote) await VoteController.upVote(userId, req.body.answerId)
     else await VoteController.undoVote(userId, req.body.answerId)
 
-
     res.send("Upvoted question")
 })
 

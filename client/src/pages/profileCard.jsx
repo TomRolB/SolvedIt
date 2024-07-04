@@ -66,8 +66,11 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
     function handleFileChange(event) {
         let uuid = localStorage.getItem("uuid");
 
+        const file = event.target.files[0];
+        if (file === undefined) return
         const formData = new FormData()
-        formData.append('file', event.target.files[0])
+
+        formData.append('file', file)
         formData.append('uuid', uuid)
 
         axios
