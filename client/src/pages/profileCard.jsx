@@ -8,6 +8,7 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
     let [userData, setData] = useState()
     let [uuid, setUuid] = useUserUuid()
     const [pictureUrl, setPictureUrl] = useState("")
+    const [isImageHovered, setIsImageHovered] = useState(false)
 
     useEffect(() => {
         const fetchUserData = async () =>{
@@ -30,6 +31,7 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
                 .then((res) => {
                     const url = URL.createObjectURL(res.data);
                     setPictureUrl(url);
+                    setIsImageHovered(false)
                 })
                 .catch(err => console.log(err))
         };
@@ -89,9 +91,22 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
                 <div className="pl-5 flex flex-col items-start">
                     <input id="upload" type="file" onChange={handleFileChange} className="hidden"/><br/>
                     <label htmlFor="upload" className="text-amber-50 cursor-pointer ml-2">
-                        <img
-                        className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer" src={pictureUrl}
-                        alt="Profile picture"/>
+                        {!isImageHovered
+                            ? <img
+                                className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer" src={pictureUrl}
+                                alt="Profile picture"
+                                onMouseEnter={() => setIsImageHovered(true)}
+                                // onMouseLeave={() => setIsImageHovered(false)}
+                            />
+                            : <div className="relative text-center">
+                                <img
+                                className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer opacity-10" src={pictureUrl}
+                                alt="Profile picture"
+                                // onMouseEnter={() => setIsImageHovered(true)}
+                                onMouseLeave={() => setIsImageHovered(false)}/>
+                                <h2 className="w-full absolute top-0 left-0 text-center mt-10 text-white">Upload image</h2>
+                            </div>
+                        }
                     </label>
 
                 </div>
