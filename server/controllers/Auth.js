@@ -3,6 +3,7 @@ const crypto = require("crypto")
 const cron = require("cron")
 
 const sessions = {}
+const transientUuids = {}
 const EXPIRATION_TIME = 3600000
 
 // Node class used in SessionQueue
@@ -93,10 +94,6 @@ exports.validateUser = async (form) => {
     }
 }
 
-const RegisterResult = {
-    SUCCESS: "Successfully registered",
-}
-
 exports.registerUser = async (form) => {
     if (form.body.password !== form.body.confirmPassword) {
         return {
@@ -156,8 +153,20 @@ exports.logout = (uuid) => {
 }
 
 exports.getUserId = (uuid) => {
-    console.log(sessions)
     return sessions[uuid]
+}
+
+exports.generateTransientUuid = (id) => {
+    const uuid = crypto.randomUUID()
+    transientUuids[uuid] = id
+    return uuid
+}
+
+exports.popTransientUuid = (uuid) => {
+    const realId = transientUuids[uuid];
+    delete transientUuids[uuid];
+
+    return realId
 }
 
 exports.isAdmin = async (uuid, classId) => {

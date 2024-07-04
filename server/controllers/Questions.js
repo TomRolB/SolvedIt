@@ -2,6 +2,7 @@ const {Question, Answer, Users, TaggedBy} = require("../models/")
 const db = require("../models/index")
 const {QueryTypes} = require("sequelize");
 const fs = require('fs')
+const {generateTransientUuid} = require("./Auth");
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -53,6 +54,10 @@ exports.getAnswersToQuestion = async (questionId, userId, isAdmin) => {
     answers.forEach((answer) => {
         answer.dataValues.belongsToThisUser = answer.userId === userId;
         answer.dataValues.canBeDeleted = answer.userId === userId || isAdmin;
+    })
+
+    answers.forEach((answer) => {
+        answer.dataValues.uuid = generateTransientUuid(answer.dataValues.User.id)
     })
 
     answers.forEach((answer) => {

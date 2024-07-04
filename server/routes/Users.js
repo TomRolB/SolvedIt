@@ -81,12 +81,14 @@ router.get("/:uuid", async(req,res) =>{
 })
 
 router.get("/:uuid/picture", async (req, res) => {
-    let id = Auth.getUserId(req.params.uuid)?.id
-    if (id === undefined) {
-        console.log("Undefined id")
-        return;
-    }
-    if (!fs.existsSync(`./uploads/p${id}`)) {
+    let id = req.query.isTransientUuid
+        ? Auth.popTransientUuid(req.params.uuid)
+        : Auth.getUserId(req.params.uuid)?.id
+    // if (id === undefined) {
+    //     console.log("Undefined id")
+    //     return;
+    // }
+    if (id === undefined || !fs.existsSync(`./uploads/p${id}`)) {
         const filePath = path.resolve(__dirname + "/../uploads/default/profile.jpg");
         res.sendFile(filePath)
     } else {

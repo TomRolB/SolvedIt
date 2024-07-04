@@ -2,9 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
-import { confirmAlert } from 'react-confirm-alert';
+import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import {FileUpload} from "../components/FileUpload";
+import {ProfilePicture} from "../components/ProfilePicture";
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
     if (idx >= fileNames.length) {
@@ -173,6 +174,7 @@ export function QuestionPage() {
         function renderContents() {
             return <>
                 <div className="flex justify-between">
+                  {/*<ProfilePicture userId={questionInfo.User.id}></ProfilePicture>*/}
                   <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
                   <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
                 </div>
@@ -448,8 +450,11 @@ export function QuestionPage() {
         }
 
         function renderContents() {
+            console.log(`answer.uuid: ${answer.uuid}`)
+
             return <>
                 <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+                    <ProfilePicture uuid={answer.uuid} isTransientUuid={true}></ProfilePicture>
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
                     {isVerified ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" className={"position: absolute; top: 0; right: 0;"}>
                         <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path><path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
