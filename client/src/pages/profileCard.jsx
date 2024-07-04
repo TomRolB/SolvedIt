@@ -72,10 +72,13 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
 
         axios
             .post(`/users/${uuid}/picture`, formData)
-            .then(res => console.log(res))
+            .then(res => {
+                console.log(res)
+                setPictureCount(pictureCount + 1)
+            })
             .catch(err => console.log(err))
 
-        setPictureCount(pictureCount + 1)
+
     }
 
     return (
