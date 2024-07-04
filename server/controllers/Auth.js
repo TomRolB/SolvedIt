@@ -164,7 +164,7 @@ exports.generateTransientUuid = (id) => {
 
 exports.popTransientUuid = (uuid) => {
     const realId = transientUuids[uuid];
-    delete transientUuids[uuid];
+    // delete transientUuids[uuid];
 
     return realId
 }

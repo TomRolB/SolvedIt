@@ -3,6 +3,7 @@ import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {QuestionFilter} from "./QuestionFilter";
+import {ProfilePicture} from "../components/ProfilePicture";
 
 export function Class({uuid, setUuid, classId, setClassId}) {
 
@@ -73,6 +74,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             tagName: question.tagName,
             canBeDeleted: question.canBeDeleted,
             fileNames: question.fileNames,
+            uuid: question.uuid,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,
@@ -95,6 +97,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             userId: question.userId,
             canBeDeleted: question.canBeDeleted,
             fileNames: question.fileNames,
+            uuid: question.uuid,
             User: {
                 userId: question.userId,
                 firstName: question.firstName,
@@ -116,7 +119,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             {!questionInfo.isActive
                 ? <p className="text-amber-50">This question has been deleted. However, you can still see its answers.</p>
                 :<>
-                    <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                    <div className="flex items-center">
+                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true}/>
+                        <h1 className="text-2xl text-amber-50 ml-2">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                    </div>
                     <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
                     {questionInfo.tags.length > 0 ?
                         <h1 className="text-amber-50 pt-6">Tags: {questionInfo.tags.join(", ")}</h1> : null}

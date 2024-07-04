@@ -26,6 +26,7 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
 
     questionsWithTags.forEach((question) => {
         question.canBeDeleted = question.userId === userId || isAdmin;
+        question.uuid = generateTransientUuid(question.userId);
     })
 
     questionsWithTags.forEach((question) => {

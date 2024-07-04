@@ -16,7 +16,7 @@ export function ProfilePicture({uuid, isTransientUuid}) {
             )
             .then((res) => {
                 const url = URL.createObjectURL(res.data);
-                setPictureUrl(url);
+                if (pictureUrl === "") setPictureUrl(url);
             })
             .catch(err => console.log(err))
     }, []);
