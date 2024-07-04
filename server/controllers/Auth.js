@@ -3,6 +3,7 @@ const crypto = require("crypto")
 const cron = require("cron")
 
 const sessions = {}
+const transientUuids = {}
 const EXPIRATION_TIME = 3600000
 
 // Node class used in SessionQueue
@@ -18,7 +19,9 @@ class Node {
 // we can efficiently delete sessions which
 // have expired
 class SessionQueue {
-    constructor(){
+    constructor(object, expirationTime){
+        this.object = object
+        this.expirationTime = expirationTime
         this.first = null
         this.last = null
         this.size = 0
@@ -40,23 +43,25 @@ class SessionQueue {
     }
     deleteAllExpiredSessions() {
         const now = Date.now()
-        while (this.size > 0 && (now - this.first.datetime > EXPIRATION_TIME)) {
-            delete sessions[this.first.value]
+        while (this.size > 0 && (now - this.first.datetime > this.expirationTime)) {
+            delete this.object[this.first.value]
             this.first = this.first.next
             this.size--
         }
     }
 }
 
-const queue = new SessionQueue()
+const sessionQueue = new SessionQueue(sessions, EXPIRATION_TIME)
+const transientQueue = new SessionQueue(transientUuids,10000)
 
 // Cron job to delete expired sessions.
 // The job will run every minute to make it testable
 new cron.CronJob(
     '00 * * * * *',
     function () {
-        queue.deleteAllExpiredSessions()
+        sessionQueue.deleteAllExpiredSessions()
         console.log("CRON JOB: Deleted expired sessions")
+        transientQueue.deleteAllExpiredSessions()
     },
     null,
     true,
@@ -85,16 +90,12 @@ exports.validateUser = async (form) => {
         id: user.id,
         since: Date.now()
     }
-    queue.enqueue(uuid)
+    sessionQueue.enqueue(uuid)
 
     return {
         wasSuccessful: true,
         uuid: uuid,
     }
-}
-
-const RegisterResult = {
-    SUCCESS: "Successfully registered",
 }
 
 exports.registerUser = async (form) => {
@@ -139,7 +140,7 @@ exports.registerUser = async (form) => {
         id: user.id,
         since: Date.now()
     }
-    queue.enqueue(uuid)
+    sessionQueue.enqueue(uuid)
 
     return {
         wasSuccessful: true,
@@ -156,8 +157,20 @@ exports.logout = (uuid) => {
 }
 
 exports.getUserId = (uuid) => {
-    console.log(sessions)
     return sessions[uuid]
+}
+
+exports.generateTransientUuid = (id) => {
+    const uuid = crypto.randomUUID()
+    transientUuids[uuid] = id
+    return uuid
+}
+
+exports.popTransientUuid = (uuid) => {
+    const realId = transientUuids[uuid];
+    // delete transientUuids[uuid];
+
+    return realId
 }
 
 exports.isAdmin = async (uuid, classId) => {

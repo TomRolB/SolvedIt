@@ -13,6 +13,7 @@ export async function ClassEnroll()   {
         const response = await fetch(endpoint)
         if(!response) return false;
         let responseValue = await response.json()
+        if (!responseValue) return false;
         // console.log(responseValue)
         return responseValue.length !== 0;
     }
