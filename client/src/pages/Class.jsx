@@ -11,6 +11,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
     const [isAdmin, setIsAdmin] = useState(false)
     const [questions, setQuestions] = useState([])
     const [showFilter, setShowFilter] = useState(false)
+    const [errorCount, setErrorCount] = useState(0)
     let {id} = useParams()
 
     useEffect(() => {
@@ -33,7 +34,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log("Question error")
             })
     // }, [questions]);
-    }, []);
+    }, [errorCount]);
 
     const createQuestionElements = (data) => {
         let questions = []
@@ -120,7 +121,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 ? <p className="text-amber-50">This question has been deleted. However, you can still see its answers.</p>
                 :<>
                     <div className="flex items-center">
-                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true}/>
+                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}/>
                         <h1 className="text-2xl text-amber-50 ml-2">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
                     </div>
                     <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>

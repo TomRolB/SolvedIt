@@ -31,7 +31,9 @@ function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswe
             console.log(fetchedFiles.length)
             fetchFilesRecursively(fileNames, id, fetchedFiles, idx + 1, setter, isAnswer)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err);
+        })
 }
 
 function Files({files}) {
@@ -61,6 +63,7 @@ export function QuestionPage() {
     let {id} = useParams()
     let [isTeacher, setIsTeacher] = useState(false)
     const [files, setFiles] = useState([])
+    const [errorCount, setErrorCount] = useState(0)
 
 
     useEffect(() => {
@@ -87,12 +90,16 @@ export function QuestionPage() {
             })
             .catch(err => console.log(err))
 
-    }, [answersLen, isTeacher]);
+    }, [answersLen, isTeacher, errorCount]);
 
     function Question({questionInfo}) {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
         const [replyFiles, setReplyFiles] = useState([])
+
+        useEffect(() => {
+
+        }, [errorCount]);
 
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
@@ -175,7 +182,7 @@ export function QuestionPage() {
             return <>
                 <div className="flex justify-between">
                     <div className="flex items-center">
-                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true}/>
+                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}></ProfilePicture>
                         <h1 className="text-2xl text-amber-50 ml-2">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
                     </div>
                     <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
@@ -309,8 +316,6 @@ export function QuestionPage() {
         const [isVerified, setIsVerified] = useState(false)
         const [replyFiles, setReplyFiles] = useState([])
         const [fetchedFiles, setFetchedFiles] = useState([])
-        const [pictureCount, setPictureCount] = useState()
-
         useEffect(() => {
             fetchFilesRecursively(
                 answer.fileNames, answer.id, [], 0, setFetchedFiles, true
@@ -458,7 +463,7 @@ export function QuestionPage() {
             return <>
                 <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                     <div className="flex items-center">
-                        <ProfilePicture uuid={answer.uuid} isTransientUuid={true}></ProfilePicture>
+                        <ProfilePicture uuid={answer.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}></ProfilePicture>
                         <span className="text-sm font-semibold text-gray-900 dark:text-white ml-2">{answer.User.firstName + answer.User.lastName}</span>
                     </div>
                     {isVerified ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" className={"position: absolute; top: 0; right: 0;"}>
