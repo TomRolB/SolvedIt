@@ -5,6 +5,8 @@ import {Navbar} from "../components/Navbar";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import {FileUpload} from "../components/FileUpload";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
     if (idx >= fileNames.length) {
@@ -147,7 +149,7 @@ export function QuestionPage() {
                 })
                 .then((res) => console.log(res))
                 .catch((err) => console.log(err))
-
+            toast.success("Question deleted successfully")
             setIsQuestionActive(false)
         }
 
@@ -238,21 +240,8 @@ export function QuestionPage() {
     }
 
     const handleQuestionReport = (questionInfo) => {
-        confirmAlert({
-            title: 'Report Question:',                        // Title dialog
-            message: `Question: ${questionInfo.title}`,               // Message dialog
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: () => confirmQuestionReport(questionInfo)
-                },
-                {
-                    label: 'No',
-                    onClick: () => {}
-                }
-            ],
-            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
-        })
+        confirmQuestionReport(questionInfo)
+        toast.success("Question reported successfully")
     }
 
     const confirmQuestionReport = (questionInfo) => {
@@ -268,21 +257,8 @@ export function QuestionPage() {
     }
 
     function handleAnswerReport(answer) {
-        confirmAlert({
-            title: 'Report Answer:',                        // Title dialog
-            message: `Answer: ${answer.description}`,               // Message dialog
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: () => confirmAnswerReport(answer)
-                },
-                {
-                    label: 'No',
-                    onClick: () => {}
-                }
-            ],
-            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
-        })
+        confirmAnswerReport(answer)
+        toast.success("Answer reported successfully")
     }
 
     const confirmAnswerReport = (answer) => {
@@ -367,6 +343,7 @@ export function QuestionPage() {
                 .catch((err) => console.log(err))
 
             setAnswersLen(0)
+            toast.success("Answer deleted successfully")
         }
 
         function handleVerify() {
@@ -388,6 +365,7 @@ export function QuestionPage() {
                 description: "Your answer validity has been changed",
                 notificationType: "answerValidation"
             }).then(res => console.log(res))
+            toast.success("Answer validated successfully")
         }
 
         function handleVote() {

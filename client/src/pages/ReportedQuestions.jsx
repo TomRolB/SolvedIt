@@ -2,6 +2,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function ReportedQuestions({uuid, setUuid}) {
 
@@ -88,6 +90,7 @@ export function ReportedQuestions({uuid, setUuid}) {
                 console.log(res)
             })
             .catch((err) => console.log(err))
+        toast.success("Question deleted successfully")
     }
 
     function handleAnswerDelete(answerId) {
@@ -104,6 +107,7 @@ export function ReportedQuestions({uuid, setUuid}) {
                 console.log(res)
             })
             .catch((err) => console.log(err))
+            toast.success("Answer deleted successfully")
     }
 
 
