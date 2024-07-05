@@ -4,6 +4,8 @@ import axios from "axios";
 import * as PropTypes from "prop-types";
 import {Navbar} from "../components/Navbar";
 import {Copy} from "../components/Copy";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ManyTimesCode({code, expiration, userCount}) {
     return <>
@@ -111,6 +113,7 @@ export function Invites() {
         if (result.data.wasSuccessful) {
             setGeneratedCode(result.data.inviteCode)
             fetchCodes()
+            toast.success("Code created successfully")
         } else {
             setErrorMessage(result.data.errorMessage)
         }

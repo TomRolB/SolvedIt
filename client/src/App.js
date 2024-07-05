@@ -23,6 +23,8 @@ import {Leaderboard} from "./pages/Leaderboard";
 import {Notifications} from "./pages/Notifications";
 import {NotificationSettings} from "./pages/NotificationSettings";
 import {ClassNotificationSettings} from "./pages/ClassNotificationSettings";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App(props) {
@@ -105,6 +107,7 @@ function App(props) {
                 <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
                 <Route path="/class/:id/notification-settings" element={(<ClassNotificationSettings></ClassNotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}
+            <ToastContainer/>
         </BrowserRouter>
     );
 }
