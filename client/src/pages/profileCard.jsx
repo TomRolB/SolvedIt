@@ -3,6 +3,8 @@ import React, {useEffect, useState} from 'react';
 import '../styles/ProfileCard.css';
 import {useUserUuid} from "../hooks/useUserUuid";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export const ProfileCard = () => {
     //Profile gets and updates uuid
     let [userData, setData] = useState()
@@ -30,6 +32,7 @@ export const ProfileCard = () => {
                 .catch(
                     reason => {console.log(reason)}
                 )
+            toast.success("User deleted successfully")
         }
         if(uuid) {
             deleteUser()

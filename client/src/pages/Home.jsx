@@ -2,6 +2,8 @@ import {useNavigate} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Home({uuid, setUuid, classId, setClassId}) {
 
@@ -74,6 +76,7 @@ export function Home({uuid, setUuid, classId, setClassId}) {
     function handleCodeJoinResult(result) {
         if (result.data.wasSuccessful) {
             navigate("/class/" + result.data.classId)
+            toast.success("Successfully joined class")
         } else {
             setErrorMessage(result.data.errorMessage)
         }

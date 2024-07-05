@@ -1,32 +1,10 @@
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export const Copy = ({text}) => {
-
-    // const clipboard = FlowbiteInstances.getInstance('CopyClipboard', 'npm-install-copy-text');
-    //
-    // const $defaultMessage = document.getElementById('default-message');
-    // const $successMessage = document.getElementById('success-message');
-    //
-    // clipboard.updateOnCopyCallback((clipboard) => {
-    //     showSuccess();
-    //
-    //     // reset to default state
-    //     setTimeout(() => {
-    //         resetToDefault();
-    //     }, 2000);
-    // })
-    //
-    // const showSuccess = () => {
-    //     $defaultMessage.classList.add('hidden');
-    //     $successMessage.classList.remove('hidden');
-    // }
-    //
-    // const resetToDefault = () => {
-    //     $defaultMessage.classList.remove('hidden');
-    //     $successMessage.classList.add('hidden');
-    // }
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(text)
+        toast.success("Copied to clipboard")
     }
 
     return (
