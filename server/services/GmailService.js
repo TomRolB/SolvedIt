@@ -1,7 +1,15 @@
 const nodemailer = require('nodemailer');
 const {mail} = require("./mail");
+const {Users} = require('../models')
 
-exports.sendEmail = (description) => {
+exports.sendEmail = async (description, userId) => {
+    let emailAddress = (await Users.findOne({
+        where: {
+            id: userId
+        },
+        attributes: ['email']
+    })).email
+
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
@@ -17,10 +25,10 @@ exports.sendEmail = (description) => {
 
     let message = {
         from: mail.user,
-        to: 'jijajix166@calunia.com',
+        to: emailAddress,
         subject: description.title,
         text: description.description,
-        html: '<h2>Message sent from SolvedIt</h2>'
+        html: `<p>${description.description}</p>`
     };
 
     transporter.sendMail(message, (err, info) => {

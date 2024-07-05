@@ -49,22 +49,22 @@ exports.getAllNotifications = async (userId) => {
 }
 
 exports.createNotification = async (description) =>{
-    const classMates = await IsInClass.findAll({where: {classId: description.classId}})
-
-    function sendEmailIfConfigured(canBeNotified) {
+    function sendEmailIfConfigured(canBeNotified, userId) {
         console.log(`Should send via email: ${canBeNotified.byEmail}`)
         if (canBeNotified.byEmail) {
             emailServices.forEach((service) => {
-                service.sendEmail(description)
+                service.sendEmail(description, userId)
             })
         }
     }
+
+    const classMates = await IsInClass.findAll({where: {classId: description.classId}})
 
     for (let classMate of classMates){
         const canBeNotified = await userCanBeNotified(description, classMate.userId);
         if (canBeNotified.canBeShown) {
             await createNotificationEntry(classMate.userId, description)
-            sendEmailIfConfigured(canBeNotified);
+            sendEmailIfConfigured(canBeNotified, classMate.userId);
         }
     }
 }
