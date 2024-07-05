@@ -12,6 +12,7 @@ export function Home({uuid, setUuid, classId, setClassId}) {
 
     const [code, setCode] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
+    const [page, setPage] = useState(0)
 
     const navigate = useNavigate()
 
@@ -91,7 +92,7 @@ export function Home({uuid, setUuid, classId, setClassId}) {
     }
   
     return (
-        <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
+        <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300">
             <div>
                 <Navbar></Navbar>
             </div>
@@ -118,7 +119,7 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                         </tr>
                         </thead>
                         <tbody>
-                        {classRows}
+                        {classRows.slice(10 * page, 10 *(page + 1))}
                         </tbody>
                     </table>
                 </div>
@@ -135,6 +136,16 @@ export function Home({uuid, setUuid, classId, setClassId}) {
                         <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded" type="submit"
                                value="Submit"/>
                     </form>
+                </div>
+                <div className="flex justify-center items-center mt-2 col-span-2">
+                    <button type="button" onClick={() => page > 0 ? setPage(page - 1) : setPage(0)}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <i className="fa-solid fa-arrow-left"></i> Previous
+                    </button>
+                    <button type="button" onClick={() => classRows.length / 10 > page + 1 ? setPage(page + 1) : setPage(page)}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Next <i className="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
