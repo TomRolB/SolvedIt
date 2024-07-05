@@ -1,7 +1,4 @@
-// Use at least Nodemailer v4.1.0
 const nodemailer = require('nodemailer');
-
-// Generate SMTP service account from ethereal.email
 
 exports.sendEmail = (description) => {
     nodemailer.createTestAccount((err, account) => {

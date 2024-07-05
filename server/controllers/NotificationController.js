@@ -1,9 +1,8 @@
 const {Notification, IsInClass} = require('../models/')
 const NotificationSettings = require("./NotificationSettings")
-const EtherealMailService = require('../services/EtherealMailService')
+const GmailService = require('../services/GmailService')
 
-
-const emailServices = [EtherealMailService]
+const emailServices = [GmailService]
 
 async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
@@ -51,16 +50,21 @@ exports.getAllNotifications = async (userId) => {
 
 exports.createNotification = async (description) =>{
     const classMates = await IsInClass.findAll({where: {classId: description.classId}})
+
+    function sendEmailIfConfigured(canBeNotified) {
+        console.log(`Should send via email: ${canBeNotified.byEmail}`)
+        if (canBeNotified.byEmail) {
+            emailServices.forEach((service) => {
+                service.sendEmail(description)
+            })
+        }
+    }
+
     for (let classMate of classMates){
         const canBeNotified = await userCanBeNotified(description, classMate.userId);
         if (canBeNotified.canBeShown) {
             await createNotificationEntry(classMate.userId, description)
-            console.log(`Should send by email: ${canBeNotified.byEmail}`)
-            if (canBeNotified.byEmail) {
-                emailServices.forEach((service) => {
-                    service.sendEmail(description)
-                })
-            }
+            sendEmailIfConfigured(canBeNotified);
         }
     }
 }
