@@ -92,17 +92,18 @@ export function PostQuestion() {
                             <input
                                 className={"block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}
                                 onChange={handleDescriptionChange} type={"text"}/><br/>
-                            <FileUpload files={files} setFiles={setFiles} singleFile={false}/>
                             <Select
                                 closeMenuOnSelect={false}
                                 isMulti
                                 name="colors"
                                 options={options}
-                                className="basic-multi-select"
+                                className="basic-multi-select mt-2"
                                 classNamePrefix="select"
                                 onChange={handleChange}
+                                placeholder={"Select tags"}
                             /><br></br>
-                            <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded "
+                            <FileUpload files={files} setFiles={setFiles} singleFile={false}/>
+                            <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-4 md-2 rounded "
                                    type={"submit"}/>
                         </form>
                     </div>
