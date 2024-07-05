@@ -1,5 +1,9 @@
 const {Notification, IsInClass} = require('../models/')
 const NotificationSettings = require("./NotificationSettings")
+const EtherealMailService = require('../services/EtherealMailService')
+
+
+const emailServices = [EtherealMailService]
 
 async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
@@ -10,11 +14,13 @@ async function userCanBeNotified(notification, userId) {
         console.log("Notification type" + notificationType);
         switch (notificationType){
             case "newQuestion":
-                return classSettings.newQuestions === "All"
+                return {canBeShown: classSettings.newQuestions === "All", byEmail: classSettings.notifyByEmail}
             case "newAnswer":
-                return classSettings.newAnswers === "All"
+                return {canBeShown: classSettings.newAnswers === "All", byEmail: classSettings.notifyByEmail}
             case "answerValidation":
-                return isTeacher ? classSettings.answerValidation === "Teacher" : classSettings.answerValidation === "Always"
+                return isTeacher
+                    ? {canBeShown: classSettings.answerValidation === "Teacher", byEmail: classSettings.notifyByEmail}
+                    : {canBeShown: classSettings.answerValidation === "Always", byEmail: classSettings.notifyByEmail}
         }
     }
     const isAble = (notification, classSettings) =>{
@@ -24,7 +30,7 @@ async function userCanBeNotified(notification, userId) {
         return notificationTypeCanBeShown(notification.notificationType, generalSettings)
     }
     let able = isAble(notification, classSettings)
-    console.log("Is able to be shown: " + able);
+    console.log("Is able to be shown: " + able.canBeShown);
     return able;
 }
 
@@ -46,8 +52,16 @@ exports.getAllNotifications = async (userId) => {
 exports.createNotification = async (description) =>{
     const classMates = await IsInClass.findAll({where: {classId: description.classId}})
     for (let classMate of classMates){
-        if(await userCanBeNotified(description, classMate.userId))
-        await createNotificationEntry(classMate.userId, description);
+        const canBeNotified = await userCanBeNotified(description, classMate.userId);
+        if (canBeNotified.canBeShown) {
+            await createNotificationEntry(classMate.userId, description)
+            console.log(`Should send by email: ${canBeNotified.byEmail}`)
+            if (canBeNotified.byEmail) {
+                emailServices.forEach((service) => {
+                    service.sendEmail(description)
+                })
+            }
+        }
     }
 }
 
