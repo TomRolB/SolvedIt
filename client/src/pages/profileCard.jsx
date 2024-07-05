@@ -5,10 +5,12 @@ import {useUserUuid} from "../hooks/useUserUuid";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-export const ProfileCard = () => {
+export const ProfileCard = ({pictureCount, setPictureCount}) => {
     //Profile gets and updates uuid
     let [userData, setData] = useState()
     let [uuid, setUuid] = useUserUuid()
+    const [pictureUrl, setPictureUrl] = useState("")
+    const [isImageHovered, setIsImageHovered] = useState(false)
 
     useEffect(() => {
         const fetchUserData = async () =>{
@@ -21,10 +23,26 @@ export const ProfileCard = () => {
                     reason => {console.log(reason)}
             )
         }
+
+        const fetchProfilePicture = () => {
+            axios
+                .get(`/users/${uuid}/picture`, {
+                        responseType: "blob"
+                    }
+                )
+                .then((res) => {
+                    const url = URL.createObjectURL(res.data);
+                    setPictureUrl(url);
+                    setIsImageHovered(false)
+                })
+                .catch(err => console.log(err))
+        };
+
         if(uuid) {
             fetchUserData()
+            fetchProfilePicture()
         }
-    }, [uuid]);
+    }, [uuid, pictureCount]);
 
     const handleDelete = () => {
         const deleteUser = async () =>{
@@ -44,20 +62,56 @@ export const ProfileCard = () => {
         }
     };
 
-
-
-
-
     console.log(userData) //Funca :)
     const navigate = useNavigate();
     if(!userData){
         return <p>Loading...</p>
     }
 
+    function handleFileChange(event) {
+        let uuid = localStorage.getItem("uuid");
+
+        const file = event.target.files[0];
+        if (file === undefined) return
+        const formData = new FormData()
+
+        formData.append('file', file)
+        formData.append('uuid', uuid)
+
+        axios
+            .post(`/users/${uuid}/picture`, formData)
+            .then(res => {
+                console.log(res)
+                setPictureCount(pictureCount + 1)
+            })
+            .catch(err => console.log(err))
+
+
+    }
+
     return (
             <div className=" bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-10 p-5">
                 <div className="pl-5 flex flex-col items-start">
-                    <img className="w-24 h-24 mb-3 rounded-full shadow-lg" src={require("../media/image.jpg")} alt="Bonnie image"/>
+                    <input id="upload" type="file" onChange={handleFileChange} className="hidden"/><br/>
+                    <label htmlFor="upload" className="text-amber-50 cursor-pointer ml-2">
+                        {!isImageHovered
+                            ? <img
+                                className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer" src={pictureUrl}
+                                alt="Profile picture"
+                                onMouseEnter={() => setIsImageHovered(true)}
+                                // onMouseLeave={() => setIsImageHovered(false)}
+                            />
+                            : <div className="relative text-center">
+                                <img
+                                className="w-24 h-24 mb-3 rounded-full shadow-lg cursor-pointer opacity-10" src={pictureUrl}
+                                alt="Profile picture"
+                                // onMouseEnter={() => setIsImageHovered(true)}
+                                onMouseLeave={() => setIsImageHovered(false)}/>
+                                <h2 className="w-full absolute top-0 left-0 text-center mt-10 text-white">Upload image</h2>
+                            </div>
+                        }
+                    </label>
+
                 </div>
                 <div className="card-body p-4">
                     <h3 className="text-3xl font-bold dark:text-white">User Information:</h3>

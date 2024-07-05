@@ -5,6 +5,9 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const Auth = require("../controllers/Auth");
+const fs = require("fs");
+const path = require('path');
+const {upload} = require("../services/FileService");
 
 router.use(bodyParser.urlencoded({extended: true}))
 
@@ -75,6 +78,56 @@ router.get("/:uuid", async(req,res) =>{
         }
     )
     res.send(data)
+})
+
+router.get("/:uuid/picture", async (req, res) => {
+    let id = req.query.isTransientUuid
+        ? Auth.popTransientUuid(req.params.uuid)
+        : Auth.getUserId(req.params.uuid)?.id
+    if (id === undefined) {
+        res.status(302).send("Could not find file")
+    }
+    else if (!fs.existsSync(`./uploads/p${id}`)) {
+        const filePath = path.resolve(__dirname + "/../uploads/default/profile.jpg");
+        res.sendFile(filePath)
+    } else {
+        const fileNames = fs.readdirSync(`./uploads/p${id}`)
+        const filepath = path.resolve(__dirname + `/../uploads/p${id}/${fileNames[0]}`)
+        res.sendFile(filepath)
+    }
+})
+
+function deleteOldPhoto(id) {
+    if (fs.existsSync(`./uploads/p${id}`)) {
+        const fileName = fs.readdirSync(`./uploads/p${id}`)[0]
+        fs.rmSync(`./uploads/p${id}/${fileName}`)
+    }
+}
+
+function relocateNewPhoto(id) {
+    const fileName = fs.readdirSync(`./uploads/awaiting_id`)[0]
+    console.log(`fileName: ${fileName}`)
+
+    if (!fs.existsSync(`./uploads/p${id}`)) {
+        fs.mkdirSync(`./uploads/p${id}`)
+    }
+    fs.renameSync(`./uploads/awaiting_id/${fileName}`, `./uploads/p${id}/${fileName}`)
+}
+
+router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
+    let id = Auth.getUserId(req.params.uuid)?.id
+    if (id === undefined) return;
+
+    // if (fs.existsSync(`./uploads/p${id}`)) {
+    //     fs.rmdirSync(`./uploads/p${id}`, {recursive: true, force: true})
+    // }
+    //
+    // await fs.rename('./uploads/awaiting_id', `./uploads/p${id}`, (err) => {console.log(err)})
+
+    deleteOldPhoto(id);
+    relocateNewPhoto(id);
+
+    res.send("Uploaded file")
 })
 
 router.post("/:uuid/delete", async (req,res)=>{

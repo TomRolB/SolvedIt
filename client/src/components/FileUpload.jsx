@@ -1,9 +1,11 @@
 import React from "react";
 
-export function FileUpload({files, setFiles}) {
+export function FileUpload({files, setFiles, singleFile}) {
     function handleFileChange(event) {
         console.log(event.target.files[0])
-        setFiles([...files, event.target.files[0]])
+
+        if (singleFile) setFiles([event.target.files[0]])
+        else setFiles([...files, event.target.files[0]])
     }
 
     function displayUploadedFileNames() {
