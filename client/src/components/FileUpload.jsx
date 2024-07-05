@@ -14,7 +14,7 @@ export function FileUpload({files, setFiles, singleFile}) {
 
     return <>
         <input id="upload" type="file" onChange={handleFileChange} className="hidden"/><br/>
-        <label htmlFor="upload" className="text-amber-50 cursor-pointer ml-2"><i className="fa-solid fa-upload"></i> Upload Files </label><br/>
+        <label htmlFor="upload" className="text-white cursor-pointer ml-2"><i className="fa-solid fa-upload"></i> Upload Files </label><br/>
         {files.length > 0
             ? <div className="bg-gray-600 p-2 m-1 rounded">{displayUploadedFileNames()}</div>
             : null}
