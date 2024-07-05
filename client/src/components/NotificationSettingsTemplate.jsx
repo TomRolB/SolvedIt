@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const NotificationSettingsTemplate = ({classId}) => {
 
@@ -142,6 +144,7 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 .then((res) => console.log(res))
                 .catch(err => console.log(err))
         }
+        toast.success("Notification settings updated successfully")
     }
 
     useEffect(() => {

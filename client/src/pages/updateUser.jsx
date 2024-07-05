@@ -3,6 +3,8 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useUserUuid} from "../hooks/useUserUuid";
 import {useNavigate} from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const ProfileChanger = ()=>{
     const namesInputStyle = "h-10 w-40 border-blue-700 border-2 rounded mt-2 md-2 text-xl";
@@ -24,10 +26,13 @@ export const ProfileChanger = ()=>{
 
 
 
-    const handleEdit = () => {
-        axios.put(`/users/${uuid}/update`, {firstName: firstName, lastName: lastName}).then((res) => {
-            console.log(res)
-        }).catch(err => console.log(err))
+    const handleEdit = (event) => {
+        event.preventDefault()
+        axios
+            .put(`/users/${uuid}/update`, {firstName: firstName, lastName: lastName})
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+            toast.success("Name updated successfully")
         navigate("/home")
     }
 
