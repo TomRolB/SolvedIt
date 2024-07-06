@@ -142,7 +142,13 @@ export function QuestionPage() {
                 classId: id,
                 title: "New Answer",
                 description: "New answer has been submitted to one of your questions",
-                notificationType: "newAnswer"
+                notificationType: "newAnswer",
+                notificationInfo: {
+                    questionInfo: questionInfo,
+                    answerInfo: {
+                        description: answerDescription
+                    }
+                }
             }).then(res => console.log(res))
 
         }
@@ -374,7 +380,8 @@ export function QuestionPage() {
                 classId: id,
                 title: "Answer Validation",
                 description: "Your answer validity has been changed",
-                notificationType: "answerValidation"
+                notificationType: "answerValidation",
+                notificationInfo: answer
             }).then(res => console.log(res))
             toast.success("Answer validated successfully")
         }

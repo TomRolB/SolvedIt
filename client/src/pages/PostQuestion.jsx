@@ -59,7 +59,11 @@ export function PostQuestion() {
             classId: id,
             title: title,
             description: "New question has been submitted",
-            notificationType: "newQuestion"
+            notificationType: "newQuestion",
+            notificationInfo: {
+                title: title,
+                description: description
+            }
         }).then((res) => {
                 console.log(res)
                 navigate("/class/" + id)

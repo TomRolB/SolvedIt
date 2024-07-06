@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const {mail} = require("./mail");
 const {Users} = require('../models')
+const Strategies = require("./html_strategies/Strategies");
 
 exports.sendEmail = async (description, userId) => {
     let emailAddress = (await Users.findOne({
@@ -28,7 +29,7 @@ exports.sendEmail = async (description, userId) => {
         to: emailAddress,
         subject: description.title,
         text: description.description,
-        html: `<p>${description.description}</p>`
+        html: (await Strategies.getHtml(description)) || `<p>${description.description}</p>`
     };
 
     transporter.sendMail(message, (err, info) => {
