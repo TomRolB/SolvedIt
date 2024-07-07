@@ -17,7 +17,7 @@ router.post("/create-class", async (req, res) => {
     // await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
     await NotificationSettings.createNotificationSettings(userId, maxId)
-    InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
+    await InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
     res.send("Created class!")
 })
 
