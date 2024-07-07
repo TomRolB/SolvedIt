@@ -2,6 +2,8 @@ import {redirect, useNavigate, useParams} from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function EditTag() {
     const [name, setName] = useState("")
@@ -24,6 +26,7 @@ export function EditTag() {
             console.log(res)
             navigate(`/class/${id}`)
         }).catch(err => console.log(err))
+        toast.success("Tag deleted successfully")
     }
 
     const handleEdit = () => {
@@ -31,6 +34,7 @@ export function EditTag() {
             console.log(res)
             navigate(`/class/${id}`)
         }).catch(err => console.log(err))
+        toast.success("Tag updated successfully")
     }
 
     const handleNameChange = (newName) => {

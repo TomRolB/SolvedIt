@@ -2,9 +2,13 @@ import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
-import { confirmAlert } from 'react-confirm-alert';
+import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 import {FileUpload} from "../components/FileUpload";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {ProfilePicture} from "../components/ProfilePicture";
+
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
     if (idx >= fileNames.length) {
@@ -30,7 +34,9 @@ function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswe
             console.log(fetchedFiles.length)
             fetchFilesRecursively(fileNames, id, fetchedFiles, idx + 1, setter, isAnswer)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err);
+        })
 }
 
 function Files({files}) {
@@ -60,6 +66,7 @@ export function QuestionPage() {
     let {id} = useParams()
     let [isTeacher, setIsTeacher] = useState(false)
     const [files, setFiles] = useState([])
+    const [errorCount, setErrorCount] = useState(0)
 
 
     useEffect(() => {
@@ -86,12 +93,16 @@ export function QuestionPage() {
             })
             .catch(err => console.log(err))
 
-    }, [answersLen, isTeacher]);
+    }, [answersLen, isTeacher, errorCount]);
 
     function Question({questionInfo}) {
         const [isBeingReplied, setIsBeingReplied] = useState(false)
         const [answerDescription, setAnswerDescription] = useState("")
         const [replyFiles, setReplyFiles] = useState([])
+
+        useEffect(() => {
+
+        }, [errorCount]);
 
         function handleTextChange(event) {
             setAnswerDescription(event.target.value)
@@ -131,7 +142,13 @@ export function QuestionPage() {
                 classId: id,
                 title: "New Answer",
                 description: "New answer has been submitted to one of your questions",
-                notificationType: "newAnswer"
+                notificationType: "newAnswer",
+                notificationInfo: {
+                    questionInfo: questionInfo,
+                    answerInfo: {
+                        description: answerDescription
+                    }
+                }
             }).then(res => console.log(res))
 
         }
@@ -147,7 +164,7 @@ export function QuestionPage() {
                 })
                 .then((res) => console.log(res))
                 .catch((err) => console.log(err))
-
+            toast.success("Question deleted successfully")
             setIsQuestionActive(false)
         }
 
@@ -165,7 +182,7 @@ export function QuestionPage() {
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
                 <textarea  placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm mt-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
-                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles} singleFile={false}/>
                 <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" /><br/>
             </form>;
         }
@@ -173,8 +190,11 @@ export function QuestionPage() {
         function renderContents() {
             return <>
                 <div className="flex justify-between">
-                  <h1 className="text-2xl text-amber-50">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
-                  <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
+                    <div className="flex items-center">
+                        <ProfilePicture uuid={questionInfo.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}></ProfilePicture>
+                        <h1 className="text-2xl text-amber-50 ml-2">{questionInfo.User.firstName + " " + questionInfo.User.lastName}</h1>
+                    </div>
+                    <button type="button" onClick={() => handleQuestionReport(questionInfo)} className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i className="fa-solid fa-flag"></i> Report</button>
                 </div>
                 <h1 className="text-5xl text-amber-50">{questionInfo.title}</h1>
                 {questionInfo.tags.length > 0 ?
@@ -238,21 +258,8 @@ export function QuestionPage() {
     }
 
     const handleQuestionReport = (questionInfo) => {
-        confirmAlert({
-            title: 'Report Question:',                        // Title dialog
-            message: `Question: ${questionInfo.title}`,               // Message dialog
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: () => confirmQuestionReport(questionInfo)
-                },
-                {
-                    label: 'No',
-                    onClick: () => {}
-                }
-            ],
-            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
-        })
+        confirmQuestionReport(questionInfo)
+        toast.success("Question reported successfully")
     }
 
     const confirmQuestionReport = (questionInfo) => {
@@ -268,21 +275,8 @@ export function QuestionPage() {
     }
 
     function handleAnswerReport(answer) {
-        confirmAlert({
-            title: 'Report Answer:',                        // Title dialog
-            message: `Answer: ${answer.description}`,               // Message dialog
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: () => confirmAnswerReport(answer)
-                },
-                {
-                    label: 'No',
-                    onClick: () => {}
-                }
-            ],
-            overlayClassName: "overlay-custom-class-name"      // Custom overlay class name
-        })
+        confirmAnswerReport(answer)
+        toast.success("Answer reported successfully")
     }
 
     const confirmAnswerReport = (answer) => {
@@ -305,7 +299,6 @@ export function QuestionPage() {
         const [isVerified, setIsVerified] = useState(false)
         const [replyFiles, setReplyFiles] = useState([])
         const [fetchedFiles, setFetchedFiles] = useState([])
-
         useEffect(() => {
             fetchFilesRecursively(
                 answer.fileNames, answer.id, [], 0, setFetchedFiles, true
@@ -367,6 +360,7 @@ export function QuestionPage() {
                 .catch((err) => console.log(err))
 
             setAnswersLen(0)
+            toast.success("Answer deleted successfully")
         }
 
         function handleVerify() {
@@ -386,8 +380,10 @@ export function QuestionPage() {
                 classId: id,
                 title: "Answer Validation",
                 description: "Your answer validity has been changed",
-                notificationType: "answerValidation"
+                notificationType: "answerValidation",
+                notificationInfo: answer
             }).then(res => console.log(res))
+            toast.success("Answer validated successfully")
         }
 
         function handleVote() {
@@ -410,20 +406,26 @@ export function QuestionPage() {
         }
 
         function renderButtons() {
-            return <div>
+            return <div className="flex items-center">
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
                 </button>
 
-                <button onClick={handleVote}
-                        className={
-                            hasUserVotedIt
-                                ? "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
-                                : "text-white bg-gray-700 px-5 py-2.5 me-2 mb-2 cursor-default"
-                }>
-                    <i className="fa-solid fa-arrow-up"></i>
-                    {" " + voteCount}
-                </button>
+                {!answer.belongsToThisUser
+                    ? <button onClick={handleVote}
+                              className={
+                                  hasUserVotedIt
+                                      ? "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800 cursor-pointer"
+                                      : "text-white bg-gray-700 px-5 py-2.5 me-2 mb-2 cursor-pointer"
+                              }>
+                        <i className="fa-solid fa-arrow-up"></i>
+                        {" " + voteCount}
+                    </button>
+                    : <h2 className="text-white bg-gray-700 px-5 py-2.5 me-2 mb-2 cursor-normal">
+                        <i className="fa-solid fa-arrow-up"></i>
+                        {" " + voteCount}
+                    </h2>
+                }
 
                 {answer.canBeDeleted
                     ? <button onClick={handleReplyDelete}
@@ -442,15 +444,20 @@ export function QuestionPage() {
         function renderForm() {
             return <form onSubmit={handleAnswerSubmit}>
                 <textarea placeholder="Write your answer here" onChange={handleTextChange} className={"break-words h-40 bg-gray-600 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mt-2 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}/><br/>
-                <FileUpload files={replyFiles} setFiles={setReplyFiles}/>
+                <FileUpload files={replyFiles} setFiles={setReplyFiles} singleFile={false}/>
                 <input type="submit" value="Submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"/><br/>
             </form>;
         }
 
         function renderContents() {
+            console.log(`answer.uuid: ${answer.uuid}`)
+
             return <>
                 <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{answer.User.firstName + answer.User.lastName}</span>
+                    <div className="flex items-center">
+                        <ProfilePicture uuid={answer.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}></ProfilePicture>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white ml-2">{answer.User.firstName + " " + answer.User.lastName}</span>
+                    </div>
                     {isVerified ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" className={"position: absolute; top: 0; right: 0;"}>
                         <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path><path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
                     </svg> : null}
@@ -467,7 +474,7 @@ export function QuestionPage() {
 
         return (
             <div className={getDynamicClassName()}>
-                <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                <div className="flex flex-col w-full max-w-[400px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
                     {!answer.isActive
                         ?
                         <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{"This answer has been deleted"}</p>

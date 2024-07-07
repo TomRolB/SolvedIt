@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
 import {useNavigate, useParams} from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function CreateTag() {
     const [tagName, setTagName] = useState("")
@@ -27,6 +29,7 @@ export function CreateTag() {
                 console.log("Navigating")
             })
             .catch(err => console.log(err))
+        toast.success("Tag created successfully")
     }
 
     return (

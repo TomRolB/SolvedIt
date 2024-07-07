@@ -1,3 +1,4 @@
 /server/node_modules/
 /server/public/
 /server/uploads/
+/server/services/mail.js
