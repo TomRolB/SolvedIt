@@ -1,34 +1,57 @@
-const {Notification, IsInClass} = require('../models/')
+const {Notification, IsInClass, Question} = require('../models/')
 const NotificationSettings = require("./NotificationSettings")
 const GmailService = require('../services/GmailService')
+const {getUserId} = require("./Auth");
 
 const emailServices = [GmailService]
 
 async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
     let generalSettings = await NotificationSettings.getNotificationSettingsOfClass(null, userId)
-    let isTeacher = await IsInClass.findOne({where: {userId: userId, classId: notification.classId}}).isTeacher
+    let sender = await IsInClass.findOne({where: {userId: getUserId(notification.uuid).id, classId: notification.classId}})
     console.log("User id: " + userId);
-    const notificationTypeCanBeShown = (notificationType, classSettings)=> {
+    const notificationTypeCanBeShown = async (notificationType, classSettings) => {
         console.log("Notification type" + notificationType);
-        switch (notificationType){
+        switch (notificationType) {
             case "newQuestion":
                 return {canBeShown: classSettings.newQuestions === "All", byEmail: classSettings.notifyByEmail}
             case "newAnswer":
-                return {canBeShown: classSettings.newAnswers === "All", byEmail: classSettings.notifyByEmail}
+                let question = await Question.findOne({where:{id: notification.notificationInfo.questionInfo.id}})
+                let isCurrentUsersQuestion = question.userId === userId
+                let teacherReplied = sender.isTeacher
+                let showAnswerCondition = classSettings.newAnswers === "All" && isCurrentUsersQuestion
+
+                if(classSettings.newAnswers === "Teacher's") return {canBeShown: showAnswerCondition && teacherReplied,
+                    byEmail: classSettings.notifyByEmail}
+                else if (classSettings.newAnswers === "All") return {canBeShown: showAnswerCondition, byEmail: classSettings.notifyByEmail}
+
+                return {canBeShown: false, byEmail: classSettings.notifyByEmail}
             case "answerValidation":
-                return isTeacher
-                    ? {canBeShown: classSettings.answerValidation === "Teacher", byEmail: classSettings.notifyByEmail}
-                    : {canBeShown: classSettings.answerValidation === "Always", byEmail: classSettings.notifyByEmail}
+                let sameUser = notification.notificationInfo.userId === userId
+                // return isTeacher
+                //     ? {
+                //         canBeShown: classSettings.answerValidation === "Teacher's" && sameUser,
+                //         byEmail: classSettings.notifyByEmail
+                //     }
+                //     : {
+                //         canBeShown: classSettings.answerValidation === "Always" && sameUser,
+                //         byEmail: classSettings.notifyByEmail
+                //     }
+                let showValidationCondition = classSettings.answerValidation !== "Never" && sameUser
+                console.log("Verification can be notified: " + showValidationCondition);
+                return {
+                    canBeShown: showValidationCondition,
+                    byEmail: classSettings.notifyByEmail
+                }
         }
     }
-    const isAble = (notification, classSettings) =>{
+    const isAble = async(notification, classSettings) =>{
         if(classSettings.isActive){
-            return notificationTypeCanBeShown(notification.notificationType, classSettings)
+            return await notificationTypeCanBeShown(notification.notificationType, classSettings)
         }
-        return notificationTypeCanBeShown(notification.notificationType, generalSettings)
+        return await notificationTypeCanBeShown(notification.notificationType, generalSettings)
     }
-    let able = isAble(notification, classSettings)
+    let able = await isAble(notification, classSettings)
     console.log("Is able to be shown: " + able.canBeShown);
     return able;
 }

@@ -7,9 +7,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const ProfileChanger = ()=>{
-    const namesInputStyle = "h-10 w-40 border-blue-700 border-2 rounded mt-2 md-2 text-xl";
-
-    const [data, setData] = useState({})
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
 
@@ -18,7 +15,6 @@ export const ProfileChanger = ()=>{
     useEffect(()=>{
         axios.get(`/users/${uuid}`).then(res =>{
             console.log(res)
-            setData(res.data)
             setFirstName(res.data.firstName)
             setLastName(res.data.lastName)
         }).catch(err => console.log(err))

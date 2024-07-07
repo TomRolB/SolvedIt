@@ -4,7 +4,8 @@ exports.getNotificationSettingsOfClass = async (classId, userId) => await Notifi
     where: {
         classId: classId,
         userId: userId
-    }
+    },
+    order: [["updatedAt", "DESC"]],
 });
 
 exports.updateNotificationSettings = async (classId, userId, info, isActive) => {
