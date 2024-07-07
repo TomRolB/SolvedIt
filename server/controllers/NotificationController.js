@@ -17,9 +17,15 @@ async function userCanBeNotified(notification, userId) {
                 return {canBeShown: classSettings.newQuestions === "All", byEmail: classSettings.notifyByEmail}
             case "newAnswer":
                 let question = await Question.findOne({where:{id: notification.notificationInfo.questionInfo.id}})
-                let isCurrentUsersQuestion = question.id === userId
+                let isCurrentUsersQuestion = question.userId === userId
                 let teacherReplied = sender.isTeacher
-                return {canBeShown: classSettings.newAnswers === "All" && isCurrentUsersQuestion && teacherReplied, byEmail: classSettings.notifyByEmail}
+                let showAnswerCondition = classSettings.newAnswers === "All" && isCurrentUsersQuestion
+
+                if(classSettings.newAnswers === "Teacher's") return {canBeShown: showAnswerCondition && teacherReplied,
+                    byEmail: classSettings.notifyByEmail}
+                else if (classSettings.newAnswers === "All") return {canBeShown: showAnswerCondition, byEmail: classSettings.notifyByEmail}
+
+                return {canBeShown: false, byEmail: classSettings.notifyByEmail}
             case "answerValidation":
                 let sameUser = notification.notificationInfo.userId === userId
                 // return isTeacher
@@ -31,10 +37,10 @@ async function userCanBeNotified(notification, userId) {
                 //         canBeShown: classSettings.answerValidation === "Always" && sameUser,
                 //         byEmail: classSettings.notifyByEmail
                 //     }
-                let showCond = classSettings.answerValidation !== "Never" && sameUser
-                console.log("Verification can be notified: " + showCond);
+                let showValidationCondition = classSettings.answerValidation !== "Never" && sameUser
+                console.log("Verification can be notified: " + showValidationCondition);
                 return {
-                    canBeShown: showCond,
+                    canBeShown: showValidationCondition,
                     byEmail: classSettings.notifyByEmail
                 }
         }
