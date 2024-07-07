@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) =>{
             type: DataTypes.INTEGER,
             allowNull: false,
             default: 0
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            default: true
         }
     });
     InviteLink.associate = (models) =>{

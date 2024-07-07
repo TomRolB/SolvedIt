@@ -17,7 +17,7 @@ router.post("/create-class", async (req, res) => {
     // await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
     await NotificationSettings.createNotificationSettings(userId, maxId)
-    await InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0})
+    await InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0, isActive: true})
     res.send("Created class!")
 })
 
@@ -82,6 +82,22 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
         return
     }
     res.send(isInClass)
+})
+
+router.get("/byId/:id/get-link", async(req,res) =>{
+    const classId = req.params.id
+    const inviteLink = await InviteLink.findOne({where:{classId:Number(classId)}})
+    res.send({inviteLink})
+})
+
+router.post("/byId/:id/change-link-activity", async(req,res) =>{
+    const classId = req.params.id
+    let inviteLink = await InviteLink.findOne({where:{classId:Number(classId)}})
+    await InviteLink.update({isActive: !inviteLink.isActive},{where:{classId:Number(classId)}});
+
+    inviteLink = await InviteLink.findOne({where:{id:classId}})
+
+    res.send({inviteLink})
 })
 
 router.get("/byId/:id/members", async(req,res) =>{
