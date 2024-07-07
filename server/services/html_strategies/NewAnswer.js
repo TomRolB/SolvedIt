@@ -10,7 +10,7 @@ exports.getHtml = async (description) => {
         attributes: ['firstName', 'lastName']
     })
 
-    return `<p>${respondentData.firstName} ${respondentData.lastName} answered your question:</p>
+    return `<p>${respondentData.firstName} ${respondentData.lastName} answered your question:</p><br>
             <p><b>You:</b></p>
             <h4>${description.notificationInfo.questionInfo.title}</h4>
             <p>${description.notificationInfo.questionInfo.description}</p><br>
