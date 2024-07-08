@@ -11,7 +11,7 @@ export const ClassNotificationSettings = () => {
     return (
         <>
             <Navbar></Navbar>
-            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <NotificationSettingsTemplate classId={id}></NotificationSettingsTemplate>
             </div>
         </>

@@ -63,7 +63,7 @@ export const Leaderboard =() =>{
     return (
         <div>
             <Navbar></Navbar>
-            <div className="bg-white p-8 rounded-md w-full">
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <div className=" flex items-center justify-between pb-6">
                     <div className="flex items-center justify-between">
                     </div>
