@@ -12,7 +12,7 @@ exports.updateNotificationSettings = async (classId, userId, info, isActive) => 
     NotificationSettings.update({
         newQuestions: info.newQuestions,
         newAnswers: info.newAnswers,
-        answerValidation: info.answerValidation,
+        answerValidation: info.validation,
         notifyByEmail: info.notifyByEmail,
         isActive: isActive
     }, {
