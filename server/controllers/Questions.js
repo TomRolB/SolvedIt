@@ -83,68 +83,48 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         isVerified: false
     })
 
-    function sendDiscordMessage() {
-        // axios
-        //     .post('https://discord.com/api/v10/channels/1259563181848924284/messages',
-        //         {
-        //             content: description
-        //         }, {
-        //             headers: {
-        //                 Authorization: 'Bot ' + discord.DISCORD_TOKEN
-        //             }
-        //         }
-        //     )
-        //     .then(async res => {
-        //         await DiscordMessage.create({
-        //             messageId: res.data.id,
-        //             questionOrAnswerId: result.id,
-        //             isAnswer: false
-        //         })
-        //
-        //         function createThread() {
-        //             axios
-        //                 .post(`https://discord.com/api/v10/channels/1259563181848924284/messages/${res.data.id}/threads`,
-        //                     {name: title},
-        //                     {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
-        //                 .then(() => {
-        //                 })
-        //                 .catch(err => console.log(err))
-        //         }
-        //
-        //         createThread();
-        //     })
-        //     .catch(err => console.log(err))
+    const userName = await Users.findOne({
+        where: {
+            id: userId
+        },
+        attributes: ['firstName', 'lastName']
+    })
 
+    function sendMessageInThread(res) {
+        const threadId = res.data.id;
+        axios
+            .post(`https://discord.com/api/v10/channels/${threadId}/messages`,
+                {
+                    content: `**${userName.firstName} ${userName.lastName}**:\n\n` + description
+                }, {
+                    headers: {
+                        Authorization: 'Bot ' + discord.DISCORD_TOKEN
+                    }
+                }
+            )
+            .then((res) => {
+                DiscordMessage.create({
+                    messageId: res.data.id,
+                    questionOrAnswerId: result.id,
+                    threadId: threadId,
+                    isAnswer: false
+                })
+            })
+            .catch(err => console.log(err))
+    }
+
+    function createThreadFromQuestion() {
         axios
             .post(`https://discord.com/api/v10/channels/1259563181848924284/threads`,
                 {name: title, type: 11},
                 {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
             .then(res => {
-                const threadId = res.data.id;
-                axios
-                    .post(`https://discord.com/api/v10/channels/${threadId}/messages`,
-                        {
-                            content: description
-                        }, {
-                            headers: {
-                                Authorization: 'Bot ' + discord.DISCORD_TOKEN
-                            }
-                        }
-                    )
-                    .then((res) => {
-                        DiscordMessage.create({
-                            messageId: res.data.id,
-                            questionOrAnswerId: result.id,
-                            threadId: threadId,
-                            isAnswer: false
-                        })
-                    })
-                    .catch(err => console.log(err))
+                sendMessageInThread(res);
             })
             .catch(err => console.log(err))
     }
 
-    sendDiscordMessage();
+    createThreadFromQuestion();
 
     fs.rename('./uploads/awaiting_id', `./uploads/${result.id}`,() => {})
 
@@ -178,18 +158,35 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         isVerified: false
     })
 
+    const userName = await Users.findOne({
+        where: {
+            id: userId
+        },
+        attributes: ['firstName', 'lastName']
+    })
+
     async function sendDiscordMessage() {
-        const messageBeingAnswered = await DiscordMessage.findOne({
-            where: {
-                questionOrAnswerId: parentId || questionId,
-            },
-            attributes: ['messageId', 'threadId']
-        })
+        const messageBeingAnswered = await DiscordMessage.findOne(
+            // If it has no parent, then the parent is not an answer, but the question per se
+            parentId === null || parentId === undefined
+                ? {
+                    where: {
+                        questionOrAnswerId: questionId,
+                        isAnswer: false
+                    },
+                    attributes: ['messageId', 'threadId']
+                } : {
+                    where: {
+                        questionOrAnswerId: parentId,
+                        isAnswer: true
+                    }
+                }
+        )
 
         axios
             .post(`https://discord.com/api/v10/channels/${messageBeingAnswered.threadId}/messages`,
                 {
-                    content: description,
+                    content: `**${userName.firstName} ${userName.lastName}**:\n\n` + description,
                     message_reference: {
                         message_id: messageBeingAnswered.messageId
                     }
