@@ -183,6 +183,8 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
                 }
         )
 
+        if (!messageBeingAnswered) return;
+
         axios
             .post(`https://discord.com/api/v10/channels/${messageBeingAnswered.threadId}/messages`,
                 {
