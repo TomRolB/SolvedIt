@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink} = require("../models")
+const { Class, IsInClass, InviteLink, DiscordChannelLink} = require("../models")
 const bodyParser = require("body-parser")
 const NotificationSettings = require("../controllers/NotificationSettings")
 const Auth = require("../controllers/Auth");
@@ -8,6 +8,10 @@ router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const Tags = require("../controllers/Tags");
 const {Sequelize, QueryTypes} = require("sequelize");
+const axios = require("axios");
+const {discord} = require("./discord");
+const DiscordChannelController = require('../controllers/DiscordChannelController')
+
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -130,6 +134,33 @@ router.put("/byId/:id/change-permissions", async(req,res) =>{
     res.send("Role successfully changed")
 })
 
+router.post("/byId/:id/discord/link-with-channel", async(req, res) =>{
+    const classId = req.params.id
+    const classObject = await Class.findOne({where: {id: classId}})
+    const isLinked = await DiscordChannelController.classIsLinked(req)
+    if(isLinked){
+        res.send("Channel already linked")
+        return;
+    }
+
+    let discordChannel;
+    await axios.post(`https://discord.com/api/v10/guilds/1259563181848924281/channels`,
+        {name: classObject.name},{headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}}).
+    then(response => {
+        console.log(response.data)
+        discordChannel = response.data
+    }).catch(err => console.log(err))
+    console.log("Channel info: " + discordChannel);
+
+    await DiscordChannelLink.create({classId: classId, channelId: discordChannel.id, name: discordChannel.name})
+
+    res.send("Channel linked successfully!")
+})
+
+router.get("/byId/:id/discord/is-linked", async(req,res) =>{
+    const exists = await DiscordChannelController.classIsLinked(req)
+    res.send(exists)
+})
 
 
 module.exports = router
