@@ -7,10 +7,12 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
     const [navbarOpen, setNavbarOpen] = useState(false)
     const [navbarClassName, setNavbarClassName] = useState("hidden w-full md:block md:w-auto" )
     const [pictureUrl, setPictureUrl] = useState("")
-
+    const [hasUnseenNotifications, setHasUnseenNotifications] = useState(false)
     useEffect(() => {
+        let currentUuid = localStorage.getItem("uuid")
+
         axios
-            .get(`/users/${localStorage.getItem("uuid")}/picture`, {
+            .get(`/users/${currentUuid}/picture`, {
                     responseType: "blob"
                 }
             )
@@ -19,7 +21,22 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
                 setPictureUrl(url);
             })
             .catch(err => console.log(err))
-    }, [uuid, pictureCount]);
+
+        function hasAnyUnseenNotification(notificationArray) {
+            return notificationArray.some(notification => {
+                let wasSeen = notification.wasSeen
+                console.log("NOTIFICATION WAS SEEN: "+ wasSeen)
+                return !wasSeen
+            })
+        }
+
+        axios.get(`/notification/get-all-notifications/${currentUuid}`).then(res => {
+            setHasUnseenNotifications(hasAnyUnseenNotification(res.data))
+        }).catch(err => console.log(err))
+
+    }, [uuid, pictureCount, hasUnseenNotifications]);
+
+    console.log("Has any unseen notification: " + hasUnseenNotifications);
 
     const handleLogOut = () => {
         axios

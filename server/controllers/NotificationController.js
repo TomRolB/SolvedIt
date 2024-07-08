@@ -9,9 +9,7 @@ async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
     let generalSettings = await NotificationSettings.getNotificationSettingsOfClass(null, userId)
     let sender = await IsInClass.findOne({where: {userId: getUserId(notification.uuid).id, classId: notification.classId}})
-    console.log("User id: " + userId);
     const notificationTypeCanBeShown = async (notificationType, classSettings) => {
-        console.log("Notification type" + notificationType);
         switch (notificationType) {
             case "newQuestion":
                 return {canBeShown: classSettings.newQuestions === "All", byEmail: classSettings.notifyByEmail}
@@ -38,7 +36,6 @@ async function userCanBeNotified(notification, userId) {
                 //         byEmail: classSettings.notifyByEmail
                 //     }
                 let showValidationCondition = classSettings.answerValidation !== "Never" && sameUser
-                console.log("Verification can be notified: " + showValidationCondition);
                 return {
                     canBeShown: showValidationCondition,
                     byEmail: classSettings.notifyByEmail
@@ -51,14 +48,11 @@ async function userCanBeNotified(notification, userId) {
         }
         return await notificationTypeCanBeShown(notification.notificationType, generalSettings)
     }
-    let able = await isAble(notification, classSettings)
-    console.log("Is able to be shown: " + able.canBeShown);
-    return able;
+    return await isAble(notification, classSettings);
 }
 
 exports.getAllNotifications = async (userId) => {
     let classes = await IsInClass.findAll({where: {userId: userId}})
-    console.log("Classes amount: " + classes.length);
     let notifications = []
     for(let cl of classes){
         let classNotifications = await Notification.findAll({where: {userId: userId, classId: cl.classId}})
@@ -68,6 +62,7 @@ exports.getAllNotifications = async (userId) => {
     }
 
     console.log("Filtered notifications: " + notifications.length) //Notifications to REALLY return
+    notifications.sort((a,b) => new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate())
     return notifications;
 }
 
@@ -99,6 +94,7 @@ async function createNotificationEntry(userId, description) {
         classId: description.classId,
         title: description.title,
         notificationType: description.notificationType,
-        description: description.description
+        description: description.description,
+        wasSeen: false
     })
 }
