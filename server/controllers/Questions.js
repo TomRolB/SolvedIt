@@ -37,9 +37,6 @@ exports.getQuestionsWithTags = async (classId, userId, isAdmin, isActive) => {
         else question.fileNames = []
     })
 
-    console.log("Final result:")
-    console.log(questionsWithTags)
-
     return questionsWithTags
 }
 
