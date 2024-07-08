@@ -7,10 +7,12 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
     const [navbarOpen, setNavbarOpen] = useState(false)
     const [navbarClassName, setNavbarClassName] = useState("hidden w-full md:block md:w-auto" )
     const [pictureUrl, setPictureUrl] = useState("")
-
+    const [hasUnseenNotifications, setHasUnseenNotifications] = useState(false)
     useEffect(() => {
+        let currentUuid = localStorage.getItem("uuid")
+
         axios
-            .get(`/users/${localStorage.getItem("uuid")}/picture`, {
+            .get(`/users/${currentUuid}/picture`, {
                     responseType: "blob"
                 }
             )
@@ -19,7 +21,20 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
                 setPictureUrl(url);
             })
             .catch(err => console.log(err))
-    }, [uuid, pictureCount]);
+
+        function hasAnyUnseenNotification(notificationArray) {
+            return notificationArray.some(notification => {
+                return !notification.wasSeen
+            })
+        }
+
+        axios.get(`/notification/get-all-notifications/${currentUuid}`).then(res => {
+            setHasUnseenNotifications(hasAnyUnseenNotification(res.data))
+        }).catch(err => console.log(err))
+
+    }, [uuid, pictureCount, hasUnseenNotifications]);
+
+    console.log("Has any unseen notification: " + hasUnseenNotifications);
 
     const handleLogOut = () => {
         axios
@@ -68,12 +83,19 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
                             </div>
                         </li>
                         <li>
-                            <div className="bg-indigo-400 pb-2 pt-2 pl-3 pr-3 rounded-lg">
-                                <a href="/notifications" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"><i className="fa-solid fa-bell"></i></a>
+                            <div className="bg-indigo-400 pb-2 pt-2 pl-3 pr-3 rounded-lg relative">
+                                <a href="/notifications"
+                                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                                    <i className="fa-solid fa-bell"></i>
+                                </a>
+                                {hasUnseenNotifications ?
+                                    <div className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full"></div> : null}
                             </div>
                         </li>
+
                         <li>
-                            <a href="/profile" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                            <a href="/profile"
+                               className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                                 <img className="w-10 h-10 rounded-full" src={pictureUrl} alt="Rounded avatar"></img>
                             </a>
                         </li>
