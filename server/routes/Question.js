@@ -6,8 +6,6 @@ const Questions = require('../controllers/Questions.js')
 const VoteController = require('../controllers/VoteController.js')
 const {upload} = require("../services/FileService");
 const path = require('path');
-const axios = require("axios");
-const {discord} = require("./discord");
 
 router.get("/questions", async (req, res) => {
     const classId = req.query.classId
@@ -79,26 +77,6 @@ router.post('/post-question', upload.array('file', 10), async (req, res) => {
         req.body.description,
         parsedTags(req)
     )
-
-    axios
-        .post('https://discord.com/api/v10/channels/1259563181848924284/messages',
-            {
-                content: req.body.description
-            }, {
-                headers: {
-                    Authorization: 'Bot ' + discord.DISCORD_TOKEN
-                }
-            }
-        )
-        .then(res => {
-            axios
-                .post(`https://discord.com/api/v10/channels/1259563181848924284/messages/${res.data.id}/threads`,
-                    {name: req.body.title},
-                    {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
-                .then(()=>{})
-                .catch(err => console.log(err))
-        })
-        .catch(err => console.log(err))
 
     res.send("Posted question")
 })

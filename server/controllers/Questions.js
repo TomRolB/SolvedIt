@@ -1,8 +1,10 @@
-const {Question, Answer, Users, TaggedBy} = require("../models/")
+const {Question, Answer, Users, TaggedBy, DiscordMessage} = require("../models/")
 const db = require("../models/index")
 const {QueryTypes} = require("sequelize");
 const fs = require('fs')
 const {generateTransientUuid} = require("./Auth");
+const axios = require("axios");
+const {discord} = require("../routes/discord");
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -81,6 +83,69 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
         isVerified: false
     })
 
+    function sendDiscordMessage() {
+        // axios
+        //     .post('https://discord.com/api/v10/channels/1259563181848924284/messages',
+        //         {
+        //             content: description
+        //         }, {
+        //             headers: {
+        //                 Authorization: 'Bot ' + discord.DISCORD_TOKEN
+        //             }
+        //         }
+        //     )
+        //     .then(async res => {
+        //         await DiscordMessage.create({
+        //             messageId: res.data.id,
+        //             questionOrAnswerId: result.id,
+        //             isAnswer: false
+        //         })
+        //
+        //         function createThread() {
+        //             axios
+        //                 .post(`https://discord.com/api/v10/channels/1259563181848924284/messages/${res.data.id}/threads`,
+        //                     {name: title},
+        //                     {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
+        //                 .then(() => {
+        //                 })
+        //                 .catch(err => console.log(err))
+        //         }
+        //
+        //         createThread();
+        //     })
+        //     .catch(err => console.log(err))
+
+        axios
+            .post(`https://discord.com/api/v10/channels/1259563181848924284/threads`,
+                {name: title, type: 11},
+                {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
+            .then(res => {
+                const threadId = res.data.id;
+                axios
+                    .post(`https://discord.com/api/v10/channels/${threadId}/messages`,
+                        {
+                            content: description
+                        }, {
+                            headers: {
+                                Authorization: 'Bot ' + discord.DISCORD_TOKEN
+                            }
+                        }
+                    )
+                    .then((res) => {
+                        DiscordMessage.create({
+                            messageId: res.data.id,
+                            questionOrAnswerId: result.id,
+                            threadId: threadId,
+                            isAnswer: false
+                        })
+                    })
+                    .catch(err => console.log(err))
+            })
+            .catch(err => console.log(err))
+    }
+
+    sendDiscordMessage();
+
     fs.rename('./uploads/awaiting_id', `./uploads/${result.id}`,() => {})
 
     const maxId = await Question.max('id')
@@ -112,6 +177,41 @@ exports.addAnswer = async (userId, classId, questionId, parentId, description) =
         isActive: true,
         isVerified: false
     })
+
+    async function sendDiscordMessage() {
+        const messageBeingAnswered = await DiscordMessage.findOne({
+            where: {
+                questionOrAnswerId: parentId || questionId,
+            },
+            attributes: ['messageId', 'threadId']
+        })
+
+        axios
+            .post(`https://discord.com/api/v10/channels/${messageBeingAnswered.threadId}/messages`,
+                {
+                    content: description,
+                    message_reference: {
+                        message_id: messageBeingAnswered.messageId
+                    }
+                }, {
+                    headers: {
+                        Authorization: 'Bot ' + discord.DISCORD_TOKEN
+                    }
+                }
+            )
+            .then(async res => {
+                await DiscordMessage.create({
+                    messageId: res.data.id,
+                    questionOrAnswerId: result.id,
+                    threadId: messageBeingAnswered.threadId,
+                    isAnswer: true
+                })
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    await sendDiscordMessage()
 
     fs.rename('./uploads/awaiting_id', `./uploads/a${result.id}`,() => {})
 
