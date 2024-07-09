@@ -1,8 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const Auth = require('../controllers/Auth')
-const {IsInClass, Votes} = require('../models/')
-const Tags = require("../controllers/Tags");
 const Filter = require("../controllers/Filter");
 const Question = require("../controllers/Questions");
 router.get('/filter-by-tags', async (req, res) => {

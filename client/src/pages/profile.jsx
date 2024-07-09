@@ -1,5 +1,5 @@
 import {Navbar} from "../components/Navbar";
-import {ProfileCard} from "./profileCard";
+import {ProfileCard} from "./ProfileCard";
 import {useState} from "react";
 
 

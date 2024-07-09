@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink} = require("../models")
+const { Class, IsInClass, InviteLink, DiscordChannelLink} = require("../models")
 const bodyParser = require("body-parser")
 const NotificationSettings = require("../controllers/NotificationSettings")
 const Auth = require("../controllers/Auth");
@@ -8,6 +8,11 @@ router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const Tags = require("../controllers/Tags");
 const {Sequelize, QueryTypes} = require("sequelize");
+const axios = require("axios");
+const {discord} = require("./discord");
+const DiscordChannelController = require('../controllers/DiscordChannelController')
+const {generateTransientUuid} = require("../controllers/Auth");
+
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -106,7 +111,12 @@ router.get("/byId/:id/members", async(req,res) =>{
 from users u
 JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = :id`
     const classMembers = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
-    res.send(classMembers)
+    const membersWithPictures = []
+    for(let user of classMembers){
+        membersWithPictures.push({userInfo: user, uuid: generateTransientUuid(user.id)})
+    }
+    // console.log("Leaderbaord: " + leaderBoard);
+    res.send(membersWithPictures)
 })
 
 
@@ -125,16 +135,20 @@ router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
 
 router.get("/byId/:id/leaderboard", async(req,res) =>{
     const id = req.params.id
-    console.log("Id: " + id);
+    // console.log("Id: " + id);
     let query = `SELECT u.id, firstName, lastName, email, u.createdAt, count(v.answerId) as upvotes
 from users u
 JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = :id
 JOIN votes v ON v.userId = u.id
 group by u.id
 order by upvotes desc`
-    const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
-    console.log("Leaderbaord: " + leaderBoard);
-    res.send(leaderBoard)
+    const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT}) //Shoud be an array
+    const leaderBoardWithPictures = []
+    for(let user of leaderBoard){
+        leaderBoardWithPictures.push({userInfo: user, uuid: generateTransientUuid(user.id)})
+    }
+    // console.log("Leaderbaord: " + leaderBoard);
+    res.send(leaderBoardWithPictures)
 })
 
 router.put("/byId/:id/change-permissions", async(req,res) =>{
@@ -146,6 +160,33 @@ router.put("/byId/:id/change-permissions", async(req,res) =>{
     res.send("Role successfully changed")
 })
 
+router.post("/byId/:id/discord/link-with-channel", async(req, res) =>{
+    const classId = req.params.id
+    const classObject = await Class.findOne({where: {id: classId}})
+    const isLinked = await DiscordChannelController.classIsLinked(req)
+    if(isLinked){
+        res.send("Channel already linked")
+        return;
+    }
+
+    let discordChannel;
+    await axios.post(`https://discord.com/api/v10/guilds/1259563181848924281/channels`,
+        {name: classObject.name},{headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}}).
+    then(response => {
+        // console.log(response.data)
+        discordChannel = response.data
+    }).catch(err => console.log(err))
+    console.log("Channel info: " + discordChannel);
+
+    await DiscordChannelLink.create({classId: classId, channelId: discordChannel.id, name: discordChannel.name})
+
+    res.send("Channel linked successfully!")
+})
+
+router.get("/byId/:id/discord/is-linked", async(req,res) =>{
+    const exists = await DiscordChannelController.classIsLinked(req)
+    res.send(exists)
+})
 
 
 module.exports = router

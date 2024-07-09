@@ -1,12 +1,11 @@
 import {useUserUuid} from "../hooks/useUserUuid";
-import React, {useState} from "react";
+import React from "react";
 import {Navbar} from "../components/Navbar";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 export const DeleteUser = () =>{
     let [uuid, setUuid] = useUserUuid()
-    let [userData, setData] = useState()
     const navigate = useNavigate()
 
     const handleLogOut = () => {

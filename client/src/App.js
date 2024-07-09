@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Login} from "./pages/login";
-import Register from "./pages/register";
+import {Login} from "./pages/Login";
+import Register from "./pages/Register";
 import {Home} from "./pages/Home";
 import {CreateClass} from "./pages/CreateClass";
 import axios from "axios";
-import {Profile} from "./pages/profile"
-import {ProfileChanger} from "./pages/updateUser";
-import {DeleteUser} from "./pages/deleteUser";
+import {Profile} from "./pages/Profile"
+import {ProfileChanger} from "./pages/UpdateUser";
+import {DeleteUser} from "./pages/DeleteUser";
 import {Class} from "./pages/Class";
 import {Invites} from "./pages/Invites"
 import {ClassEdit} from "./pages/ClassEdit";
@@ -23,7 +23,7 @@ import {Leaderboard} from "./pages/Leaderboard";
 import {Notifications} from "./pages/Notifications";
 import {NotificationSettings} from "./pages/NotificationSettings";
 import {ClassNotificationSettings} from "./pages/ClassNotificationSettings";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 

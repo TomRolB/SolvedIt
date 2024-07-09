@@ -5,8 +5,7 @@ export function ProfilePicture({uuid, isTransientUuid, errorCount, setErrorCount
     const [pictureUrl, setPictureUrl] = useState("")
 
     useEffect(() => {
-        axios
-            .get(`/users/${uuid}/picture`,
+        axios.get(`/users/${uuid}/picture`,
                 {
                     params: {
                         isTransientUuid: isTransientUuid
