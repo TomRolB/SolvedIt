@@ -116,6 +116,9 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
 
     async function createThreadFromQuestion() {
         const channelId = await DiscordChannelController.getChannelId(classId);
+
+        if (channelId === null || channelId === undefined) return;
+
         axios
             .post(`https://discord.com/api/v10/channels/${channelId}/threads`,
                 {name: title, type: 11},

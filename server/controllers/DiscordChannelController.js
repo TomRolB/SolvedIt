@@ -12,5 +12,5 @@ exports.getChannelId = async (classId) => {
         attributes: ['channelId']
     })
 
-    return channelData.channelId
+    return channelData?.channelId
 }

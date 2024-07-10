@@ -69,11 +69,11 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
                         </li>
                         <li>
                             <div className="bg-indigo-400 pb-2 pt-2 pl-3 pr-3 rounded-lg">
-                                <a href="/class/notifications/Notifications" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"><i className="fa-solid fa-bell"></i></a>
+                                <a href="/notifications" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"><i className="fa-solid fa-bell"></i></a>
                             </div>
                         </li>
                         <li>
-                            <a href="/user/Profile" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                            <a href="/user/profile" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                                 <img className="w-10 h-10 rounded-full" src={pictureUrl} alt="Rounded avatar"></img>
                             </a>
                         </li>
