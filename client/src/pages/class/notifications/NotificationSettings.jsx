@@ -1,7 +1,7 @@
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../../../components/Navbar";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import {NotificationSettingsTemplate} from "../components/NotificationSettingsTemplate";
+import {NotificationSettingsTemplate} from "../../../components/NotificationSettingsTemplate";
 export const NotificationSettings = () => {
     const [classRows, setClassRows] = useState(null)
 

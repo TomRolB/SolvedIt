@@ -2,8 +2,8 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
-import {Navbar} from "../components/Navbar";
-import {Copy} from "../components/Copy";
+import {Navbar} from "../../components/Navbar";
+import {Copy} from "../../components/Copy";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

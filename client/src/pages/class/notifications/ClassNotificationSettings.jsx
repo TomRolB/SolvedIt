@@ -1,8 +1,7 @@
-import {Navbar} from "../components/Navbar";
-import React, {useEffect, useState} from "react";
-import axios from "axios";
+import {Navbar} from "../../../components/Navbar";
+import React from "react";
 import {useParams} from "react-router-dom";
-import {NotificationSettingsTemplate} from "../components/NotificationSettingsTemplate";
+import {NotificationSettingsTemplate} from "../../../components/NotificationSettingsTemplate";
 
 
 export const ClassNotificationSettings = () => {

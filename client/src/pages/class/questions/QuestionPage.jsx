@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {Navbar} from "../components/Navbar";
-import {confirmAlert} from 'react-confirm-alert';
+import {Navbar} from "../../../components/Navbar";
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import {FileUpload} from "../components/FileUpload";
+import {FileUpload} from "../../../components/FileUpload";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {ProfilePicture} from "../components/ProfilePicture";
+import {ProfilePicture} from "../../../components/ProfilePicture";
 
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {

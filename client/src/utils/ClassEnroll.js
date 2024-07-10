@@ -1,5 +1,3 @@
-import "../styles/LinkEnterPopUp.css"
-
 export async function ClassEnroll()   {
     let uuid = localStorage.getItem("uuid");
     let link = window?.location.href

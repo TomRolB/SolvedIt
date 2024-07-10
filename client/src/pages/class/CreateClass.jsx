@@ -1,35 +1,35 @@
 import React, {useState} from 'react';
 import axios from "axios";
-import {Navbar} from "../components/Navbar";
-import {useNavigate, useParams} from "react-router-dom";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {Navbar} from "../../components/Navbar";
+import {useNavigate} from "react-router-dom";
 
-export function CreateTag() {
-    const [tagName, setTagName] = useState("")
+export function CreateClass() {
+    const [className, setClassName] = useState("")
+    const [description, setDescription] = useState("")
     const navigate = useNavigate()
-    let {id} = useParams()
 
     function handleClassNameChange(event) {
-        setTagName(event.target.value)
+        setClassName(event.target.value)
+    }
+
+    function handleDescriptionChange(event) {
+        setDescription(event.target.value)
     }
 
     function handleSubmit(event) {
-        event.preventDefault()
+        event.preventDefault() //Prevents page from refreshing
         axios
-            .post(`/class/byId/${id}/create-tag`, {
-                name: tagName,
-                classId: id,
+            .post("/class/create-class", {
+                name: className,
+                description: description,
                 uuid: localStorage.getItem("uuid")
             })
             .then((res) => {
-                console.log("a")
                 console.log(res.data)
-                navigate("/class/" + id)
+                navigate("/home")
                 console.log("Navigating")
             })
             .catch(err => console.log(err))
-        toast.success("Tag created successfully")
     }
 
     return (
@@ -38,11 +38,14 @@ export function CreateTag() {
             <div className="p-5 h-screen bg-gradient-to-tr from-white to-blue-300">
                 <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
                     <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800">
-                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">Create Tag</h5>
+                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">Create Class</h5>
                         <form method="post" onSubmit={handleSubmit} className="p-10">
-                            <label htmlFor="className" className="block text-lg font-bold dark:text-white mb-2">Tag Name:</label>
+                            <label htmlFor="className" className="block text-lg font-bold dark:text-white mb-2">Class name:</label>
                             <input className={"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"} type="text" id="className" name="classtName"
                                    onChange={handleClassNameChange}/><br/>
+                            <label htmlFor="lastName" className="block text-lg font-bold dark:text-white mb-2">Description: </label>
+                            <input className={"block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"} type="text" id="lastName" name="lastName"
+                                   onChange={handleDescriptionChange}/><br/>
                             <input className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded " type="submit"/>
                         </form>
                     </div>

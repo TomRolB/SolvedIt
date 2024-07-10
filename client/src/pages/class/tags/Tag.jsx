@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 import {useNavigate} from "react-router-dom";
-import "../styles/Tag.css"
+import "../../../styles/Tag.css"
 
 export const Tag = ({tagInfo, classId}) => {
     const navigate = useNavigate()
