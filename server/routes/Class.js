@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { Class, IsInClass, InviteLink} = require("../models")
+const { Class, IsInClass, InviteLink, DiscordChannelLink} = require("../models")
 const bodyParser = require("body-parser")
 const NotificationSettings = require("../controllers/NotificationSettings")
 const Auth = require("../controllers/Auth");
@@ -8,6 +8,8 @@ router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const Tags = require("../controllers/Tags");
 const {Sequelize, QueryTypes} = require("sequelize");
+const DiscordChannelController = require('../controllers/DiscordChannelController')
+
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
     // console.log(classInfo.uuid)
@@ -130,6 +132,28 @@ router.put("/byId/:id/change-permissions", async(req,res) =>{
     res.send("Role successfully changed")
 })
 
+router.post("/byId/:id/discord/link-with-channel/:channel_id", async(req, res) =>{
+    try{
+        const classId = req.params.id
+        const classObject = await Class.findOne({where: {id: classId}})
+        const isLinked = await DiscordChannelController.classIsLinked(req)
+        if(isLinked){
+            res.send("Channel already linked")
+            return;
+        }
+
+        await DiscordChannelLink.create({classId: classId, channelId: req.params.channel_id, name: classObject.name})
+
+        res.send("Channel linked successfully!")
+    } catch (err){
+        console.log(err);
+    }
+})
+
+router.get("/byId/:id/discord/is-linked", async(req,res) =>{
+    const exists = await DiscordChannelController.classIsLinked(req)
+    res.send(exists)
+})
 
 
 module.exports = router

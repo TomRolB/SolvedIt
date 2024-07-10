@@ -1,8 +1,8 @@
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../../../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {ClassMember} from "../components/ClassMember";
+import {ClassMember} from "../../../components/ClassMember";
 
 export const ClassMembers =() =>{
     const classId = useParams().id
@@ -29,7 +29,6 @@ export const ClassMembers =() =>{
         getClassMembers()
     }, [classId, isAdmin]);
 
-    let image = require("../media/image.jpg")
     const getStudentEntry = (student) =>{
         if(student.permissions !== "owner")
         return (
@@ -37,12 +36,6 @@ export const ClassMembers =() =>{
         )
     }
 
-    const handleUserKick = async (student) => {
-        console.log(student.id)
-        await axios.post(`/class/byId/${classId}/kick-user/${student.id}`).
-        then(res => console.log(res)).
-        catch(err => console.log(err))
-    }
     function handleReturn(){
         navigate("/class/" + classId)
     }

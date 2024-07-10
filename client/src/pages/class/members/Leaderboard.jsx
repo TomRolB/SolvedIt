@@ -1,4 +1,4 @@
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../../../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
@@ -21,7 +21,7 @@ export const Leaderboard =() =>{
         console.log(members);
     }, [classId]);
 
-    let image = require("../media/image.jpg")
+    let image = require("../../../media/image.jpg")
     const getStudentEntry = (student) =>{
         if(student.permissions !== "owner")
             return <tbody>
