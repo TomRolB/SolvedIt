@@ -142,6 +142,8 @@ router.post("/byId/:id/discord/link-with-channel/:channel_id", async(req, res) =
             return;
         }
 
+        console.log(`Creating link for ${req.params.channel_id}`)
+
         await DiscordChannelLink.create({classId: classId, channelId: req.params.channel_id, name: classObject.name})
 
         res.send("Channel linked successfully!")

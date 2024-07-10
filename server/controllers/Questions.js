@@ -5,6 +5,7 @@ const fs = require('fs')
 const {generateTransientUuid} = require("./Auth");
 const axios = require("axios");
 const {discord} = require("../routes/discord");
+const DiscordChannelController = require("./DiscordChannelController");
 
 exports.getQuestionsOfClass = async (classId) => await Question.findAll({
     where: {
@@ -113,9 +114,10 @@ exports.addQuestion = async (userId, classId, title, description, tags) => {
             .catch(err => console.log(err))
     }
 
-    function createThreadFromQuestion() {
+    async function createThreadFromQuestion() {
+        const channelId = await DiscordChannelController.getChannelId(classId);
         axios
-            .post(`https://discord.com/api/v10/channels/1259563181848924284/threads`,
+            .post(`https://discord.com/api/v10/channels/${channelId}/threads`,
                 {name: title, type: 11},
                 {headers: {Authorization: 'Bot ' + discord.DISCORD_TOKEN}})
             .then(res => {
