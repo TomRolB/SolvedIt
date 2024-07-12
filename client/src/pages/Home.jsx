@@ -64,11 +64,11 @@ export function Home({uuid, setUuid, classId, setClassId}) {
     }, []);
 
 
-    const sendUuid = () => {
-        axios.post("/home", {uuid: uuid})
-            .then((res) => console.log(res))
-            .catch(err => console.log(err))
-    }
+    // const sendUuid = () => {
+    //     axios.post("/home", {uuid: uuid})
+    //         .then((res) => console.log(res))
+    //         .catch(err => console.log(err))
+    // } //May delete
 
     function handleCodeChange(event) {
         setCode(event.target.value)

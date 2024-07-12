@@ -1,10 +1,10 @@
-import image from "../media/image.jpg";
 import React, {useState} from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import {ProfilePicture} from "./ProfilePicture";
 
-export const ClassMember =({student, isAdmin, classId}) =>{
+export const ClassMember =({student, isAdmin, classId, uuid}) =>{
     const [permissions, setPermissions] = useState(student.isTeacher === 0 ? student.permissions: "teacher")
 
     const handleUserKick = async (student) => {
@@ -28,17 +28,14 @@ export const ClassMember =({student, isAdmin, classId}) =>{
         <tr>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <div className="flex items-center">
-                    <div className="flex-shrink-0 w-10 h-10">
-                        <img className="w-full h-full rounded-full"
-                             src={image}
-                             alt="" />
-                    </div>
+                    <ProfilePicture uuid={uuid} isTransientUuid={true}></ProfilePicture>
                     <div className="ml-3">
                         <p className="text-gray-900 whitespace-no-wrap">
                             {student.firstName} {student.lastName}
                         </p>
                     </div>
                 </div>
+
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 {student.permissions === "normal" ? (

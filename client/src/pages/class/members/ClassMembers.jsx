@@ -11,18 +11,18 @@ export const ClassMembers =() =>{
     let navigate = useNavigate()
 
     function checkUserIsAdmin() {
-        axios
-            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: classId}})
+        axios.get("/users/is-admin",
+            {params: {uuid: localStorage.getItem('uuid'), classId: classId}})
             .then((res) => setIsAdmin(res.data.isAdmin))
             .catch((err) => console.log(err))
-    }
+    } //May need to move
 
     useEffect(() => {
         const getClassMembers = async () => {
             const response = await fetch(`/class/byId/${classId}/members`)
             const responseValue = await response.json()
             if (responseValue.length > 0) {
-                setMembers( responseValue)
+                setMembers(responseValue)
             }
         }
         checkUserIsAdmin()
@@ -30,9 +30,9 @@ export const ClassMembers =() =>{
     }, [classId, isAdmin]);
 
     const getStudentEntry = (student) =>{
-        if(student.permissions !== "owner")
+        if(student.userInfo.permissions !== "owner")
         return (
-            <ClassMember student={student} isAdmin={isAdmin} classId={classId}></ClassMember>
+            <ClassMember student={student.userInfo} isAdmin={isAdmin} classId={classId} uuid={student.uuid}></ClassMember>
         )
     }
 

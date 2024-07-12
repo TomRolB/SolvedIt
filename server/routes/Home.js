@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { Class, Users, IsInClass } = require("../models")
+const {Users} = require("../models")
 const auth = require("../controllers/Auth")
-const {Sequelize, QueryTypes} = require("sequelize");
+const {QueryTypes} = require("sequelize");
 const db = require("../models/index")
 
 

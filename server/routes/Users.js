@@ -6,8 +6,8 @@ const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const Auth = require("../controllers/Auth");
 const fs = require("fs");
-const path = require('path');
 const {upload} = require("../services/FileService");
+const ProfilePictureProvider = require("../providers/ProfilePictureProvider");
 
 router.use(bodyParser.urlencoded({extended: true}))
 
@@ -34,18 +34,10 @@ router.post("/", async (req, res) => {
     res.json(user)
 })
 
-router.get("/login", async (req, res) => {
-    // res.render("temp_login")
-})
-
 router.post("/login", async (req, res) => {
     const result = await Auth.validateUser(req)
 
     res.send(result)
-})
-
-router.get("/register", async (req, res) => {
-    res.render("temp_register")
 })
 
 router.post("/register", async (req, res) => {
@@ -70,13 +62,7 @@ router.post("/logout", async (req, res) => {
 
 router.get("/:uuid", async(req,res) =>{
     let id = Auth.getUserId(req.params.uuid).id
-    let data = await Users.findOne(
-        {
-            where:{
-                id:id
-            }
-        }
-    )
+    let data = await Users.findOne({where:{id:id}})
     res.send(data)
 })
 
@@ -84,17 +70,10 @@ router.get("/:uuid/picture", async (req, res) => {
     let id = req.query.isTransientUuid
         ? Auth.popTransientUuid(req.params.uuid)
         : Auth.getUserId(req.params.uuid)?.id
-    if (id === undefined) {
-        res.status(302).send("Could not find file")
-    }
-    else if (!fs.existsSync(`./uploads/p${id}`)) {
-        const filePath = path.resolve(__dirname + "/../uploads/default/profile.jpg");
-        res.sendFile(filePath)
-    } else {
-        const fileNames = fs.readdirSync(`./uploads/p${id}`)
-        const filepath = path.resolve(__dirname + `/../uploads/p${id}/${fileNames[0]}`)
-        res.sendFile(filepath)
-    }
+
+    let filePath = ProfilePictureProvider.getPicturePath(res,id)
+    if(!filePath) return
+    res.sendFile(filePath)
 })
 
 function deleteOldPhoto(id) {
@@ -133,13 +112,7 @@ router.post("/:uuid/picture", upload.single('file'), async (req, res) => {
 router.post("/:uuid/delete", async (req,res)=>{
     let id = Auth.getUserId(req.params.uuid).id
     Auth.logout(req.params.uuid)
-    await Users.destroy(
-        {
-            where:{
-                id:id
-            }
-        }
-    )
+    await Users.destroy({where:{id:id}})
     res.send('User has been successfully deleted')
 })
 
@@ -148,11 +121,7 @@ router.put("/:uuid/update", async(req,res)=>{
     let data = req.body
     let newFirstName = data.firstName
     let newLastName = data.lastName
-    await Users.update(
-        {firstName: newFirstName, lastName: newLastName}, {where: {id:id}}
-    )
-
-
+    await Users.update({firstName: newFirstName, lastName: newLastName}, {where: {id:id}})
 })
 
 module.exports = router

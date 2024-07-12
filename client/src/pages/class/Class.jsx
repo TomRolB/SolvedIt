@@ -1,9 +1,9 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {Navbar} from "../../components/Navbar";
+import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {QuestionFilter} from "./questions/QuestionFilter";
-import {ProfilePicture} from "../../components/ProfilePicture";
+import {QuestionFilter} from "./QuestionFilter";
+import {ProfilePicture} from "../components/ProfilePicture";
 
 export function Class({uuid, setUuid, classId, setClassId}) {
 
@@ -55,7 +55,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         }
         setQuestions(
             questions.map((questionInfo) => {
-                if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
+                if (questionInfo[2] === undefined || questionInfo[2].length === 0) { //This can be shortened to !questionInfo[2]
                     return (
                         <Question key={questionInfo.id} questionInfo={questionInfo}/>
                     )
@@ -156,6 +156,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     }
 
+    const LinkWithDiscord = () =>{
+        axios.post(`/class/byId/${id}/discord/link-with-channel`).then(response => console.log(response)).catch(err => console.log(err))
+    }
+
     return (
         <div>
             <Navbar></Navbar>
@@ -178,7 +182,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                             <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported
                                 Questions and Answers</a>
                         </button>
-                        {linkedWithDiscord ? null : <button type="button" onClick={()=> navigate("/class/" + id + "/link-with-discord")}
+                        {linkedWithDiscord ? null : <button type="button" onClick={LinkWithDiscord}
                                                             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             <i className="fa-solid fa-plus"></i> Link With Discord
                         </button>}

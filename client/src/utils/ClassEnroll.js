@@ -16,6 +16,14 @@ export async function ClassEnroll()   {
         return responseValue.length !== 0;
     }
 
+    const inviteLinkRequest = await fetch(`/class/byId/${id}/get-link`).catch(err => console.log(err))
+    const inviteLink = await inviteLinkRequest.json().catch(err => console.log(err))
+    // console.log("InviteLink: "+ inviteLink.inviteLink);
+    //
+    // console.log("IsActive: " + inviteLink.inviteLink.isActive)
+
+    if(!inviteLink.inviteLink.isActive) return false;
+
     const alreadyEnrolled = (!uuid || !id) ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
     const classExists = await notEmptyResponse(`/class/byId/${id}`)
 

@@ -1,7 +1,7 @@
-import {Navbar} from "../../../components/Navbar";
+import {Navbar} from "../components/Navbar";
 import React from "react";
 import {useParams} from "react-router-dom";
-import {NotificationSettingsTemplate} from "../../../components/NotificationSettingsTemplate";
+import {NotificationSettingsTemplate} from "../components/NotificationSettingsTemplate";
 
 
 export const ClassNotificationSettings = () => {

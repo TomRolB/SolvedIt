@@ -1,6 +1,7 @@
 import {Navbar} from "../../../components/Navbar";
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
+import axios from "axios";
 
 
 export const Notifications = () => {
@@ -14,7 +15,7 @@ export const Notifications = () => {
 
     useEffect(() => {
         const getNotifications = async () => {
-            let response = await fetch(`/notification/getAllNotifications/${localStorage.getItem('uuid')}`)
+            let response = await fetch(`/notification/get-all-notifications/${localStorage.getItem('uuid')}`)
             let responseValue = await response.json()
             console.log(responseValue);
             if (responseValue.length > 0) {
@@ -26,6 +27,10 @@ export const Notifications = () => {
 
 
         function createEntry(notification) {
+            if(!notification.wasSeen){
+                axios.post(`notification/${notification.id}/mark-as-seen`).then(res => console.log(res))
+                    .catch(err=> console.log(err))
+            }
         return (
             <tr>
             <th scope="col" className="px-6 py-3">
