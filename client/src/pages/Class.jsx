@@ -12,6 +12,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
     const [questions, setQuestions] = useState([])
     const [showFilter, setShowFilter] = useState(false)
     const [errorCount, setErrorCount] = useState(0)
+    const [linkedWithDiscord, setLinkedWithDiscord] = useState(false)
     let {id} = useParams()
 
     useEffect(() => {
@@ -33,8 +34,11 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log(err)
                 console.log("Question error")
             })
+        axios.get(`/class/byId/${id}/discord/is-linked`).then(res => {
+            setLinkedWithDiscord(res.data)
+        })
     // }, [questions]);
-    }, [errorCount]);
+    }, [errorCount, linkedWithDiscord]);
 
     const createQuestionElements = (data) => {
         let questions = []
@@ -51,7 +55,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         }
         setQuestions(
             questions.map((questionInfo) => {
-                if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
+                if (questionInfo[2] === undefined || questionInfo[2].length === 0) { //This can be shortened to !questionInfo[2]
                     return (
                         <Question key={questionInfo.id} questionInfo={questionInfo}/>
                     )
@@ -139,7 +143,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         if (classInfo === null) return (<h1>Class not found</h1>)
         return (
             <div>
-                <h1 className="text-5xl font-extrabold dark:text-black">{classInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {classInfo.id}</small></h1>
+                <h1 className="text-5xl font-extrabold dark:text-black">{classInfo.name}</h1>
                 { isAdmin?
                     <button type="button"
                              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
@@ -152,6 +156,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     }
 
+    const LinkWithDiscord = () =>{
+        axios.post(`/class/byId/${id}/discord/link-with-channel`).then(response => console.log(response)).catch(err => console.log(err))
+    }
+
     return (
         <div>
             <Navbar></Navbar>
@@ -161,22 +169,30 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                     <div>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <a href={"/class/" + id + "/invites"}><i className="fa-solid fa-plus"></i> Manage Invitations</a>
+                            <a href={"/class/" + id + "/invites"}><i className="fa-solid fa-plus"></i> Manage
+                                Invitations</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-members"}><i className="fa-solid fa-pen-to-square"></i> View Class Members</a>
+                            <a href={"/class/" + id + "/view-members"}><i
+                                className="fa-solid fa-pen-to-square"></i> View Class Members</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported Questions and Answers</a>
+                            <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported
+                                Questions and Answers</a>
                         </button>
+                        {linkedWithDiscord ? null : <button type="button" onClick={LinkWithDiscord}
+                                                            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            <i className="fa-solid fa-plus"></i> Link With Discord
+                        </button>}
                     </div>
                     :
                     <div>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post Question</a>
+                            <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post
+                                Question</a>
                         </button>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
@@ -184,15 +200,18 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-tags"}><i className="fa-solid fa-pen-to-square"></i> Edit Tags</a>
+                            <a href={"/class/" + id + "/view-tags"}><i className="fa-solid fa-pen-to-square"></i> Edit
+                                Tags</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-members"}><i className="fa-solid fa-pen-to-square"></i> View Class Members</a>
+                            <a href={"/class/" + id + "/view-members"}><i
+                                className="fa-solid fa-pen-to-square"></i> View Class Members</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/notification-settings"}><i className="fa-solid fa-bell"></i> Notification Settings</a>
+                            <a href={"/class/" + id + "/notification-settings"}><i
+                                className="fa-solid fa-bell"></i> Notification Settings</a>
                         </button>
                     </div>
                 }

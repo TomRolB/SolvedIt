@@ -1,5 +1,3 @@
-import "../styles/LinkEnterPopUp.css"
-
 export async function ClassEnroll()   {
     let uuid = localStorage.getItem("uuid");
     let link = window?.location.href
@@ -20,9 +18,9 @@ export async function ClassEnroll()   {
 
     const inviteLinkRequest = await fetch(`/class/byId/${id}/get-link`).catch(err => console.log(err))
     const inviteLink = await inviteLinkRequest.json().catch(err => console.log(err))
-    console.log("InviteLink: "+ inviteLink.inviteLink);
-
-    console.log("IsActive: " + inviteLink.inviteLink.isActive)
+    // console.log("InviteLink: "+ inviteLink.inviteLink);
+    //
+    // console.log("IsActive: " + inviteLink.inviteLink.isActive)
 
     if(!inviteLink.inviteLink.isActive) return false;
 

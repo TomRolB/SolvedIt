@@ -2,6 +2,7 @@ import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
+import {ProfilePicture} from "../components/ProfilePicture";
 
 export const Leaderboard =() =>{
     const classId = useParams().id
@@ -10,47 +11,44 @@ export const Leaderboard =() =>{
 
 
     useEffect(() => {
-        const getClassMembers = async () => {
+        const getLeaderboard = async () => {
             await axios.get(`/class/byId/${classId}/leaderboard`).then(res => {
                 console.log(res.data);
                 setMembers(res.data)
             })
                 .catch(err => console.log(err))
         }
-        getClassMembers()
+        getLeaderboard()
         console.log(members);
     }, [classId]);
 
-    let image = require("../media/image.jpg")
     const getStudentEntry = (student) =>{
-        if(student.permissions !== "owner")
+        if(student.userInfo.permissions !== "owner")
             return <tbody>
             <tr>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                         <div className="flex-shrink-0 w-10 h-10">
-                            <img className="w-full h-full rounded-full"
-                                 src={image}
-                                 alt="" />
+                            <ProfilePicture uuid={student.uuid} isTransientUuid={true}></ProfilePicture>
                         </div>
                         <div className="ml-3">
                             <p className="text-gray-900 whitespace-no-wrap">
-                                {student.firstName} {student.lastName}
+                                {student.userInfo.firstName} {student.userInfo.lastName}
                             </p>
                         </div>
                     </div>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{student.email}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{student.userInfo.email}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {student.createdAt}
+                        {student.userInfo.createdAt}
                     </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {student.upvotes}
+                        {student.userInfo.upvotes}
                     </p>
                 </td>
             </tr>

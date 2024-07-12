@@ -8,11 +8,11 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
     const [navbarClassName, setNavbarClassName] = useState("hidden w-full md:block md:w-auto" )
     const [pictureUrl, setPictureUrl] = useState("")
     const [hasUnseenNotifications, setHasUnseenNotifications] = useState(false)
+
     useEffect(() => {
         let currentUuid = localStorage.getItem("uuid")
 
-        axios
-            .get(`/users/${currentUuid}/picture`, {
+        axios.get(`/users/${currentUuid}/picture`, {
                     responseType: "blob"
                 }
             )
@@ -22,12 +22,6 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
             })
             .catch(err => console.log(err))
 
-        function hasAnyUnseenNotification(notificationArray) {
-            return notificationArray.some(notification => {
-                return !notification.wasSeen
-            })
-        }
-
         axios.get(`/notification/get-all-notifications/${currentUuid}`).then(res => {
             setHasUnseenNotifications(hasAnyUnseenNotification(res.data))
         }).catch(err => console.log(err))
@@ -36,9 +30,14 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
 
     console.log("Has any unseen notification: " + hasUnseenNotifications);
 
+    function hasAnyUnseenNotification(notificationArray) {
+        return notificationArray.some(notification => {
+            return !notification.wasSeen
+        })
+    }
+
     const handleLogOut = () => {
-        axios
-            .post("users/logout", {uuid: uuid})
+        axios.post("users/logout", {uuid: uuid})
             .then((res) => console.log(res))
             .catch(err => console.log(err))
 
@@ -46,7 +45,8 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
 
         let path = "/login"
         navigate(path)
-    }
+    } //May need to move these functions (login, logout, register, etc.)
+    // to an external component/module in order to avoid code repetition
 
     const handleNavbarToggle = () => {
         setNavbarOpen(!navbarOpen)

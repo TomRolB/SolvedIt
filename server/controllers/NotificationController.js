@@ -9,44 +9,48 @@ async function userCanBeNotified(notification, userId) {
     let classSettings = await NotificationSettings.getNotificationSettingsOfClass(notification.classId, userId)
     let generalSettings = await NotificationSettings.getNotificationSettingsOfClass(null, userId)
     let sender = await IsInClass.findOne({where: {userId: getUserId(notification.uuid).id, classId: notification.classId}})
+    //Functions needed ahead
+    async function newAnswerCanBeShown(classSettings) {
+        let question = await Question.findOne({where: {id: notification.notificationInfo.questionInfo.id}})
+        let isCurrentUsersQuestion = question.userId === userId
+        let teacherReplied = sender.isTeacher
+        let showAnswerCondition = classSettings.newAnswers === "All" && isCurrentUsersQuestion
+
+        if (classSettings.newAnswers === "Teacher's") return {
+            canBeShown: showAnswerCondition && teacherReplied,
+            byEmail: classSettings.notifyByEmail
+        }
+        else if (classSettings.newAnswers === "All") return {
+            canBeShown: showAnswerCondition,
+            byEmail: classSettings.notifyByEmail
+        }
+
+        return {canBeShown: false, byEmail: classSettings.notifyByEmail}
+    }
+
+    function validationCanBeShown(classSettings) {
+        let sameUser = notification.notificationInfo.userId === userId
+        let showValidationCondition = classSettings.answerValidation !== "Never" && sameUser
+        return {
+            canBeShown: showValidationCondition,
+            byEmail: classSettings.notifyByEmail
+        }
+    }
+
+    const isAble = async(notification, classSettings) =>{
+        return await notificationTypeCanBeShown(notification.notificationType,
+            classSettings.isActive ? classSettings : generalSettings)
+    }
+
     const notificationTypeCanBeShown = async (notificationType, classSettings) => {
         switch (notificationType) {
             case "newQuestion":
                 return {canBeShown: classSettings.newQuestions === "All", byEmail: classSettings.notifyByEmail}
             case "newAnswer":
-                let question = await Question.findOne({where:{id: notification.notificationInfo.questionInfo.id}})
-                let isCurrentUsersQuestion = question.userId === userId
-                let teacherReplied = sender.isTeacher
-                let showAnswerCondition = classSettings.newAnswers === "All" && isCurrentUsersQuestion
-
-                if(classSettings.newAnswers === "Teacher's") return {canBeShown: showAnswerCondition && teacherReplied,
-                    byEmail: classSettings.notifyByEmail}
-                else if (classSettings.newAnswers === "All") return {canBeShown: showAnswerCondition, byEmail: classSettings.notifyByEmail}
-
-                return {canBeShown: false, byEmail: classSettings.notifyByEmail}
+                return await newAnswerCanBeShown(classSettings);
             case "answerValidation":
-                let sameUser = notification.notificationInfo.userId === userId
-                // return isTeacher
-                //     ? {
-                //         canBeShown: classSettings.answerValidation === "Teacher's" && sameUser,
-                //         byEmail: classSettings.notifyByEmail
-                //     }
-                //     : {
-                //         canBeShown: classSettings.answerValidation === "Always" && sameUser,
-                //         byEmail: classSettings.notifyByEmail
-                //     }
-                let showValidationCondition = classSettings.answerValidation !== "Never" && sameUser
-                return {
-                    canBeShown: showValidationCondition,
-                    byEmail: classSettings.notifyByEmail
-                }
+                return validationCanBeShown(classSettings);
         }
-    }
-    const isAble = async(notification, classSettings) =>{
-        if(classSettings.isActive){
-            return await notificationTypeCanBeShown(notification.notificationType, classSettings)
-        }
-        return await notificationTypeCanBeShown(notification.notificationType, generalSettings)
     }
     return await isAble(notification, classSettings);
 }
@@ -57,12 +61,15 @@ exports.getAllNotifications = async (userId) => {
     for(let cl of classes){
         let classNotifications = await Notification.findAll({where: {userId: userId, classId: cl.classId}})
         console.log("Notifications in class: " + classNotifications.length);
+
         if(!classNotifications || classNotifications.length === 0) continue
+
         classNotifications.map(not => notifications.push(not))
     }
 
     console.log("Filtered notifications: " + notifications.length) //Notifications to REALLY return
-    notifications.sort((a,b) => new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate())
+
+    notifications.sort((a,b) => new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate()) //Sort by date, get the most recent ones
     return notifications;
 }
 
@@ -81,7 +88,7 @@ exports.createNotification = async (description) =>{
     for (let classMate of classMates){
         const canBeNotified = await userCanBeNotified(description, classMate.userId);
         if (canBeNotified.canBeShown) {
-            await createNotificationEntry(classMate.userId, description)
+            await createNotificationEntry(classMate.userId, description);
             sendEmailIfConfigured(canBeNotified, classMate.userId);
         }
     }

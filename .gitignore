@@ -2,3 +2,4 @@
 /server/public/
 /server/uploads/
 /server/services/mail.js
+/server/routes/discord.js

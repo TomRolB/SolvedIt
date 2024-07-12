@@ -1,10 +1,7 @@
 const {Votes} = require("../models/")
-const db = require("../models/index")
-const {QueryTypes} = require("sequelize");
 
 exports.upVote = async (userId, answerId) => await Votes.create({
-    userId: userId,
-    answerId: answerId
+    userId: userId, answerId: answerId
 });
 
 exports.undoVote = async (userId, answerId) => await Votes.destroy({
@@ -24,10 +21,7 @@ exports.voteCount = async (answerId) => {
 
 exports.hasUserVoted = async (answerId, userId) => {
     let voteEntry = await Votes.findOne({
-        where: {
-            answerId: answerId,
-            userId: userId
-        }
+        where: {answerId: answerId, userId: userId}
     });
 
     return !!voteEntry

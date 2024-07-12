@@ -62,7 +62,6 @@ export const ProfileCard = ({pictureCount, setPictureCount}) => {
         }
     };
 
-    console.log(userData) //Funca :)
     const navigate = useNavigate();
     if(!userData){
         return <p>Loading...</p>
