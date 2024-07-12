@@ -43,7 +43,7 @@ export const DiscordLink = ()=>{
             }).catch(err => console.log(err))
 
             if(responseMessage === "Channel linked successfully!"){
-                navigate("/class/:id")
+                navigate("/class/" + Number(id))
             }
         }
         catch (err){setErrorMessage(err.message)

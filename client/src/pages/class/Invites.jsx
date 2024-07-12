@@ -183,9 +183,10 @@ export function Invites() {
                 </form>
                 <div>
                 <Subtitle text={"Link"}></Subtitle>
-                <Copy text={`http://localhost:3000/enroll-to/${id}`}></Copy>
-                <label>Is Active</label>
-                <input type="checkbox" onChange={handleActiveChange} checked={linkIsActive}/>
+                        <Copy text={`http://localhost:3000/enroll-to/${id}`} style={{ width: 'auto', height: 'auto' }}></Copy>
+                        <label style={{ marginRight: '1em' }}>Is Active</label>
+                        <input type="checkbox" onChange={handleActiveChange} checked={linkIsActive}/>
+
                 </div>
             </div>
         </div>

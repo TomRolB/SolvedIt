@@ -35,6 +35,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log("Question error")
             })
         axios.get(`/class/byId/${id}/discord/is-linked`).then(res => {
+            console.log("ALREADY LINKED: ",res.data);
             setLinkedWithDiscord(res.data)
         })
     // }, [questions]);

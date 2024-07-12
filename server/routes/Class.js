@@ -9,6 +9,7 @@ const db = require("../models/index")
 const Tags = require("../controllers/Tags");
 const {Sequelize, QueryTypes} = require("sequelize");
 const DiscordChannelController = require('../controllers/DiscordChannelController')
+const {generateTransientUuid} = require("../controllers/Auth");
 
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
@@ -111,7 +112,11 @@ router.get("/byId/:id/members", async(req,res) =>{
 from users u
 JOIN isinclasses isin WHERE isin.userId = u.id AND isin.classId = :id`
     const classMembers = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
-    res.send(classMembers)
+    const membersWithPictures = []
+    for(let user of classMembers){
+        membersWithPictures.push({userInfo: user, uuid: generateTransientUuid(user.id)})
+    }
+    res.send(membersWithPictures)
 })
 
 
@@ -131,15 +136,20 @@ router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
 router.get("/byId/:id/leaderboard", async(req,res) =>{
     const id = req.params.id
     console.log("Id: " + id);
-    let query = `SELECT u.id, firstName, lastName, email, u.createdAt, count(v.answerId) as upvotes
+    let query = `SELECT u.id, u.firstName, u.lastName, u.createdAt, u.updatedAt, u.email, count(a.userId) as upvotes
 from users u
 JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = :id
-JOIN votes v ON v.userId = u.id
-group by u.id
-order by upvotes desc`
-    const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT})
-    console.log("Leaderbaord: " + leaderBoard);
-    res.send(leaderBoard)
+JOIN answers a ON a.userId = u.id AND a.classId = isin.classId
+JOIN votes v ON v.answerId = a.id
+GROUP BY u.id
+ORDER BY upvotes desc`;
+
+    const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT}) //Shoud be an array
+    const leaderBoardWithPictures = []
+    for(let user of leaderBoard){
+        leaderBoardWithPictures.push({userInfo: user, uuid: generateTransientUuid(user.id)})
+    }
+    res.send(leaderBoardWithPictures)
 })
 
 router.put("/byId/:id/change-permissions", async(req,res) =>{
