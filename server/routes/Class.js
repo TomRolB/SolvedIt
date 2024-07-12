@@ -136,12 +136,13 @@ router.post("/byId/:id/kick-user/:userId", async(req,res) =>{
 router.get("/byId/:id/leaderboard", async(req,res) =>{
     const id = req.params.id
     // console.log("Id: " + id);
-    let query = `SELECT u.id, firstName, lastName, email, u.createdAt, count(v.answerId) as upvotes
+    let query = `SELECT u.id, u.firstName, u.lastName, u.createdAt, u.updatedAt, u.email, count(a.userId) as upvotes
 from users u
 JOIN isinclasses isin ON isin.userId = u.id AND isin.classId = :id
-JOIN votes v ON v.userId = u.id
-group by u.id
-order by upvotes desc`
+JOIN answers a ON a.userId = u.id AND a.classId = isin.classId
+JOIN votes v ON v.answerId = a.id
+GROUP BY u.id
+ORDER BY upvotes desc`
     const leaderBoard = await db.sequelize.query(query, {replacements: {id: id},type: QueryTypes.SELECT}) //Shoud be an array
     const leaderBoardWithPictures = []
     for(let user of leaderBoard){
