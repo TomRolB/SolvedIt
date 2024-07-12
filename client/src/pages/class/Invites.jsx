@@ -99,7 +99,7 @@ export function Invites() {
         console.log(isAdmin)
         if (isAdmin) fetchCodes()
         axios.get(`/class/byId/${id}/get-link`).then(res=> {
-            setLinkIsActive(res.data.inviteLink.isActive)
+            setLinkIsActive(res.data.isActive)
         }).catch(err => console.log(err))
 
     }, [isAdmin])

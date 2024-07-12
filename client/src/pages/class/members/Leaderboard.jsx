@@ -1,8 +1,8 @@
-import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {ProfilePicture} from "../components/ProfilePicture";
+import {Navbar} from "../../../components/Navbar";
+import {ProfilePicture} from "../../../components/ProfilePicture";
 
 export const Leaderboard =() =>{
     const classId = useParams().id

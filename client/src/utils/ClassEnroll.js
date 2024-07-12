@@ -22,7 +22,7 @@ export async function ClassEnroll()   {
     //
     // console.log("IsActive: " + inviteLink.inviteLink.isActive)
 
-    if(!inviteLink.inviteLink.isActive) return false;
+    if(!inviteLink.isActive) return false;
 
     const alreadyEnrolled = (!uuid || !id) ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
     const classExists = await notEmptyResponse(`/class/byId/${id}`)
