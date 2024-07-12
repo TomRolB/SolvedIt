@@ -9,6 +9,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
     const [classInfo, setClassInfo] = useState([{}])
     const [isAdmin, setIsAdmin] = useState(false)
+    const [isTeacher, setIsTeacher] = useState(false)
     const [questions, setQuestions] = useState([])
     const [showFilter, setShowFilter] = useState(false)
     const [errorCount, setErrorCount] = useState(0)
@@ -22,7 +23,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
         axios
             .get("/users/is-admin", {params: {uuid: uuid, classId: id}})
-            .then((res) => setIsAdmin(res.data.isAdmin))
+            .then((res) => {
+                setIsAdmin(res.data.isAdmin);
+                setIsTeacher(res.data.isTeacher);
+            })
             .catch((err) => console.log(err))
 
         axios
@@ -162,6 +166,14 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <CourseInfo/>
+                {!isTeacher
+                    ? <button type="button"
+                             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post
+                            Question</a>
+                    </button>
+                    : null
+                }
                 {isAdmin ?
                     <div>
                         <button type="button"
@@ -179,18 +191,14 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                             <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported
                                 Questions and Answers</a>
                         </button>
-                        {linkedWithDiscord ? null : <button type="button" onClick={()=> navigate("/class/" + id + "/link-with-discord")}
-                                                            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <i className="fa-solid fa-plus"></i> Link With Discord
-                        </button>}
+                        {linkedWithDiscord ? null :
+                            <button type="button" onClick={() => navigate("/class/" + id + "/link-with-discord")}
+                                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                <i className="fa-solid fa-plus"></i> Link With Discord
+                            </button>}
                     </div>
                     :
                     <div>
-                        <button type="button"
-                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post
-                                Question</a>
-                        </button>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             <a href={"/class/" + id + "/create-tag"}><i className="fa-solid fa-plus"></i> Create Tag</a>
