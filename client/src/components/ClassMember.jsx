@@ -60,7 +60,7 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                                 <option value="admin">Admin</option>
                                 <option selected value="teacher">Teacher</option>
                             </select>
-                        ):(
+                        ): student.isAdmin ? (
                             <select id="new-questions"
                                     disabled={!isAdmin}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -71,7 +71,7 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                                 <option selected value="admin">Admin</option>
                                 <option value="teacher">Teacher</option>
                             </select>
-                        )
+                        ) : "Owner"
                 }
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -81,7 +81,7 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 {/*TODO: create the button to report them (but that's further)*/}
-                {isAdmin ? <>
+                {isAdmin && student.permissions !== "owner" ? <>
                     <button onClick={()=>{
                         handleUserKick(student)
                         toast.success("Student has been kicked")

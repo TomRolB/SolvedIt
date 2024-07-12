@@ -30,7 +30,6 @@ export const ClassMembers =() =>{
     }, [classId, isAdmin]);
 
     const getStudentEntry = (student) =>{
-        if(student.userInfo.permissions !== "owner")
         return (
             <ClassMember student={student.userInfo} isAdmin={isAdmin} classId={classId} uuid={student.uuid}></ClassMember>
         )
