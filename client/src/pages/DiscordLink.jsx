@@ -50,13 +50,15 @@ export const DiscordLink = ()=>{
             console.log(err)}
     }
 
+    const BOT_INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1259558781558194197&permissions=8&integration_type=0&scope=bot+applications.commands";
     return(
         <div>
             <Navbar></Navbar>
             <div className="max-w-lg mx-auto my-12 bg-white p-8 rounded-xl shadow shadow-slate-300">
                 <h1 className="text-4xl font-medium">Link class with Discord Server</h1>
-                <p className="text-slate-500">Fill up the form to link to a Discord Server.</p>
+                <p className="text-slate-500 mt-2">Fill up the form to link to a Discord Server.</p>
                 <p className="text-slate-500">Beware of creating a Webhook in your server before linking it.</p>
+                <p className="text-slate-500">You must also invite the SolvedIt bot with <a className="underline border-l-blue-500" href={BOT_INVITE_LINK} target={"_blank"}>this link</a>.</p>
                 <form className="my-10">
                     <div className="flex flex-col space-y-5">
                         <p className="font-medium text-slate-700 pb-2">Discord Channel Webhook Link</p>
