@@ -43,11 +43,16 @@ router.post("/notify", async (req, res) => {
 router.get("/get-all-notifications/:uuid", async (req, res) =>{
     // console.log("uuid: " + req.params.uuid);
     try{
-        const userId = Auth.getUserId(req.params.uuid).id
-        const allNotifications = await NotificationController.getAllNotifications(userId.id)
+        const userId = Auth.getUserId(req.params.uuid)?.id
+        const allNotifications = await NotificationController.getAllNotifications(userId)
         res.send(allNotifications)
     } catch(err){
-
+        res.status(500).send("Could not get notifications")
+        console.log("Error while querying notifications:")
+        console.log(`UUID: ${req.params.uuid}`)
+        const userId = Auth.getUserId(req.params.uuid)?.id
+        console.log(`userId: ${userId}`)
+        console.log(err)
     }
     //Try-caught due to uuid handling
 })
