@@ -167,7 +167,7 @@ export function Invites() {
     return isAdmin? (
         <div>
             <Navbar></Navbar>
-            <div className="bg-gradient-to-tr from-white to-blue-300 ml-2">
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <Subtitle text={"One-time codes"}></Subtitle>
                 {oneTimeCodes.length > 0 ? oneTimeCodes : "No one-time codes created"}
                 <Subtitle text={"Many-times codes"}></Subtitle>

@@ -53,23 +53,24 @@ export const DiscordLink = ()=>{
     return(
         <div>
             <Navbar></Navbar>
-            <div className="max-w-lg mx-auto my-12 bg-white p-8 rounded-xl shadow shadow-slate-300">
-                <h1 className="text-4xl font-medium">Link class with Discord Server</h1>
-                <p className="text-slate-500">Fill up the form to link to a Discord Server.</p>
-                <p className="text-slate-500">Beware of creating a Webhook in your server before linking it.</p>
-                <form className="my-10">
-                    <div className="flex flex-col space-y-5">
-                        <p className="font-medium text-slate-700 pb-2">Discord Channel Webhook Link</p>
-                        { errorMessage != null ? <h1 className="text-red-600"> {errorMessage} </h1> : null }
-                        <input type="text" className="w-full py-3 border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-slate-500 hover:shadow" placeholder="Enter class link" value={webhookLink} onChange={handleLinkChange}/>
-                        <button
-                            className="w-full py-3 font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg border-indigo-500 hover:shadow inline-flex space-x-2 items-center justify-center"
-                            onClick={handleSubmit}>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="40px" width="40px" viewBox="0 -28.5 256 256" version="1.1"
-                                preserveAspectRatio="xLowYLow">
-                            <g>
-                                <path
-                                    d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <div className="max-w-lg mx-auto my-12 bg-white p-8 rounded-xl shadow shadow-slate-300">
+                    <h1 className="text-4xl font-medium">Link class with Discord Server</h1>
+                    <p className="text-slate-500">Fill up the form to link to a Discord Server.</p>
+                    <p className="text-slate-500">Beware of creating a Webhook in your server before linking it.</p>
+                    <form className="my-10">
+                        <div className="flex flex-col space-y-5">
+                            <p className="font-medium text-slate-700 pb-2">Discord Channel Webhook Link</p>
+                            { errorMessage != null ? <h1 className="text-red-600"> {errorMessage} </h1> : null }
+                            <input type="text" className="w-full py-3 border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-slate-500 hover:shadow" placeholder="Enter class link" value={webhookLink} onChange={handleLinkChange}/>
+                            <button
+                                className="w-full py-3 font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg border-indigo-500 hover:shadow inline-flex space-x-2 items-center justify-center"
+                                onClick={handleSubmit}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="40px" width="40px" viewBox="0 -28.5 256 256" version="1.1"
+                                     preserveAspectRatio="xLowYLow">
+                                    <g>
+                                        <path
+                                            d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,
                                     4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896
                                     98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988
                                      55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,
@@ -84,15 +85,16 @@ export const DiscordLink = ()=>{
                                        108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489
                                        147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,
                                        94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
-                                    fill="#5865F2" fill-rule="nonzero"></path>
-                            </g>
-                        </svg>
-                        <span>Link with Channel</span>
-                    </button>
+                                            fill="#5865F2" fill-rule="nonzero"></path>
+                                    </g>
+                                </svg>
+                                <span>Link with Channel</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
-</div>
-</div>
+        </div>
 )
 
 }
