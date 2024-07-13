@@ -17,10 +17,10 @@ export async function ClassEnroll()   {
     }
 
     const inviteLinkRequest = await fetch(`/class/byId/${id}/get-link`).catch(err => console.log(err))
-    const inviteLink = await inviteLinkRequest.json().catch(err => console.log(err))
-    // console.log("InviteLink: "+ inviteLink.inviteLink);
-    //
-    // console.log("IsActive: " + inviteLink.inviteLink.isActive)
+    const inviteLink = await inviteLinkRequest.json()
+    console.log("InviteLink: "+ inviteLink);
+
+    console.log("IsActive: " + inviteLink.isActive)
 
     if(!inviteLink.isActive) return false;
 
@@ -33,5 +33,6 @@ export async function ClassEnroll()   {
 
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
     let resVal = await response.json()
+    console.log("Message: ", resVal);
     return resVal.length !==0
 }

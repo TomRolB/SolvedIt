@@ -20,7 +20,7 @@ router.post("/create-class", async (req, res) => {
     // await console.log(maxId)
     await IsInClass.create({userId: userId, classId: maxId, permissions: 'owner', isTeacher: false})
     await NotificationSettings.createNotificationSettings(userId, maxId)
-    InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0, isActive: true})
+    await InviteLink.create({classId: maxId, link: `http://localhost:3000/enroll-to/${maxId}`,userCount:0, isActive: true})
     res.send("Created class!")
 })
 
@@ -72,8 +72,8 @@ router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     const userId = Auth.getUserId(req.params.uuid).id
     await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
     await NotificationSettings.createNotificationSettings(userId, classId)
-    InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
-    res.json({message: "Successfully enrolled"})
+    await InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
+    res.json("Successfully enrolled")
 })
 
 router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
