@@ -3,7 +3,7 @@ const router = express.Router()
 const Auth = require("../controllers/Auth")
 const NotificationSettings = require("../controllers/NotificationSettings")
 const NotificationController= require('../controllers/NotificationController')
-
+const {Notification} = require('../models/');
 router.get("/get-general-notification-settings", async (req, res) => {
     const uuid = await Auth.getUserId(req.query.uuid)
     const settings = await NotificationSettings.getNotificationSettingsOfClass(null, uuid.id)
@@ -12,8 +12,8 @@ router.get("/get-general-notification-settings", async (req, res) => {
 
 router.get("/get-notification-settings-of-class/:classId", async (req, res) => {
     const info = req.query
-    console.log(req)
-    console.log(req.params)
+    // console.log(req)
+    // console.log(req.params)
     const userId = await Auth.getUserId(info.uuid).id
     const settings = await NotificationSettings.getNotificationSettingsOfClass(req.params.classId, userId)
     res.json(settings)
@@ -35,15 +35,32 @@ router.post("/update-notification-settings-of-class/:classId", async (req, res) 
 
 router.post("/notify", async (req, res) => {
     const description = req.body
-    console.log("Desc: " + description);
+    // console.log("Desc: " + description);
     await NotificationController.createNotification(description)
     res.send({message: 'Notification sent successfully!'})
 })
 
-router.get("/getAllNotifications/:uuid", async (req, res) =>{
-    const userId = Auth.getUserId(req.params.uuid).id
-    const allNotifications = await NotificationController.getAllNotifications(userId)
-    res.send(allNotifications)
+router.get("/get-all-notifications/:uuid", async (req, res) =>{
+    // console.log("uuid: " + req.params.uuid);
+    try{
+        const userId = Auth.getUserId(req.params.uuid)?.id
+        const allNotifications = await NotificationController.getAllNotifications(userId)
+        res.send(allNotifications)
+    } catch(err){
+        res.status(500).send("Could not get notifications")
+        console.log("Error while querying notifications:")
+        console.log(`UUID: ${req.params.uuid}`)
+        const userId = Auth.getUserId(req.params.uuid)?.id
+        console.log(`userId: ${userId}`)
+        console.log(err)
+    }
+    //Try-caught due to uuid handling
+})
+
+router.post("/:id/mark-as-seen", async (req, res) => {
+    const notificationId = req.params.id
+    await Notification.update({wasSeen: true},{where: {id:notificationId}})
+    res.send("Notification seen successfully!")
 })
 
 module.exports = router

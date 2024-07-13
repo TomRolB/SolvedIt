@@ -2,8 +2,8 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import * as PropTypes from "prop-types";
-import {Navbar} from "../components/Navbar";
-import {Copy} from "../components/Copy";
+import {Navbar} from "../../components/Navbar";
+import {Copy} from "../../components/Copy";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -52,6 +52,7 @@ export function Invites() {
 
     const [oneTimeCodes, setOneTimeCodes] = useState([])
     const [manyTimesCodes, setManyTimesCodes] = useState([])
+    const [linkIsActive, setLinkIsActive] = useState(false)
 
     function handleCodeResponse(res) {
         let oneTime = []
@@ -97,6 +98,10 @@ export function Invites() {
         checkUserIsAdmin()
         console.log(isAdmin)
         if (isAdmin) fetchCodes()
+        axios.get(`/class/byId/${id}/get-link`).then(res=> {
+            setLinkIsActive(res.data.isActive)
+        }).catch(err => console.log(err))
+
     }, [isAdmin])
 
     function handleEmailChange(event) {
@@ -154,24 +159,35 @@ export function Invites() {
         setIsOneTime(!isOneTime)
     }
 
+    function handleActiveChange() {
+        setLinkIsActive(!linkIsActive)
+        axios.post(`/class/byId/${id}/change-link-activity`).then(res => console.log(res)).catch(err => console.log(err))
+    }
+
     return isAdmin? (
         <div>
             <Navbar></Navbar>
-            <div className="bg-gradient-to-tr from-white to-blue-300">
+            <div className="bg-gradient-to-tr from-white to-blue-300 ml-2">
                 <Subtitle text={"One-time codes"}></Subtitle>
-                {oneTimeCodes.length > 0? oneTimeCodes : "No one-time codes created"}
+                {oneTimeCodes.length > 0 ? oneTimeCodes : "No one-time codes created"}
                 <Subtitle text={"Many-times codes"}></Subtitle>
-                {manyTimesCodes.length > 0? manyTimesCodes : "No many-times codes created"}
+                {manyTimesCodes.length > 0 ? manyTimesCodes : "No many-times codes created"}
                 <Subtitle text={"Create new code"}></Subtitle>
                 <form onSubmit={handleCodeCreation}>
                     {errorMessage ? <h1 color={"red"}>{errorMessage}</h1> : null}
                     <label>one-time</label>
                     <input type="checkbox" onChange={handleCheckboxChange} checked={isOneTime}/>
                     {input}<br/>
-                    <input type="submit" value="Generate" className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
+                    <input type="submit" value="Generate"
+                           className="h-10 w-40 bg-blue-700 text-white text-xl mt-2 md-2 rounded"/>
                 </form>
+                <div>
                 <Subtitle text={"Link"}></Subtitle>
-                <Copy text={`http://localhost:3000/enroll-to/${id}`}></Copy>
+                        <Copy text={`http://localhost:3000/enroll-to/${id}`} style={{ width: 'auto', height: 'auto' }}></Copy>
+                        <label style={{ marginRight: '1em' }}>Is Active</label>
+                        <input type="checkbox" onChange={handleActiveChange} checked={linkIsActive}/>
+
+                </div>
             </div>
         </div>
     ) : null

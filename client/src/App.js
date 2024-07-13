@@ -1,30 +1,31 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Login} from "./pages/login";
-import Register from "./pages/register";
+import {Login} from "./pages/Login";
+import Register from "./pages/Register";
 import {Home} from "./pages/Home";
-import {CreateClass} from "./pages/CreateClass";
+import {CreateClass} from "./pages/class/CreateClass";
 import axios from "axios";
-import {Profile} from "./pages/profile"
-import {ProfileChanger} from "./pages/updateUser";
-import {DeleteUser} from "./pages/deleteUser";
-import {Class} from "./pages/Class";
-import {Invites} from "./pages/Invites"
-import {ClassEdit} from "./pages/ClassEdit";
-import {PostQuestion} from "./pages/PostQuestion";
-import {QuestionPage} from "./pages/QuestionPage";
-import {CreateTag} from "./pages/CreateTag";
-import {ViewTags} from "./pages/ViewTags";
-import {EditTag} from "./pages/EditTag";
+import {Profile} from "./pages/user/Profile"
+import {ProfileChanger} from "./pages/user/UpdateUser";
+import {DeleteUser} from "./pages/user/DeleteUser";
+import {Class} from "./pages/class/Class";
+import {Invites} from "./pages/class/Invites"
+import {ClassEdit} from "./pages/class/ClassEdit";
+import {PostQuestion} from "./pages/class/questions/PostQuestion";
+import {QuestionPage} from "./pages/class/questions/QuestionPage";
+import {CreateTag} from "./pages/class/tags/CreateTag";
+import {ViewTags} from "./pages/class/tags/ViewTags";
+import {EditTag} from "./pages/class/tags/EditTag";
 import {ClassEnroll} from "./utils/ClassEnroll";
-import {ClassMembers} from "./pages/ClassMembers";
-import {ReportedQuestions} from "./pages/ReportedQuestions";
-import {Leaderboard} from "./pages/Leaderboard";
-import {Notifications} from "./pages/Notifications";
-import {NotificationSettings} from "./pages/NotificationSettings";
-import {ClassNotificationSettings} from "./pages/ClassNotificationSettings";
-import { ToastContainer, toast } from 'react-toastify';
+import {ClassMembers} from "./pages/class/members/ClassMembers";
+import {ReportedQuestions} from "./pages/class/questions/ReportedQuestions";
+import {Leaderboard} from "./pages/class/members/Leaderboard";
+import {Notifications} from "./pages/class/notifications/Notifications";
+import {NotificationSettings} from "./pages/class/notifications/NotificationSettings";
+import {ClassNotificationSettings} from "./pages/class/notifications/ClassNotificationSettings";
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {DiscordLink} from "./pages/DiscordLink";
 
 
 function App(props) {
@@ -94,18 +95,19 @@ function App(props) {
                 <Route path="/class/:id/view-tags" element={(<ViewTags/>)}></Route>
                 <Route path="/class/:id/edit-tag/:tagId" element={(<EditTag/>)}></Route>
                 <Route path="/class/:id/invites" element={(<Invites/>)}></Route>
+                <Route path="/class/:id/notification-settings" element={(<ClassNotificationSettings></ClassNotificationSettings>)}></Route>
                 <Route path="/class/:id/edit"
                        element={(<ClassEdit uuid={uuid} setUuid={setUuid}/>)}></Route>
                 <Route path="/class/:id/view-members"
                        element={(<ClassMembers uuid={uuid} setUuid={setUuid}/>)}/>
                 <Route path="/class/:id/leaderboard"
                        element={(<Leaderboard uuid={uuid} setUuid={setUuid}/>)}/>
-                <Route path="/enroll-to/:id" element={path}></Route>
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
+                <Route path="/class/:id/link-with-discord" element={(<DiscordLink/>)}></Route>
+                <Route path="/enroll-to/:id" element={path}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
                 <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
-                <Route path="/class/:id/notification-settings" element={(<ClassNotificationSettings></ClassNotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}
             <ToastContainer/>
         </BrowserRouter>

@@ -1,5 +1,3 @@
-import "../styles/LinkEnterPopUp.css"
-
 export async function ClassEnroll()   {
     let uuid = localStorage.getItem("uuid");
     let link = window?.location.href
@@ -18,6 +16,14 @@ export async function ClassEnroll()   {
         return responseValue.length !== 0;
     }
 
+    const inviteLinkRequest = await fetch(`/class/byId/${id}/get-link`).catch(err => console.log(err))
+    const inviteLink = await inviteLinkRequest.json()
+    console.log("InviteLink: "+ inviteLink);
+
+    console.log("IsActive: " + inviteLink.isActive)
+
+    if(!inviteLink.isActive) return false;
+
     const alreadyEnrolled = (!uuid || !id) ? false : await notEmptyResponse(`/class/${uuid}/enrolled-in/${id}`)
     const classExists = await notEmptyResponse(`/class/byId/${id}`)
 
@@ -27,5 +33,6 @@ export async function ClassEnroll()   {
 
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
     let resVal = await response.json()
+    console.log("Message: ", resVal);
     return resVal.length !==0
 }

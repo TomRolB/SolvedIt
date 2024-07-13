@@ -5,8 +5,7 @@ export function ProfilePicture({uuid, isTransientUuid, errorCount, setErrorCount
     const [pictureUrl, setPictureUrl] = useState("")
 
     useEffect(() => {
-        axios
-            .get(`/users/${uuid}/picture`,
+        axios.get(`/users/${uuid}/picture`,
                 {
                     params: {
                         isTransientUuid: isTransientUuid
@@ -24,5 +23,8 @@ export function ProfilePicture({uuid, isTransientUuid, errorCount, setErrorCount
             })
     }, []);
 
-    return <img className="w-10 h-10 rounded-full" src={pictureUrl} alt="Rounded avatar"></img>;
+    return pictureUrl
+        ? <img loading={"lazy"} className="w-10 h-10 rounded-full" src={pictureUrl} alt=""></img>
+        : <img className="w-10 h-10 rounded-full" src={require("../media/blank.png")} alt=""></img>
+
 }

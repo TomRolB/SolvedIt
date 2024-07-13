@@ -1,40 +1,52 @@
-import {redirect, useNavigate, useParams} from "react-router-dom";
-import {Navbar} from "../components/Navbar";
-import React, {useEffect, useRef, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {Navbar} from "../../components/Navbar";
+import React, {useEffect,useState} from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export function EditTag() {
+export function ClassEdit({uuid, setUuid}) {
+    const [isAdmin, setIsAdmin] = useState(false)
+
+    const [classInfo, setClassInfo] = useState({})
     const [name, setName] = useState("")
-    const [tagInfo, setTagInfo] = useState({})
+    const [description, setDescription] = useState("")
     const navigate = useNavigate();
 
-    const {id, tagId} = useParams()
+    const {id} = useParams()
+
+    function checkUserIsAdmin() {
+        axios
+            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: id}})
+            .then((res) => setIsAdmin(res.data.isAdmin))
+            .catch((err) => console.log(err))
+    }
 
     useEffect(() => {
-        axios.get(`/tag/${id}/tags/${tagId}`, {}).then((res) => {
+        checkUserIsAdmin()
+        axios.get(`/class/byId/${id}`, {params: {uuid: localStorage.getItem('uuid')}}).then((res) => {
             console.log(res)
-            setTagInfo(res.data)
+            setClassInfo(res.data)
             setName(res.data.name)
+            setDescription(res.data.description)
         }).catch(err => console.log(err))
 
     }, [])
 
     const handeDelete = () => {
-        axios.delete(`/tag/${id}/tags/${tagId}`, {}).then((res) => {
+        axios.delete(`/class/byId/${id}/edit`, {params: {uuid: localStorage.getItem('uuid')}}).then((res) => {
             console.log(res)
-            navigate(`/class/${id}`)
+            navigate("/home")
         }).catch(err => console.log(err))
-        toast.success("Tag deleted successfully")
+        toast.success("Class deleted successfully")
     }
 
     const handleEdit = () => {
-        axios.put(`/tag/${id}/tags/${tagId}`, {name: name}).then((res) => {
+        axios.put(`/class/byId/${id}/edit`, {name: name, description: description, uuid: localStorage.getItem("uuid")}).then((res) => {
             console.log(res)
             navigate(`/class/${id}`)
         }).catch(err => console.log(err))
-        toast.success("Tag updated successfully")
+        toast.success("Class edited successfully")
     }
 
     const handleNameChange = (newName) => {
@@ -42,18 +54,26 @@ export function EditTag() {
         console.log(name)
     }
 
+    const handleDescriptionChange = (newDescription) => {
+        setDescription(newDescription.target.value)
+        console.log(description)
+    }
 
-    return (
+    return isAdmin? (
         <div>
             <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
                 <div className={'container py-15 px-10 mx-0 min-w-full flex flex-col items-center'}>
-                    <h1 className="text-5xl font-extrabold dark:text-black">Edit {tagInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {tagInfo.id}</small></h1>
+                    <h1 className="text-5xl font-extrabold dark:text-black">Edit {classInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {classInfo.id}</small></h1>
                     <div className={"w-80"}>
                         <form className="flex flex-col space-y-4 mt-4">
                             <div className="mb-5">
                                 <label htmlFor="base-input" className="block mb-2 text-lg font-medium text-gray-900">Class Name</label>
                                 <input type="text" id="base-input" value={name} onChange={handleNameChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                            </div>
+                            <div className="mb-5">
+                                <label htmlFor="base-input" className="block mb-2 text-lg font-medium text-gray-900">Description</label>
+                                <textarea value={description} onChange={handleDescriptionChange}  rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                             </div>
                         </form>
                         <div className={"pt-5 flex flex-col items-center"}>
@@ -70,5 +90,5 @@ export function EditTag() {
                 </div>
             </div>
         </div>
-    )
+    ) : null
 }

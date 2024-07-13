@@ -1,8 +1,8 @@
-import {redirect, useNavigate, useParams} from "react-router-dom";
-import {Navbar} from "../components/Navbar";
-import React, {useEffect, useRef, useState} from "react";
+import {useParams} from "react-router-dom";
+import {Navbar} from "../../../components/Navbar";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import "../styles/Tag.css"
+import "../../../styles/Tag.css"
 import {Tag} from "./Tag";
 
 

@@ -1,6 +1,6 @@
-import {useUserUuid} from "../hooks/useUserUuid";
-import React, {useEffect, useState} from "react";
-import {Navbar} from "../components/Navbar";
+import {useUserUuid} from "../../hooks/useUserUuid";
+import React, {useState} from "react";
+import {Navbar} from "../../components/Navbar";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 

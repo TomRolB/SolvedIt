@@ -1,24 +1,19 @@
 const {NotificationSettings} = require("../models/")
 
 exports.getNotificationSettingsOfClass = async (classId, userId) => await NotificationSettings.findOne({
-    where: {
-        classId: classId,
-        userId: userId
-    }
+    where: {classId: classId, userId: userId},
+    order: [["updatedAt", "DESC"]],
 });
 
 exports.updateNotificationSettings = async (classId, userId, info, isActive) => {
     NotificationSettings.update({
         newQuestions: info.newQuestions,
         newAnswers: info.newAnswers,
-        answerValidation: info.answerValidation,
+        answerValidation: info.validation,
         notifyByEmail: info.notifyByEmail,
         isActive: isActive
     }, {
-        where: {
-            classId: classId,
-            userId: userId
-        }
+        where: {classId: classId, userId: userId}
     });
 }
 

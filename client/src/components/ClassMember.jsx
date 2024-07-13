@@ -1,10 +1,10 @@
-import image from "../media/image.jpg";
 import React, {useState} from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import {ProfilePicture} from "./ProfilePicture";
 
-export const ClassMember =({student, isAdmin, classId}) =>{
+export const ClassMember =({student, isAdmin, classId, uuid}) =>{
     const [permissions, setPermissions] = useState(student.isTeacher === 0 ? student.permissions: "teacher")
 
     const handleUserKick = async (student) => {
@@ -28,20 +28,17 @@ export const ClassMember =({student, isAdmin, classId}) =>{
         <tr>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <div className="flex items-center">
-                    <div className="flex-shrink-0 w-10 h-10">
-                        <img className="w-full h-full rounded-full"
-                             src={image}
-                             alt="" />
-                    </div>
+                    <ProfilePicture uuid={uuid} isTransientUuid={true}></ProfilePicture>
                     <div className="ml-3">
                         <p className="text-gray-900 whitespace-no-wrap">
                             {student.firstName} {student.lastName}
                         </p>
                     </div>
                 </div>
+
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {student.permissions === "normal" ? (
+                {student.permissions === "normal" ? ( !isAdmin? "Normal":
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -52,29 +49,29 @@ export const ClassMember =({student, isAdmin, classId}) =>{
                         <option value="admin">Admin</option>
                         <option value="teacher">Teacher</option>
                     </select>
-                ) : student.isTeacher === 1 ? (
-                            <select id="new-questions"
-                                    disabled={!isAdmin}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    value={permissions}
-                                    onChange={(e) => setPermissions(e.target.value)}
-                            >
-                                <option value="normal">Normal</option>
-                                <option value="admin">Admin</option>
-                                <option selected value="teacher">Teacher</option>
-                            </select>
-                        ):(
-                            <select id="new-questions"
-                                    disabled={!isAdmin}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    value={permissions}
-                                    onChange={(e) => setPermissions(e.target.value)}
-                            >
-                                <option value="normal">Normal</option>
-                                <option selected value="admin">Admin</option>
-                                <option value="teacher">Teacher</option>
-                            </select>
-                        )
+                ) : student.isTeacher === 1 ? ( !isAdmin? "Teacher":
+                    <select id="new-questions"
+                            disabled={!isAdmin}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={permissions}
+                            onChange={(e) => setPermissions(e.target.value)}
+                    >
+                        <option value="normal">Normal</option>
+                        <option value="admin">Admin</option>
+                        <option selected value="teacher">Teacher</option>
+                    </select>
+                ): student.isAdmin ? ( !isAdmin? "Admin":
+                    <select id="new-questions"
+                            disabled={!isAdmin}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={permissions}
+                            onChange={(e) => setPermissions(e.target.value)}
+                    >
+                        <option value="normal">Normal</option>
+                        <option selected value="admin">Admin</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                ) : "Owner"
                 }
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -84,7 +81,7 @@ export const ClassMember =({student, isAdmin, classId}) =>{
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 {/*TODO: create the button to report them (but that's further)*/}
-                {isAdmin ? <>
+                {isAdmin && student.permissions !== "owner" ? <>
                     <button onClick={()=>{
                         handleUserKick(student)
                         toast.success("Student has been kicked")

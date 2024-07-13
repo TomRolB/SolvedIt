@@ -1,17 +1,19 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {Navbar} from "../components/Navbar";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {QuestionFilter} from "./QuestionFilter";
-import {ProfilePicture} from "../components/ProfilePicture";
+import {ProfilePicture} from "../../components/ProfilePicture";
+import {Navbar} from "../../components/Navbar";
+import {QuestionFilter} from "./questions/QuestionFilter";
 
 export function Class({uuid, setUuid, classId, setClassId}) {
 
     const [classInfo, setClassInfo] = useState([{}])
     const [isAdmin, setIsAdmin] = useState(false)
+    const [isTeacher, setIsTeacher] = useState(false)
     const [questions, setQuestions] = useState([])
     const [showFilter, setShowFilter] = useState(false)
     const [errorCount, setErrorCount] = useState(0)
+    const [linkedWithDiscord, setLinkedWithDiscord] = useState(false)
     let {id} = useParams()
 
     useEffect(() => {
@@ -21,7 +23,10 @@ export function Class({uuid, setUuid, classId, setClassId}) {
 
         axios
             .get("/users/is-admin", {params: {uuid: uuid, classId: id}})
-            .then((res) => setIsAdmin(res.data.isAdmin))
+            .then((res) => {
+                setIsAdmin(res.data.isAdmin);
+                setIsTeacher(res.data.isTeacher);
+            })
             .catch((err) => console.log(err))
 
         axios
@@ -33,8 +38,12 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                 console.log(err)
                 console.log("Question error")
             })
+        axios.get(`/class/byId/${id}/discord/is-linked`).then(res => {
+            console.log("ALREADY LINKED: ",res.data);
+            setLinkedWithDiscord(res.data)
+        })
     // }, [questions]);
-    }, [errorCount]);
+    }, [errorCount, linkedWithDiscord]);
 
     const createQuestionElements = (data) => {
         let questions = []
@@ -51,7 +60,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         }
         setQuestions(
             questions.map((questionInfo) => {
-                if (questionInfo[2] === undefined || questionInfo[2].length === 0) {
+                if (questionInfo[2] === undefined || questionInfo[2].length === 0) { //This can be shortened to !questionInfo[2]
                     return (
                         <Question key={questionInfo.id} questionInfo={questionInfo}/>
                     )
@@ -139,7 +148,7 @@ export function Class({uuid, setUuid, classId, setClassId}) {
         if (classInfo === null) return (<h1>Class not found</h1>)
         return (
             <div>
-                <h1 className="text-5xl font-extrabold dark:text-black">{classInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {classInfo.id}</small></h1>
+                <h1 className="text-5xl font-extrabold dark:text-black">{classInfo.name}</h1>
                 { isAdmin?
                     <button type="button"
                              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
@@ -157,42 +166,57 @@ export function Class({uuid, setUuid, classId, setClassId}) {
             <Navbar></Navbar>
             <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <CourseInfo/>
+                {!isTeacher
+                    ? <button type="button"
+                             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post
+                            Question</a>
+                    </button>
+                    : null
+                }
                 {isAdmin ?
                     <div>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <a href={"/class/" + id + "/invites"}><i className="fa-solid fa-plus"></i> Manage Invitations</a>
+                            <a href={"/class/" + id + "/invites"}><i className="fa-solid fa-plus"></i> Manage
+                                Invitations</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-members"}><i className="fa-solid fa-pen-to-square"></i> View Class Members</a>
+                            <a href={"/class/" + id + "/view-members"}><i
+                                className="fa-solid fa-pen-to-square"></i> View Class Members</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported Questions and Answers</a>
+                            <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported
+                                Questions and Answers</a>
                         </button>
+                        {linkedWithDiscord ? null :
+                            <button type="button" onClick={() => navigate("/class/" + id + "/link-with-discord")}
+                                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                <i className="fa-solid fa-plus"></i> Link With Discord
+                            </button>}
                     </div>
                     :
                     <div>
-                        <button type="button"
-                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                            <a href={"/class/" + id + "/post-question"}><i className="fa-solid fa-plus"></i> Post Question</a>
-                        </button>
                         <button type="button"
                                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             <a href={"/class/" + id + "/create-tag"}><i className="fa-solid fa-plus"></i> Create Tag</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-tags"}><i className="fa-solid fa-pen-to-square"></i> Edit Tags</a>
+                            <a href={"/class/" + id + "/view-tags"}><i className="fa-solid fa-pen-to-square"></i> Edit
+                                Tags</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/view-members"}><i className="fa-solid fa-pen-to-square"></i> View Class Members</a>
+                            <a href={"/class/" + id + "/view-members"}><i
+                                className="fa-solid fa-pen-to-square"></i> View Class Members</a>
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                            <a href={"/class/" + id + "/notification-settings"}><i className="fa-solid fa-bell"></i> Notification Settings</a>
+                            <a href={"/class/" + id + "/notification-settings"}><i
+                                className="fa-solid fa-bell"></i> Notification Settings</a>
                         </button>
                     </div>
                 }

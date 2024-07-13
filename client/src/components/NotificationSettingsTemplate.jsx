@@ -12,7 +12,7 @@ export const NotificationSettingsTemplate = ({classId}) => {
     const [selectedNewQuestionOption, setSelectedNewQuestionOption] = useState(null)
     const [selectedNewAnswerOption, setSelectedNewAnswerOption] = useState(null)
     const [selectedValidationOption, setSelectedValidationOption] = useState(null)
-    const [isActivated, setIsActivated] = useState(true)
+    const [isActivated, setIsActivated] = useState(false)
 
     const getNotificationSettings = () => {
         if (classId === null) {
@@ -30,14 +30,17 @@ export const NotificationSettingsTemplate = ({classId}) => {
         }
     }
 
-    const createNotificationSettings = (res) => {
-        setSelectedNewQuestionOption(res.newQuestions)
+    const createNotificationSettings = async (res) => {
+        await setSelectedNewQuestionOption(res.newQuestions)
         if (res.newQuestions === "All") {
             setNewQuestionOptions(
                 <select id="new-questions"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedNewQuestionOption}
-                        onChange={(e) => setSelectedNewQuestionOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedNewQuestionOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option selected value="All">All</option>
                     <option value="None">None</option>
@@ -48,20 +51,27 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 <select id="new-questions"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedNewQuestionOption}
-                        onChange={(e) => setSelectedNewQuestionOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedNewQuestionOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option value="All">All</option>
                     <option selected value="None">None</option>
                 </select>
             )
         }
-        setSelectedNewAnswerOption(res.newAnswers)
+        await setSelectedNewAnswerOption(res.newAnswers)
+        console.log(selectedNewAnswerOption)
         if (res.newAnswers === "All") {
             setNewAnswerOptions(
                 <select id="new-answers"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedNewAnswerOption}
-                        onChange={(e) => setSelectedNewAnswerOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedNewAnswerOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option selected value="All">All</option>
                     <option value="Teacher">Teacher's</option>
@@ -73,7 +83,10 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 <select id="new-answers"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedNewAnswerOption}
-                        onChange={(e) => setSelectedNewAnswerOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedNewAnswerOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option value="All">All</option>
                     <option value="Teacher">Teacher's</option>
@@ -85,7 +98,10 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 <select id="new-answers"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedNewAnswerOption}
-                        onChange={(e) => setSelectedNewAnswerOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedNewAnswerOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option value="All">All</option>
                     <option selected value="Teacher">Teacher's</option>
@@ -93,13 +109,15 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 </select>
             )
         }
-        setSelectedValidationOption(res.validation)
-        if (res.validation === "Always") {
+        await setSelectedValidationOption(res.answerValidation)
+        if (res.answerValidation === "Always") {
             setValidationOptions(
-                <select id="new-questions"
+                <select id="validation"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedValidationOption}
-                        onChange={(e) => setSelectedValidationOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedValidationOption(e.target.value)
+                            handleSettingsSubmit()}}
                 >
                     <option selected value="Always">Always</option>
                     <option value="Never">Never</option>
@@ -107,27 +125,35 @@ export const NotificationSettingsTemplate = ({classId}) => {
             )
         } else {
             setValidationOptions(
-                <select id="new-questions"
+                <select id="validation"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value={selectedValidationOption}
-                        onChange={(e) => setSelectedValidationOption(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedValidationOption(e.target.value)
+                            handleSettingsSubmit()
+                        }}
                 >
                     <option value="Always">Always</option>
                     <option selected value="Never">Never</option>
                 </select>
             )
         }
-        setEmailNotification(res.notifyByEmail)
+        await setEmailNotification(res.notifyByEmail)
+        await setIsActivated(res.isActive)
     }
 
     const handleSettingsSubmit = () => {
+        const newQuestions = document.getElementById('new-questions').value
+        const newAnswers = document.getElementById('new-answers').value
+        const validation = document.getElementById('validation').value
+        const email = document.getElementById("email").checked;
         if (classId === null) {
             axios.post("/notification/update-general-notification-settings", {
                 uuid: localStorage.getItem("uuid"),
-                newQuestions: selectedNewQuestionOption,
-                newAnswers: selectedNewAnswerOption,
-                validation: selectedValidationOption,
-                notifyByEmail: emailNotification,
+                newQuestions: newQuestions,
+                newAnswers: newAnswers,
+                validation: validation,
+                notifyByEmail: email,
                 isActive: isActivated
             })
                 .then((res) => console.log(res))
@@ -135,11 +161,11 @@ export const NotificationSettingsTemplate = ({classId}) => {
         } else {
             axios.post(`/notification/update-notification-settings-of-class/${classId}`, {
                 uuid: localStorage.getItem("uuid"),
-                newQuestions: selectedNewQuestionOption,
-                newAnswers: selectedNewAnswerOption,
-                validation: selectedValidationOption,
-                notifyByEmail: emailNotification,
-                isActive: isActivated
+                newQuestions: newQuestions,
+                newAnswers: newAnswers,
+                validation: validation,
+                notifyByEmail: email,
+                isActive: document.getElementById("activated").checked
             })
                 .then((res) => console.log(res))
                 .catch(err => console.log(err))
@@ -172,26 +198,23 @@ export const NotificationSettingsTemplate = ({classId}) => {
                 </form>
             </div>
             <label className="flex items-center cursor-pointer pt-1 w-max">
-                <input type="checkbox" checked={emailNotification} className="sr-only peer" onClick={() => setEmailNotification(!emailNotification)}/>
+                <input type="checkbox" checked={emailNotification} id="email" className="sr-only peer" onClick={() => {
+                    setEmailNotification(!emailNotification)
+                    handleSettingsSubmit()
+                }}/>
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                 <span className="ms-3 text-sm font-medium text-gray-900 ">Notify by Email</span>
             </label>
             {classId === null ? null :
                 <label className="inline-flex items-center cursor-pointer pt-1 w-max">
-                    <input type="checkbox" checked={isActivated} className="sr-only peer" onClick={() => {
+                    <input type="checkbox" checked={isActivated} className="sr-only peer" id="activated" onClick={() => {
                         setIsActivated(!isActivated)
-                        console.log(isActivated)
+                        handleSettingsSubmit()
                     }}/>
                     <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                     <span className="ms-3 text-sm font-medium text-gray-900 ">Override General Notification Settings</span>
                 </label>
             }
-            <button type="button"
-                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                    onClick={handleSettingsSubmit}
-            >
-                <a href="/">Confirm Settings</a>
-            </button>
         </>
     )
 }

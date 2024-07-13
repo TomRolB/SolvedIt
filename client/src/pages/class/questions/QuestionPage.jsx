@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {Navbar} from "../components/Navbar";
-import {confirmAlert} from 'react-confirm-alert';
+import {Navbar} from "../../../components/Navbar";
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import {FileUpload} from "../components/FileUpload";
+import {FileUpload} from "../../../components/FileUpload";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {ProfilePicture} from "../components/ProfilePicture";
+import {ProfilePicture} from "../../../components/ProfilePicture";
 
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
@@ -142,7 +141,13 @@ export function QuestionPage() {
                 classId: id,
                 title: "New Answer",
                 description: "New answer has been submitted to one of your questions",
-                notificationType: "newAnswer"
+                notificationType: "newAnswer",
+                notificationInfo: {
+                    questionInfo: questionInfo,
+                    answerInfo: {
+                        description: answerDescription
+                    }
+                }
             }).then(res => console.log(res))
 
         }
@@ -374,7 +379,8 @@ export function QuestionPage() {
                 classId: id,
                 title: "Answer Validation",
                 description: "Your answer validity has been changed",
-                notificationType: "answerValidation"
+                notificationType: "answerValidation",
+                notificationInfo: answer
             }).then(res => console.log(res))
             toast.success("Answer validated successfully")
         }
@@ -399,7 +405,7 @@ export function QuestionPage() {
         }
 
         function renderButtons() {
-            return <div className="flex items-stretch">
+            return <div className="flex items-center">
                 <button onClick={() => setIsBeingReplied(true)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Reply
                 </button>
@@ -449,7 +455,7 @@ export function QuestionPage() {
                 <div className="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                     <div className="flex items-center">
                         <ProfilePicture uuid={answer.uuid} isTransientUuid={true} errorCount={errorCount} setErrorCount={setErrorCount}></ProfilePicture>
-                        <span className="text-sm font-semibold text-gray-900 dark:text-white ml-2">{answer.User.firstName + answer.User.lastName}</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white ml-2">{answer.User.firstName + " " + answer.User.lastName}</span>
                     </div>
                     {isVerified ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" className={"position: absolute; top: 0; right: 0;"}>
                         <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path><path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
@@ -467,7 +473,7 @@ export function QuestionPage() {
 
         return (
             <div className={getDynamicClassName()}>
-                <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                <div className="flex flex-col w-full max-w-[400px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
                     {!answer.isActive
                         ?
                         <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{"This answer has been deleted"}</p>

@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../../../components/Navbar";
 import Select from "react-select";
 import * as PropTypes from "prop-types";
-import {FileUpload} from "../components/FileUpload";
+import {FileUpload} from "../../../components/FileUpload";
 
 FileUpload.propTypes = {
     onChange: PropTypes.func,
@@ -59,7 +59,11 @@ export function PostQuestion() {
             classId: id,
             title: title,
             description: "New question has been submitted",
-            notificationType: "newQuestion"
+            notificationType: "newQuestion",
+            notificationInfo: {
+                title: title,
+                description: description
+            }
         }).then((res) => {
                 console.log(res)
                 navigate("/class/" + id)

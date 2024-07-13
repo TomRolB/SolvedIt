@@ -1,8 +1,8 @@
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../../../components/Navbar";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {ClassMember} from "../components/ClassMember";
+import {ClassMember} from "../../../components/ClassMember";
 
 export const ClassMembers =() =>{
     const classId = useParams().id
@@ -11,38 +11,30 @@ export const ClassMembers =() =>{
     let navigate = useNavigate()
 
     function checkUserIsAdmin() {
-        axios
-            .get("/users/is-admin", {params: {uuid: localStorage.getItem('uuid'), classId: classId}})
+        axios.get("/users/is-admin",
+            {params: {uuid: localStorage.getItem('uuid'), classId: classId}})
             .then((res) => setIsAdmin(res.data.isAdmin))
             .catch((err) => console.log(err))
-    }
+    } //May need to move
 
     useEffect(() => {
         const getClassMembers = async () => {
             const response = await fetch(`/class/byId/${classId}/members`)
             const responseValue = await response.json()
             if (responseValue.length > 0) {
-                setMembers( responseValue)
+                setMembers(responseValue)
             }
         }
         checkUserIsAdmin()
         getClassMembers()
     }, [classId, isAdmin]);
 
-    let image = require("../media/image.jpg")
     const getStudentEntry = (student) =>{
-        if(student.permissions !== "owner")
         return (
-            <ClassMember student={student} isAdmin={isAdmin} classId={classId}></ClassMember>
+            <ClassMember student={student.userInfo} isAdmin={isAdmin} classId={classId} uuid={student.uuid}></ClassMember>
         )
     }
 
-    const handleUserKick = async (student) => {
-        console.log(student.id)
-        await axios.post(`/class/byId/${classId}/kick-user/${student.id}`).
-        then(res => console.log(res)).
-        catch(err => console.log(err))
-    }
     function handleReturn(){
         navigate("/class/" + classId)
     }
