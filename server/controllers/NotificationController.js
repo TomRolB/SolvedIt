@@ -60,14 +60,14 @@ exports.getAllNotifications = async (userId) => {
     let notifications = []
     for(let cl of classes){
         let classNotifications = await Notification.findAll({where: {userId: userId, classId: cl.classId}})
-        console.log("Notifications in class: " + classNotifications.length);
+        // console.log("Notifications in class: " + classNotifications.length);
 
         if(!classNotifications || classNotifications.length === 0) continue
 
         classNotifications.map(not => notifications.push(not))
     }
 
-    console.log("Filtered notifications: " + notifications.length) //Notifications to REALLY return
+    // console.log("Filtered notifications: " + notifications.length) //Notifications to REALLY return
 
     notifications.sort((a,b) => new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate()) //Sort by date, get the most recent ones
     return notifications;
