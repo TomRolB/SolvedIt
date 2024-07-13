@@ -67,24 +67,31 @@ router.get("/byId/:id/post-question", async (req, res) => {
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     // Block this route for non-admin users
     // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
-
+    let successMessage = "Successfully enrolled"
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
+    const isInClass = await IsInClass.findOne({where:{userId: userId, classId: Number(classId)}});
+    if (!isInClass){
+        await IsInClass.create({userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false});
     await NotificationSettings.createNotificationSettings(userId, classId)
     await InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
-    res.json("Successfully enrolled")
+    res.json(successMessage);
+        return
+    }
+    res.json(successMessage)
 })
 
 router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
+    // console.log("USER ID: ",userId);
+    // console.log(typeof(userId));
     const isInClass = await IsInClass.findOne({where:{classId: Number(classId), userId: userId}})
     if(!isInClass) {
-        res.send([])
+        res.json("")
         return
     }
-    res.send(isInClass)
+    res.json(isInClass)
 })
 
 router.get("/byId/:id/get-link", async(req,res) =>{

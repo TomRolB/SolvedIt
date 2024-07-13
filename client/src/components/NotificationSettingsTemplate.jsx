@@ -18,13 +18,13 @@ export const NotificationSettingsTemplate = ({classId}) => {
         if (classId === null) {
             axios.get("/notification/get-general-notification-settings", {params: {uuid: localStorage.getItem("uuid")}})
                 .then((res) => {
-                    console.log(res.data)
+                    // console.log(res.data)
                     createNotificationSettings(res.data)
                 })
         } else {
             axios.get(`/notification/get-notification-settings-of-class/${classId}`, {params: {uuid: localStorage.getItem("uuid")}})
                 .then((res) => {
-                    console.log(res.data)
+                    // console.log(res.data)
                     createNotificationSettings(res.data)
                 })
         }

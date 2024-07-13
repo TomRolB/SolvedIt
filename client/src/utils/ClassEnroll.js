@@ -12,15 +12,15 @@ export async function ClassEnroll()   {
         if(!response) return false;
         let responseValue = await response.json()
         if (!responseValue) return false;
-        // console.log(responseValue)
+        console.log("Not empty response value: ",responseValue)
         return responseValue.length !== 0;
     }
 
     const inviteLinkRequest = await fetch(`/class/byId/${id}/get-link`).catch(err => console.log(err))
     const inviteLink = await inviteLinkRequest.json()
-    console.log("InviteLink: "+ inviteLink);
+    // console.log("InviteLink: "+ inviteLink);
 
-    console.log("IsActive: " + inviteLink.isActive)
+    // console.log("IsActive: " + inviteLink.isActive)
 
     if(!inviteLink.isActive) return false;
 
@@ -32,6 +32,7 @@ export async function ClassEnroll()   {
     if(alreadyEnrolled) return true
 
     let response = await fetch(`/class/${uuid}/enroll-to/${id}`, {method:'POST'})
+    console.log(response);
     let resVal = await response.json()
     console.log("Message: ", resVal);
     return resVal.length !==0

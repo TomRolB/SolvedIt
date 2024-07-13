@@ -49,9 +49,10 @@ function App(props) {
 
     useEffect(() => {
         if (uuid) {
+            console.log("Is enrolled: " + isEnrolled);
             redirectPath();
         }
-    }, [uuid, redirectPath]);
+    }, [uuid, path]);
 
     useEffect(() => {
         if (isEnrolled) setPath(<Class uuid={uuid} setUuid={setUuid}/>)

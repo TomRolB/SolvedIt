@@ -28,7 +28,7 @@ export const Navbar = ({uuid, setUuid, pictureCount, setPictureCount}) => {
 
     }, [uuid, pictureCount, hasUnseenNotifications]);
 
-    console.log("Has any unseen notification: " + hasUnseenNotifications);
+    // console.log("Has any unseen notification: " + hasUnseenNotifications);
 
     function hasAnyUnseenNotification(notificationArray) {
         return notificationArray.some(notification => {
