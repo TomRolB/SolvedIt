@@ -25,19 +25,18 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
 
     return (
     <tbody>
-        <tr>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <tr className="bg-gray-800 border-gray-700">
+            <td className="px-5 py-5 border-b border-gray-700 text-sm">
                 <div className="flex items-center">
                     <ProfilePicture uuid={uuid} isTransientUuid={true}></ProfilePicture>
                     <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-white whitespace-no-wrap">
                             {student.firstName} {student.lastName}
                         </p>
                     </div>
                 </div>
-
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td className="px-5 py-5 border-b text-sm border-gray-700">
                 {student.permissions === "normal" ? ( !isAdmin? "Normal":
                     <select id="new-questions"
                             disabled={!isAdmin}
@@ -71,15 +70,21 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option selected value="admin">Admin</option>
                         <option value="teacher">Teacher</option>
                     </select>
-                ) : "Owner"
+                ) : (
+                    <div className="ml-3">
+                        <p className="text-white whitespace-no-wrap">
+                            Owner
+                        </p>
+                    </div>
+                )
                 }
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
+            <td className="px-5 py-5 border-b text-sm border-gray-700">
+                <p className="text-white whitespace-no-wrap">
                     {student.createdAt}
                 </p>
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td className="px-5 py-5 border-b border-gray-700 text-sm">
                 {/*TODO: create the button to report them (but that's further)*/}
                 {isAdmin && student.permissions !== "owner" ? <>
                     <button onClick={()=>{
