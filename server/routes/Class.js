@@ -10,6 +10,7 @@ const Tags = require("../controllers/Tags");
 const DiscordChannelController = require('../controllers/DiscordChannelController')
 const {generateTransientUuid} = require("../controllers/Auth");
 const ClassController = require("../controllers/ClassController");
+const {QueryTypes} = require("sequelize");
 
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
