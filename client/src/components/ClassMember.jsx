@@ -8,7 +8,7 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
     const [permissions, setPermissions] = useState(student.isTeacher === 0 ? student.permissions: "teacher")
 
     const handleUserKick = async (student) => {
-        console.log(student.id)
+        // console.log(student.id)
         await axios.post(`/class/byId/${classId}/kick-user/${student.id}`).then(res => console.log(res)).catch(err => console.log(err))
     }
 

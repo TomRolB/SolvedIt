@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Login} from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,7 +16,6 @@ import {QuestionPage} from "./pages/class/questions/QuestionPage";
 import {CreateTag} from "./pages/class/tags/CreateTag";
 import {ViewTags} from "./pages/class/tags/ViewTags";
 import {EditTag} from "./pages/class/tags/EditTag";
-import {ClassEnroll} from "./utils/ClassEnroll";
 import {ClassMembers} from "./pages/class/members/ClassMembers";
 import {ReportedQuestions} from "./pages/class/questions/ReportedQuestions";
 import {Leaderboard} from "./pages/class/members/Leaderboard";
@@ -26,6 +25,7 @@ import {ClassNotificationSettings} from "./pages/class/notifications/ClassNotifi
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {DiscordLink} from "./pages/DiscordLink";
+import {EnrollToClass} from "./pages/class/EnrollToClass"
 
 
 function App(props) {
@@ -37,26 +37,6 @@ function App(props) {
     // }, []);
 
     const [uuid, setUuid] = useState(localStorage.getItem("uuid") || null)
-    const [isEnrolled, setIsEnrolled] = useState(false)
-    const [path, setPath] = useState(<Home uuid={uuid} setUuid={setUuid}/>)
-
-
-    const redirectPath = useCallback(async () => {
-        if(!uuid) return;
-        let res = await ClassEnroll();
-        setIsEnrolled(res);
-    }, [uuid]);
-
-    useEffect(() => {
-        if (uuid) {
-            redirectPath();
-        }
-    }, [uuid, redirectPath]);
-
-    useEffect(() => {
-        if (isEnrolled) setPath(<Class uuid={uuid} setUuid={setUuid}/>)
-    }, [isEnrolled, uuid, setUuid]);
-
 
 
     function getPageIfLoggedIn(page) {
@@ -105,7 +85,7 @@ function App(props) {
                 <Route path="/class/:id/reported"
                        element={(<ReportedQuestions></ReportedQuestions>)}></Route>
                 <Route path="/class/:id/link-with-discord" element={(<DiscordLink/>)}></Route>
-                <Route path="/enroll-to/:id" element={path}></Route>
+                <Route path="/enroll-to/:id" element={<EnrollToClass/>}></Route>
                 <Route path="/notifications" element={(<Notifications></Notifications>)}></Route>
                 <Route path="/notifications/settings" element={(<NotificationSettings></NotificationSettings>)}></Route>
             </Routes>, uuid, setUuid)}

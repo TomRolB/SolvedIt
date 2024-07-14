@@ -7,9 +7,9 @@ const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const Tags = require("../controllers/Tags");
-const {Sequelize, QueryTypes} = require("sequelize");
 const DiscordChannelController = require('../controllers/DiscordChannelController')
 const {generateTransientUuid} = require("../controllers/Auth");
+const ClassController = require("../controllers/ClassController");
 
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
@@ -67,30 +67,29 @@ router.get("/byId/:id/post-question", async (req, res) => {
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     // Block this route for non-admin users
     // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
-
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    await IsInClass.findOrCreate({where:{userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false}});
-    await NotificationSettings.createNotificationSettings(userId, classId)
-    await InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
-    res.json("Successfully enrolled")
+    const enrolled = await ClassController.enrollTo(userId, classId)
+    res.json(enrolled)
 })
 
 router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
+    // console.log("USER ID: ",userId);
+    // console.log(typeof(userId));
     const isInClass = await IsInClass.findOne({where:{classId: Number(classId), userId: userId}})
     if(!isInClass) {
         res.send([])
         return
     }
-    res.send(isInClass)
+    res.json(isInClass)
 })
 
 router.get("/byId/:id/get-link", async(req,res) =>{
     const classId = req.params.id
     const inviteLink = await InviteLink.findOne({where:{classId:Number(classId)}})
-    res.send(inviteLink)
+    res.json(inviteLink)
 })
 
 router.post("/byId/:id/change-link-activity", async(req,res) =>{
