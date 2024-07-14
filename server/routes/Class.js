@@ -7,9 +7,9 @@ const Auth = require("../controllers/Auth");
 router.use(bodyParser.urlencoded({extended: true}))
 const db = require("../models/index")
 const Tags = require("../controllers/Tags");
-const {Sequelize, QueryTypes} = require("sequelize");
 const DiscordChannelController = require('../controllers/DiscordChannelController')
 const {generateTransientUuid} = require("../controllers/Auth");
+const ClassController = require("../controllers/ClassController");
 
 router.post("/create-class", async (req, res) => {
     const classInfo = req.body
@@ -67,18 +67,10 @@ router.get("/byId/:id/post-question", async (req, res) => {
 router.post("/:uuid/enroll-to/:id", async(req,res) =>{
     // Block this route for non-admin users
     // if (!await Auth.isAdmin(req.params.uuid, req.params.id)) return
-    let successMessage = "Successfully enrolled"
     const classId = req.params.id
     const userId = Auth.getUserId(req.params.uuid).id
-    const isInClass = await IsInClass.findOne({where:{userId: userId, classId: Number(classId)}});
-    if (!isInClass){
-        await IsInClass.create({userId: userId, classId: Number(classId), permissions: "normal", isTeacher: false});
-    await NotificationSettings.createNotificationSettings(userId, classId)
-    await InviteLink.update({userCount: Sequelize.literal('userCount + 1')}, {where: {classId: classId}});
-    res.json(successMessage);
-        return
-    }
-    res.json(successMessage)
+    const enrolled = await ClassController.enrollTo(userId, classId)
+    res.json(enrolled)
 })
 
 router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
@@ -88,7 +80,7 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
     // console.log(typeof(userId));
     const isInClass = await IsInClass.findOne({where:{classId: Number(classId), userId: userId}})
     if(!isInClass) {
-        res.json("")
+        res.send([])
         return
     }
     res.json(isInClass)
@@ -97,7 +89,7 @@ router.get("/:uuid/enrolled-in/:id", async(req,res) =>{
 router.get("/byId/:id/get-link", async(req,res) =>{
     const classId = req.params.id
     const inviteLink = await InviteLink.findOne({where:{classId:Number(classId)}})
-    res.send(inviteLink)
+    res.json(inviteLink)
 })
 
 router.post("/byId/:id/change-link-activity", async(req,res) =>{
