@@ -6,6 +6,7 @@ import {Navbar} from "../../components/Navbar";
 import {Copy} from "../../components/Copy";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {ReturnButton} from "../../components/ReturnButton";
 
 function ManyTimesCode({code, expiration, userCount}) {
     return <>
@@ -168,6 +169,7 @@ export function Invites() {
         <div>
             <Navbar></Navbar>
             <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={"/class/" + id}></ReturnButton>
                 <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl col-span-4">Invites</h1>
                 <Subtitle text={"One-time codes"}></Subtitle>
                 {oneTimeCodes.length > 0 ? oneTimeCodes : "No one-time codes created"}

@@ -3,6 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../../../components/Navbar";
 import {ProfilePicture} from "../../../components/ProfilePicture";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 export const Leaderboard =() =>{
     const classId = useParams().id
@@ -54,21 +55,13 @@ export const Leaderboard =() =>{
             </tr>
             </tbody>
     }
-    function handleReturn(){
-        navigate("/class/" + classId)
-    }
 
     return (
         <div>
             <Navbar></Navbar>
             <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
-                <div className=" flex items-center justify-between pb-6">
-                    <div className="flex items-center justify-between">
-                    </div>
-                </div>
-                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
-                focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
+                <ReturnButton path={"/class/" + classId}></ReturnButton>
+                <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl col-span-4">Leaderboard</h1>
                 <div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">

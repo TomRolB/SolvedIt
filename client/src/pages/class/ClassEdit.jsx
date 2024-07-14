@@ -4,6 +4,7 @@ import React, {useEffect,useState} from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {ReturnButton} from "../../components/ReturnButton";
 
 export function ClassEdit({uuid, setUuid}) {
     const [isAdmin, setIsAdmin] = useState(false)
@@ -62,7 +63,8 @@ export function ClassEdit({uuid, setUuid}) {
     return isAdmin? (
         <div>
             <Navbar></Navbar>
-            <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
+            <div className="p-5 h-screen bg-gradient-to-tr from-white to-blue-300">
+                <ReturnButton path={`/class/${id}`}/>
                 <div className={'container py-15 px-10 mx-0 min-w-full flex flex-col items-center'}>
                     <h1 className="text-5xl font-extrabold dark:text-black">Edit {classInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {classInfo.id}</small></h1>
                     <div className={"w-80"}>

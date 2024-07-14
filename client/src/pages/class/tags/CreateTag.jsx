@@ -4,6 +4,7 @@ import {Navbar} from "../../../components/Navbar";
 import {useNavigate, useParams} from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {ReturnButton} from "../../../components/ReturnButton";
 
 export function CreateTag() {
     const [tagName, setTagName] = useState("")
@@ -35,8 +36,9 @@ export function CreateTag() {
     return (
         <div>
             <Navbar></Navbar>
-            <div className="p-5 h-screen bg-gradient-to-tr from-white to-blue-300">
-                <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
+            <div className="p-5 min-h-screen bg-gradient-to-tr from-white to-blue-300">
+                <ReturnButton path={`/class/${id}`}></ReturnButton>
+                <div className="screen flex items-center justify-center">
                     <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">Create Tag</h5>
                         <form method="post" onSubmit={handleSubmit} className="p-10">
