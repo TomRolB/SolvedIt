@@ -5,6 +5,7 @@ import {Navbar} from "../../../components/Navbar";
 import Select from "react-select";
 import * as PropTypes from "prop-types";
 import {FileUpload} from "../../../components/FileUpload";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 FileUpload.propTypes = {
     onChange: PropTypes.func,
@@ -83,7 +84,8 @@ export function PostQuestion() {
         <div>
             <Navbar></Navbar>
             <div className="p-5 h-screen bg-gradient-to-tr from-white to-blue-300">
-                <div className="h-screen flex items-center justify-center bg-gradient-to-tr from-white to-blue-300">
+                <ReturnButton path={"/class/" + id}></ReturnButton>
+                <div className="h-screen flex items-start justify-center bg-gradient-to-tr from-white to-blue-300">
                     <div
                         className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">Post

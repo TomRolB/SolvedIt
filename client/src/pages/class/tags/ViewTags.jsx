@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import "../../../styles/Tag.css"
 import {Tag} from "./Tag";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 
 export function ViewTags() {
@@ -30,7 +31,8 @@ export function ViewTags() {
     return (
         <div>
             <Navbar></Navbar>
-            <div style={{"padding" : "80px"}} className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={`/class/${id}`}></ReturnButton>
                 <div className="card">
                     <span className="title">All tags</span>
                     <div className="card__tags">

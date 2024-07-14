@@ -3,6 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../../../components/Navbar";
 import {ProfilePicture} from "../../../components/ProfilePicture";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 export const Leaderboard =() =>{
     const classId = useParams().id
@@ -25,70 +26,54 @@ export const Leaderboard =() =>{
     const getStudentEntry = (student) =>{
         if(student.userInfo.permissions !== "owner")
             return <tbody>
-            <tr>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <tr className="bg-gray-800 border-gray-700">
+                <td className="px-5 py-5 border-b border-gray-700 text-sm">
                     <div className="flex items-center">
                         <div className="flex-shrink-0 w-10 h-10">
                             <ProfilePicture uuid={student.uuid} isTransientUuid={true}></ProfilePicture>
                         </div>
                         <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">
+                            <p className="text-white whitespace-no-wrap">
                                 {student.userInfo.firstName} {student.userInfo.lastName}
                             </p>
                         </div>
                     </div>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{student.userInfo.email}</p>
+                <td className="px-5 py-5 border-b text-sm border-gray-700">
+                    {student.userInfo.email}
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                        {student.userInfo.createdAt}
-                    </p>
+                <td className="px-5 py-5 border-b text-sm border-gray-700">
+                    {student.userInfo.createdAt}
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                        {student.userInfo.upvotes}
-                    </p>
+                <td className="px-5 py-5 border-b text-sm border-gray-700">
+                    {student.userInfo.upvotes}
                 </td>
             </tr>
             </tbody>
-    }
-    function handleReturn(){
-        navigate("/class/" + classId)
     }
 
     return (
         <div>
             <Navbar></Navbar>
-            <div className="bg-white p-8 rounded-md w-full">
-                <div className=" flex items-center justify-between pb-6">
-                    <div className="flex items-center justify-between">
-                    </div>
-                </div>
-                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
-                focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={"/class/" + classId}></ReturnButton>
+                <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-black-900 md:text-5xl lg:text-6xl col-span-4">Leaderboard</h1>
                 <div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                            <table className="min-w-full leading-normal">
-                                <thead>
+                            <table className="table-auto w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Name
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Email Address
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Created at
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Points
                                     </th>
                                 </tr>

@@ -25,20 +25,25 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
 
     return (
     <tbody>
-        <tr>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <tr className="bg-gray-800 border-gray-700">
+            <td className="px-5 py-5 border-b border-gray-700 text-sm">
                 <div className="flex items-center">
                     <ProfilePicture uuid={uuid} isTransientUuid={true}></ProfilePicture>
                     <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-white whitespace-no-wrap">
                             {student.firstName} {student.lastName}
                         </p>
                     </div>
                 </div>
-
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {student.permissions === "normal" ? ( !isAdmin? "Normal":
+            <td className="px-5 py-5 border-b text-sm border-gray-700">
+                {student.permissions === "normal" ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Normal
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -49,7 +54,13 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option value="admin">Admin</option>
                         <option value="teacher">Teacher</option>
                     </select>
-                ) : student.isTeacher === 1 ? ( !isAdmin? "Teacher":
+                ) : student.isTeacher === 1 ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Teacher
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -60,7 +71,13 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option value="admin">Admin</option>
                         <option selected value="teacher">Teacher</option>
                     </select>
-                ): student.isAdmin ? ( !isAdmin? "Admin":
+                ): student.permissions === "admin" ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Admin
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -71,15 +88,21 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option selected value="admin">Admin</option>
                         <option value="teacher">Teacher</option>
                     </select>
-                ) : "Owner"
+                ) : (
+                    <div className="ml-3">
+                        <p className="text-white whitespace-no-wrap">
+                            Owner
+                        </p>
+                    </div>
+                )
                 }
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
+            <td className="px-5 py-5 border-b text-sm border-gray-700">
+                <p className="text-white whitespace-no-wrap">
                     {student.createdAt}
                 </p>
             </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td className="px-5 py-5 border-b border-gray-700 text-sm">
                 {/*TODO: create the button to report them (but that's further)*/}
                 {isAdmin && student.permissions !== "owner" ? <>
                     <button onClick={()=>{

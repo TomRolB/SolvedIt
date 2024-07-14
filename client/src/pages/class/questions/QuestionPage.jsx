@@ -7,6 +7,7 @@ import {FileUpload} from "../../../components/FileUpload";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {ProfilePicture} from "../../../components/ProfilePicture";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 
 function fetchFilesRecursively(fileNames, id, fetchedFiles, idx, setter, isAnswer) {
@@ -486,7 +487,7 @@ export function QuestionPage() {
         <div>
         <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
-                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
+                <ReturnButton path={"/class/" + id}></ReturnButton>
                 <Question questionInfo={questionInfo}/>
                 {answers.length > 0 ? answers : <h1>{"This question has no answers. Be the first to reply!"}</h1>}
             </div>

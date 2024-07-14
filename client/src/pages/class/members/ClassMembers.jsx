@@ -3,12 +3,12 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {ClassMember} from "../../../components/ClassMember";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 export const ClassMembers =() =>{
     const classId = useParams().id
     let [members, setMembers] = useState([])
     const [isAdmin, setIsAdmin] = useState(false)
-    let navigate = useNavigate()
 
     function checkUserIsAdmin() {
         axios.get("/users/is-admin",
@@ -35,42 +35,28 @@ export const ClassMembers =() =>{
         )
     }
 
-    function handleReturn(){
-        navigate("/class/" + classId)
-    }
-
     return (
         <div>
         <Navbar></Navbar>
             <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={"/class/" + classId}></ReturnButton>
                 <h1 className="text-5xl font-extrabold dark:text-black">Class Members</h1>
-                <div className=" flex items-center justify-between pb-6">
-                    <div className="flex items-center justify-between">
-                    </div>
-                </div>
-                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
-                focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onClick={handleReturn}><i className="fa-fw fa-solid fa-left-long"></i>Return</button>
                 <div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                            <table className="min-w-full leading-normal">
-                                <thead>
+                            <table className="table-auto w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Name
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Role
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Created at
                                     </th>
-                                    <th
-                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3">
                                         Action
                                     </th>
                                 </tr>

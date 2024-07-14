@@ -32,26 +32,26 @@ export const Notifications = () => {
                     .catch(err=> console.log(err))
             }
         return (
-            <tr>
-            <th scope="col" className="px-6 py-3">
-                {notification.userId}
-            </th>
-            <th scope="col" className="px-6 py-3">
-                {notification.title}
-            </th>
-            <th scope="col" className="px-6 py-3">
-                {notification.description}
-            </th>
-            <th scope="col" className="px-6 py-3">
-                {notification.createdAt}
-            </th>
-            <th scope="col" className="px-6 py-3">
-                {notification.notificationType}
-            </th>
-                <th scope="col" className="px-6 py-3">
-                {notification.classId}
-            </th>
-        </tr>);
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4">
+                    {notification.userId}
+                </th>
+                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {notification.title}
+                </th>
+                <td className="px-6 py-4">
+                    {notification.description}
+                </td>
+                <td  className="px-6 py-4">
+                    {notification.createdAt}
+                </td>
+                <td className="px-6 py-4">
+                    {notification.notificationType}
+                </td>
+                <td className="px-6 py-4">
+                    {notification.classId}
+                </td>
+            </tr>);
     }
 
     return (

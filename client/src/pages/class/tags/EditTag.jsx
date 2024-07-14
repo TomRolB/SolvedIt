@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Navbar} from "../../../components/Navbar";
+import {ReturnButton} from "../../../components/ReturnButton";
 
 
 export function EditTag() {
@@ -47,7 +48,8 @@ export function EditTag() {
     return (
         <div>
             <Navbar></Navbar>
-            <div className="h-screen bg-gradient-to-tr from-white to-blue-300">
+            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={`/class/${id}/view-tags`}/>
                 <div className={'container py-15 px-10 mx-0 min-w-full flex flex-col items-center'}>
                     <h1 className="text-5xl font-extrabold dark:text-black">Edit {tagInfo.name}<small className="ms-2 font-semibold text-gray-500 dark:text-gray-800">ID: {tagInfo.id}</small></h1>
                     <div className={"w-80"}>
