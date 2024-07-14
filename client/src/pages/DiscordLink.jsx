@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Navbar} from "../components/Navbar";
+import {ReturnButton} from "../components/ReturnButton";
 
 
 export const DiscordLink = ()=>{
@@ -55,10 +56,11 @@ export const DiscordLink = ()=>{
         <div>
             <Navbar></Navbar>
             <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+                <ReturnButton path={"/class/" + Number(id)}></ReturnButton>
             <div className="max-w-lg mx-auto my-12 bg-white p-8 rounded-xl shadow shadow-slate-300">
                 <h1 className="text-4xl font-medium">Link class with Discord Server</h1>
-                <p className="text-slate-500 mt-2">Fill up the form to link to a Discord Server.</p>
-                <p className="text-slate-500">Beware of creating a Webhook in your server before linking it.</p>
+                <p className="text-slate-500 mt-2">Fill out the form to link to a Discord Server.</p>
+                <p className="text-slate-500">Make sure to create a Webhook in your server before linking it.</p>
                 <p className="text-slate-500">You must also invite the SolvedIt bot with <a className="underline border-l-blue-500" href={BOT_INVITE_LINK} target={"_blank"}>this link</a>.</p>
                 <form className="my-10">
                     <div className="flex flex-col space-y-5">
