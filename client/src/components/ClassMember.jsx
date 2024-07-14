@@ -37,7 +37,13 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                 </div>
             </td>
             <td className="px-5 py-5 border-b text-sm border-gray-700">
-                {student.permissions === "normal" ? ( !isAdmin? "Normal":
+                {student.permissions === "normal" ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Normal
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -48,7 +54,13 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option value="admin">Admin</option>
                         <option value="teacher">Teacher</option>
                     </select>
-                ) : student.isTeacher === 1 ? ( !isAdmin? "Teacher":
+                ) : student.isTeacher === 1 ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Teacher
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -59,7 +71,13 @@ export const ClassMember =({student, isAdmin, classId, uuid}) =>{
                         <option value="admin">Admin</option>
                         <option selected value="teacher">Teacher</option>
                     </select>
-                ): student.isAdmin ? ( !isAdmin? "Admin":
+                ): student.permissions === "admin" ? ( !isAdmin? (
+                            <div className="ml-3">
+                                <p className="text-white whitespace-no-wrap">
+                                    Admin
+                                </p>
+                            </div>
+                        ):
                     <select id="new-questions"
                             disabled={!isAdmin}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
