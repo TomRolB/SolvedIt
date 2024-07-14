@@ -16,13 +16,14 @@ exports.getClass = async(classId)=>{
 
 exports.enrollTo = async(userId, classId)=>{
     //BETTER PRACTICE IS TO SEND ERROR MESSAGES AND DATA, NOT BOOLEANS
+    console.log(classId)
     const classExists = await this.getClass(classId)
     if(!classExists) return false;
 
     const enrolledIn = await this.isEnrolledIn(userId, classId)
     if(enrolledIn !== null) return true;
 
-    const inviteLink = await this.getInviteLink(userId, classId)
+    const inviteLink = await this.getInviteLink(classId)
     if(!inviteLink.isActive) return false;
 
     await IsInClass.create({userId: userId, classId: classId, permissions: "normal", isTeacher: false})
