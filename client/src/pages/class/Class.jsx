@@ -188,6 +188,11 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                         </button>
                         <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <a href={"/class/" + id + "/notification-settings"}><i
+                                className="fa-solid fa-bell"></i> Notification Settings</a>
+                        </button>
+                        <button type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             <a href={"/class/" + id + "/reported"}><i className="fa-solid fa-eye"></i> View Reported
                                 Questions and Answers</a>
                         </button>
