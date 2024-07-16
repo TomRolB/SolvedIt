@@ -296,7 +296,7 @@ export function QuestionPage() {
         const [answerDescription, setAnswerDescription] = useState("")
         const [hasUserVotedIt, setHasUserVotedIt] = useState(answer.hasUserVotedIt)
         const [voteCount, setVoteCount] = useState(answer.voteCount)
-        const [isVerified, setIsVerified] = useState(false)
+        const [isVerified, setIsVerified] = useState(answer.isVerified)
         const [replyFiles, setReplyFiles] = useState([])
         const [fetchedFiles, setFetchedFiles] = useState([])
         useEffect(() => {
