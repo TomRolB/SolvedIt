@@ -486,7 +486,7 @@ export function QuestionPage() {
     return (
         <div>
         <Navbar></Navbar>
-            <div className="h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
+            <div className="min-h-screen bg-gradient-to-tr from-white to-blue-300 p-5">
                 <ReturnButton path={"/class/" + id}></ReturnButton>
                 <Question questionInfo={questionInfo}/>
                 {answers.length > 0 ? answers : <h1>{"This question has no answers. Be the first to reply!"}</h1>}
