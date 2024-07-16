@@ -182,6 +182,15 @@ export function Class({uuid, setUuid, classId, setClassId}) {
                                 Invitations</a>
                         </button>
                         <button type="button"
+                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            <a href={"/class/" + id + "/create-tag"}><i className="fa-solid fa-plus"></i> Create Tag</a>
+                        </button>
+                        <button type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <a href={"/class/" + id + "/view-tags"}><i className="fa-solid fa-pen-to-square"></i> Edit
+                                Tags</a>
+                        </button>
+                        <button type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             <a href={"/class/" + id + "/view-members"}><i
                                 className="fa-solid fa-pen-to-square"></i> View Class Members</a>
